@@ -3,7 +3,7 @@
         const bcrypt = require('bcryptjs');
         const passport = require('passport');
         // Bring in User Model
-        let User = require('../models/user');
+        let User = require('../models/user.model');
         /* GET home page. */
         router.get('/', function (req, res, next) {
         res.render('register', {title: 'Express'});

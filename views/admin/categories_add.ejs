@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <% include layouts/header %>
+    <%- include ("layouts/header") %>
 </head>
 <body class="dashboard-page">
 	<script>
@@ -13,17 +13,17 @@
         </script>
 
 <main>
-    <% include layouts/nav %>
+    <%- include ("layouts/nav") %>
 </main>
 
 <main>
-    <% include layouts/top %>
-    <% include layouts/error %>
-    <% include contents/categories_add %>
+    <%- include ("layouts/top") %>
+    <%- include ("layouts/error") %>
+    <%- include ("contents/categories_add") %>
 </main>
 
 <footer>
-  <% include layouts/footer %>
+  <%- include ("layouts/footer") %>
 </footer>
 
 <script src="/admin/js/bootstrap.js"></script>
