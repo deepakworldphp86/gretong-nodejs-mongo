@@ -31,8 +31,8 @@ module.exports = {
                 //console.log(childArrKeys[k]);
 
                 menuHtml = menuHtml + '<li>';
-                menuHtml = menuHtml + '<a class="subnav-text" href="/admin/' + childArrKeys[k] + '">';
-                menuHtml = menuHtml + childArrValues[k];
+                menuHtml = menuHtml + '<a class="subnav-text" href="/admin/' + childArrValues[k] + '">';
+                menuHtml = menuHtml + childArrKeys[k];
                 menuHtml = menuHtml + '</a>';
                 menuHtml = menuHtml + '</li>';
 

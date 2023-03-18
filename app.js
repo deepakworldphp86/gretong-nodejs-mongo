@@ -7,7 +7,7 @@ var express = require("express");
 var app = express();
 var path = require("path");
 var expressValidator = require("express-validator");
-var port = process.env.PORT || 5006;
+var port = process.env.PORT || 5007;
 
 var mongoose = require("mongoose");
 var passport = require("passport");
@@ -25,6 +25,10 @@ var usersRouter = require("./routes/users");
 var apiRouter = require("./routes/api");
 var registerRouter = require("./routes/register");
 var adminRouter = require("./routes/admin");
+var productRouter = require("./routes/product");
+var categoryRouter = require("./routes/category");
+
+
 // configuration ===============================================================
 // set up our express application
 app.use(morgan("dev")); // log every request to the console
@@ -87,6 +91,8 @@ app.use("/users", usersRouter);
 app.use("/api", apiRouter);
 app.use("/register", registerRouter);
 app.use("/admin", adminRouter);
+app.use("/admin/product", productRouter);
+app.use("/admin/category", categoryRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   res.status(400);

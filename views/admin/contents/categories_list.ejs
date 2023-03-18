@@ -33,7 +33,7 @@
                        <div class="main-grid">
 			<div class="agile-grids">
                         <div class="bs-component mb40">
-                         <a href="/admin/categories/add/<%= id %>" class="btn btn-category btn-block" >Add Category</a>
+                         <a href="/admin/category/add/<%= id %>" class="btn btn-category btn-block" >Add Category</a>
                         </div>
 				<!-- tables -->
 			         <h3>Categories Listing</h3>
@@ -41,7 +41,7 @@
 					<thead>
 					  <tr>
 						<th>Name</th>
-						<th>Description</th>
+						<th>Category Code </th>
 						<th>Content</th>
 						<th>Image</th>
 						<th>Edit</th>
@@ -52,8 +52,8 @@
                                         <% console.log(responce.length); %>
                                         <% for (var i = 0; i < responce.length; ++i) { %>
 					  <tr>
-						<td><a href="/admin/categories?id=<%= responce[i]._id %>"><%= responce[i].categories %><a/></td>
-						<td><%= responce[i].categories_description %></td>
+						<td><a href="/admin/categories?id=<%= responce[i]._id %>"><%= responce[i].Name %><a/></td>
+						<td><%= responce[i].Code %></td>
 						<td><%= responce[i].categories_content %></td>
 						<td>
                                                 <% if(responce[i].categories_image) { %>
@@ -68,7 +68,9 @@
 				  </table>
 
 
+
 				</div>
 				<!-- //tables -->
+        <%- paginationHtml %>
 			</div>
 		

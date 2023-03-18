@@ -29,16 +29,16 @@ module.exports = {
         return arrays;
     },
     adminMenus: function () {
-
+       
         var arrays = [
-            {'sales': {orders: 'Orders', invoices: 'Invoices', shipments: 'Shipments'}},
-            {'catalog': {products: 'Products', categories: 'Categories'}},
-            {'customers': {allcustomer: 'All Customer', nowonline: 'Now Online'}},
-            {'marketing': {catalogrule: 'Catalog Rule', cartrule: 'Cart Rule'}},
-            {'content': {pages: 'Products', blocks: 'Blocks'}},
-            {'reports': {productsincart: 'Products in cart', totalsales: 'Total Sales'}},
-            {'stores': {allstore: 'All Stores', configurations: 'Configurations'}},
-            {'system': {import: 'Import', export: 'Export'}}
+            {'sales': {orders: 'orders/list', invoices: 'invoices/list', shipments: 'shipments/list'}},
+            {'catalog': {product: 'product/list/1', category: 'category/list/1'}},
+            {'customers': {allcustomer: 'customer/list', nowonline: 'customer/online'}},
+            {'marketing': {catalogrule: 'promotion/catalog', cartrule: 'promotion/cart'}},
+            {'content': {pages: 'pages/cms', blocks: 'pages/block'}},
+            {'reports': {productsincart: 'abandoned/cart', totalsales: 'reports/sales'}},
+            {'stores': {allstore: 'allstore/list', configurations: 'stores/configurations'}},
+            {'system': {import: 'system/import', export: 'system/export'}}
         ];
         return arrays;
 
