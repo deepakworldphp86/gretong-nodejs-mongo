@@ -1,0 +1,75 @@
+<%
+var categories = response.categories  || '';
+var parent_id = response.parent_category  || id;
+var categories_image = response.categories_image  || '';
+var categories_description = response.categories_description  || '';
+var categories_content = response.categories_content  || '';
+%>
+
+
+<div class="main-grid">
+			<div class="agile-grids">	
+				<!-- validation -->
+				<div class="grids">
+					<div class="progressbar-heading grids-heading">
+						<h2><%= title %></h2>
+					</div>
+					
+					<div class="forms-grids">
+						<div class="w3agile-validation">
+							<div class="panel panel-widget agile-validation">
+                                                        <div class="cat-form-right">
+									<form method="post" action="<%= postUrl %>" class="validate" autocomplete="off" novalidate="novalidate" enctype="multipart/form-data">
+
+										<div class="input-info">
+											<h3>Input Texts:</h3>
+										</div>
+										<input type="hidden" name="id" value="<%= id %>" />
+										<input type="hidden" name="parent_id" value="<%= parent_id %>" />
+										<label for="field-1">Category Name : (required)&nbsp;<span class="at-required-highlight">*</span>&nbsp;<span class="at-required-highlight">*</span></label>
+										<div class="form-group">
+											<input type="text" name="categories" id="categories" value="<%= categories %>" required="true" class="form-control">
+										</div>
+                                                                               <label for="field-1">Category Url : (required)&nbsp;<span class="at-required-highlight">*</span>&nbsp;<span class="at-required-highlight">*</span></label>
+        
+                                                                                <div class="form-group">
+											<input type="text" name="categories_url" value="<%= categories %>"  id="categories_url" required="true" class="form-control">
+										</div>
+
+										<label for="field-1-2">Category Image : (not required, filter: date)</label>
+									        <div class="form-group"> 
+											<label for="exampleInputFile">File input</label> 
+											<input type="file" id="categories_image" name="categories_image"> 
+											<p class="help-block">For Category Image</p>
+                                                                                <% if(categories_image) { %>
+                                                                                <input type="hidden" name="categories_image" value="<%= categories_image %>" />
+                                                                                <img id="myImg" src="/admin/uploads/<%= categories_image %>" width="107" height="98">
+                                                                                <% } %>
+										</div>	
+                                                                               							
+                                                                                <label for="field-4">Short Description : (required)&nbsp;<span class="at-required-highlight">*</span>&nbsp;<span class="at-required-highlight">*</span></label>
+										<div class="form-group">
+											<textarea name="categories_description" id="categories_description" required="true" class="form-control"><%= categories_description %></textarea>
+										</div>
+
+										<label for="field-4-2">Description : (required, maxlength: 500)&nbsp;<span class="at-required-highlight">*</span>&nbsp;<span class="at-required-highlight">*</span></label>
+										<div class="form-group">
+											<textarea name="categories_content" id="categories_content" required="true" maxlength="500" class="form-control"><%= categories_content %></textarea><div class="help-block at-description">Typed <span class="at-counter">0</span> of 10</div><div class="help-block at-description">Typed <span class="at-counter">0</span> of 10</div>
+										</div>
+
+                                                                                <p>
+											<input type="submit" name="sub-1" value="Submit" class="btn btn-primary">
+											<input type="reset" name="res-1" id="res-1" value="Reset" class="btn btn-danger">
+										</p>
+
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+						<div class="clearfix"> </div>
+					</div>
+				</div>
+				<!-- //validation -->
+			</div>
+		</div>

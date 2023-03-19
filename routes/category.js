@@ -10,11 +10,17 @@ const html = require("../utility/dynamic-html");
 const paginate = require("../utility/pagination");
 const Response = require("../utility/response");
 const customEvents = require("../utility/custom-events");
+const dynamicForm = require("../utility/dynamic-form");
+
 const async = require("async");
 const app = express();
 const _mongodb = require("../config/database.js");
 /*************************** Model *********************************/
-let CategoriesModel = require("../models/categories.model.js");
+let {
+  CategoriesModel,
+  schema,
+  formArray,
+} = require("../models/categories.model.js");
 
 /************************** Upload Config *************************/
 var storage = multer.diskStorage({
@@ -67,21 +73,19 @@ router.get("/list/:page", auth.isAuthorized, async function (req, res, next) {
       customEvents.emit("categoryLoaded", catCollection);
       Response.successResponse(req);
       //CategoriesModel.count().exec(function (err, count) {
-        paginate
-          .getPaginate(CategoriesModel,req,pageUrl,perPage,currentPage)
-          .then((pagaintion) => {
-            if (err) return next(err);
-            res.render("admin/categories_list", {
-              menuHtml: html.getMenuHtml(),
-              title: "Categorys",
-              collection: catCollection,
-              paginationHtml: pagaintion,
-              responce: catCollection,
-              // current: page,
-              // pages: Math.ceil(count / perPage),
-              id: id,
-            });
+      paginate
+        .getPaginate(CategoriesModel, req, pageUrl, perPage, currentPage)
+        .then((pagaintion) => {
+          if (err) return next(err);
+          res.render("admin/categories_list", {
+            menuHtml: html.getMenuHtml(),
+            title: "Categorys",
+            collection: catCollection,
+            paginationHtml: pagaintion,
+            responce: catCollection,
+            id: id,
           });
+        });
       ///});
     });
 });
@@ -99,6 +103,7 @@ router.get("/edit", auth.isAuthorized, function (req, res, next) {
       title: "Category Edit",
       postUrl: "/admin/category/update",
       response: response,
+      schemaModel: schema,
       id: id,
     });
   });
@@ -107,13 +112,18 @@ router.get("/edit", auth.isAuthorized, function (req, res, next) {
 /********************************** Add categories action  ********************************************************************/
 
 router.get("/add/:id", auth.isAuthorized, function (request, response, next) {
+  const dataArray = [];
   var id = request.params.id ? request.params.id : 0;
+  var postUrl = "/admin/category/save";
+  dataArray["action"] = postUrl;
 
+  var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
   response.render("admin/categories_add", {
     menuHtml: html.getMenuHtml(),
-    title: "Categorys",
+    title: "Categorys Form",
     response: response,
-    postUrl: "/admin/category/save",
+    schemaModel: schema,
+    form: dynamicFormHtml,
     id: id,
   });
 });
