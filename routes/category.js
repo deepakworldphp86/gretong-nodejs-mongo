@@ -11,6 +11,7 @@ const paginate = require("../utility/pagination");
 const Response = require("../utility/response");
 const customEvents = require("../utility/custom-events");
 const dynamicForm = require("../utility/dynamic-form");
+const { getValidate } = require("../utility/validation");
 
 const async = require("async");
 const app = express();
@@ -60,11 +61,13 @@ var loginPromise = new Promise(function (resolve, reject) {
 /********************************** Rendering to categories Listing ********************************************************************/
 
 router.get("/list/:page", auth.isAuthorized, async function (req, res, next) {
+  var data = [];
   var id = req.query.id ? req.query.id : 0;
   var perPage = 9;
   var currentPage = req.params.page || 1;
   var url = req.url;
   var pageUrl = "/admin/category/list/";
+
   //console.log(url);
   CategoriesModel.find({})
     .skip(perPage * currentPage - perPage)
@@ -72,6 +75,7 @@ router.get("/list/:page", auth.isAuthorized, async function (req, res, next) {
     .exec(function (err, catCollection) {
       customEvents.emit("categoryLoaded", catCollection);
       Response.successResponse(req);
+
       //CategoriesModel.count().exec(function (err, count) {
       paginate
         .getPaginate(CategoriesModel, req, pageUrl, perPage, currentPage)
@@ -84,6 +88,7 @@ router.get("/list/:page", auth.isAuthorized, async function (req, res, next) {
             paginationHtml: pagaintion,
             responce: catCollection,
             id: id,
+            data: data,
           });
         });
       ///});
@@ -94,16 +99,27 @@ router.get("/list/:page", auth.isAuthorized, async function (req, res, next) {
 
 router.get("/edit", auth.isAuthorized, function (req, res, next) {
   var id = req.query.id ? req.query.id : 0;
-  CategoriesModel.find({ _id: id }, function (err, response) {
+  const dataArray = new Object();
+
+  CategoriesModel.find({ _id: id }, async function (err, response) {
+    var postUrl = "/admin/category/update";
     var response = response.pop();
-    //console.log(response);
+    dataArray.formData = response;
+    dataArray.upload_path = '/admin/uploads/';
+    if (response !== undefined) {
+      dataArray.action = postUrl;
+    }
+    var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
+
+    // console.log(dataArray);
+    // return;
     res.render("admin/categories_add", {
       menuHtml: html.getMenuHtml(),
       collection: response,
       title: "Category Edit",
-      postUrl: "/admin/category/update",
       response: response,
       schemaModel: schema,
+      form: dynamicFormHtml,
       id: id,
     });
   });
@@ -111,45 +127,53 @@ router.get("/edit", auth.isAuthorized, function (req, res, next) {
 
 /********************************** Add categories action  ********************************************************************/
 
-router.get("/add/:id", auth.isAuthorized, function (request, response, next) {
-  const dataArray = [];
-  var id = request.params.id ? request.params.id : 0;
-  var postUrl = "/admin/category/save";
-  dataArray["action"] = postUrl;
+router.get(
+  "/add/:id",
+  auth.isAuthorized,
+  async function (request, response, next) {
+    const dataArray = new Object();
+    var id = request.params.id ? request.params.id : 0;
+    var postUrl = "/admin/category/save";
+    dataArray.formData = {};
+    dataArray.action = postUrl;
+    dataArray.formData.entity_id = (await CategoriesModel.count()) + 1;
+    dataArray.formData.Id =  dataArray.formData.entity_id;
+    dataArray.formData.ParentId = (request.params.ParentId) ? request.params.ParentId : 0; 
 
-  var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
-  response.render("admin/categories_add", {
-    menuHtml: html.getMenuHtml(),
-    title: "Categorys Form",
-    response: response,
-    schemaModel: schema,
-    form: dynamicFormHtml,
-    id: id,
-  });
-});
+    var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
+    response.render("admin/categories_add", {
+      menuHtml: html.getMenuHtml(),
+      title: "Categorys Form",
+      response: response,
+      schemaModel: schema,
+      form: dynamicFormHtml,
+      id: id,
+    });
+  }
+);
 
 /********************************** Update categories action  ********************************************************************/
 
 router.post(
   "/update",
-  upload.single("categories_image"),
+  upload.single("CategoryImage"),
   function (req, res, next) {
     auth.isAuthorized;
     callback();
     const id = req.body.id;
     var categories_image = req.body.categories_image;
     if (req.file != undefined) {
-      var categories_image = req.file.filename;
+      var CategoryImage = req.file.filename;
     }
 
-    req.checkBody("categories", "Categories Name is required").notEmpty();
-    req
-      .checkBody("categories_description", "Categories Description is required")
-      .notEmpty();
-    req
-      .checkBody("categories_content", "Categories Content is not valid")
-      .notEmpty();
-    let errors = req.validationErrors();
+    var errors = [];
+    errors = getValidate(req, formArray(dataArray));
+    if (!req.file && !errors) {
+      errors = [];
+      errors.push({ msg: "Image is required filed" });
+    } else if (!req.file) {
+      errors.push({ msg: "Image is required filed" });
+    }
 
     if (errors || !categories_image) {
       req.flash("error_msg", errors);
@@ -177,7 +201,7 @@ router.post(
           } else {
             //console.log(newCategory);
             req.flash("success_msg", "You successfully Update this category");
-            res.redirect("/admin/category/list?id=" + objectCat.parent_id);
+            res.redirect("/admin/category/list/1");
           }
         }
       );
@@ -189,28 +213,24 @@ router.post(
 
 router.post(
   "/save",
-  upload.single("categories_image"),
-  function (req, res, next) {
+  upload.single("CategoryImage"),
+  async function (req, res, next) {
+    const dataArray = new Object();
+    dataArray.formData = {};
+    dataArray.action = "";
+    const ParentId = (req.body.ParentId) ? req.body.ParentId : 0; 
+    dataArray.formData.ParentId  = ParentId;
     auth.isAuthorized;
     const id = req.body.id;
-    req.checkBody("categories", "Categories Name is required").notEmpty();
-    req
-      .checkBody("categories_description", "Categories Description is required")
-      .notEmpty();
-    req
-      .checkBody("categories_content", "Categories Content is not valid")
-      .notEmpty();
-    let errors = req.validationErrors();
+    var errors = [];
+    errors = getValidate(req, formArray(dataArray));
     if (!req.file && !errors) {
       errors = [];
       errors.push({ msg: "Image is required filed" });
     } else if (!req.file) {
       errors.push({ msg: "Image is required filed" });
     }
-
-    //console.log(errors);
     if (errors || !req.file.filename) {
-      //console.log(req.body)
       req.flash("error_msg", errors);
       res.redirect(
         url.format({
@@ -219,24 +239,28 @@ router.post(
         })
       );
     } else {
-      const categories = req.body.categories;
-      const categories_description = req.body.categories_description;
-      const categories_content = req.body.categories_content;
       const image = req.file.filename;
+      const id = req.file.Id;
       let newCategory = new CategoriesModel({
-        categories: categories,
-        categories_image: image,
-        categories_description: categories_description,
-        categories_content: categories_content,
-        parent_category: id,
+        entity_id: req.body.entity_id,
+        Id: req.body.Id,
+        Code: req.body.Code,
+        Name: req.body.Name,
+        ParentId: ParentId,
+        Active: req.body.Active,
+        CreatedDate: req.body.CreatedDate,
+        ModifiedDate: req.body.ModifiedDate,
+        ExternalId: req.body.ExternalId,
+        ChannelId: req.body.ChannelId,
+        UpdateRequired: req.body.UpdateRequired,
+        CategoryImage: image,
       });
       newCategory.save(function (err) {
         if (err) {
           return;
         } else {
-          //console.log(newCategory);
           req.flash("success_msg", "You successfully save this category");
-          res.redirect("/admin/category/list?id=" + id);
+          res.redirect("/admin/category/list/1");
         }
       });
     }

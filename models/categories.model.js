@@ -8,17 +8,17 @@ const mongoosePaginate = require("mongoose-paginate-v2");
 const dynamicFormArray = (dataArray) =>  {
   form = {
     form: {
-      required: true,
+      required: false,
       method: "post",
-      action: dataArray.action,
+      action:(dataArray.action !== undefined) ? dataArray.action : '',
       autocomplete: "off",
-      novalidate: "novalidate",
+      //novalidate: "novalidate",
       class: "form-horizontal",
       enctype: "multipart/form-data",
     },
     entity_id: {
       required: true,
-      value: "value",
+      value: dataArray.formData.hasOwnProperty('entity_id') ? dataArray.formData.entity_id : '',
       fieldType: "hidden",
       label: "Entity Id",
       id: "cat_entity_id",
@@ -27,7 +27,7 @@ const dynamicFormArray = (dataArray) =>  {
     },
     Id: {
       required: true,
-      value: "value",
+      value: dataArray.formData.hasOwnProperty('Id') ? dataArray.formData.Id : '',
       fieldType: "hidden",
       label: "Id",
       id: "cat_id",
@@ -36,7 +36,7 @@ const dynamicFormArray = (dataArray) =>  {
     },
     Code: {
       required: true,
-      value: "value",
+      value: ('Code' in dataArray.formData) ? dataArray.formData.Code : '',
       fieldType: "text",
       label: "Code",
       id: "cat_code",
@@ -45,7 +45,7 @@ const dynamicFormArray = (dataArray) =>  {
     },
     Name: {
       required: true,
-      value: "value",
+      value: (dataArray.formData.Name !== undefined) ? dataArray.formData.Name : '',
       fieldType: "text",
       label: "Name",
       id: "cat_name",
@@ -54,7 +54,7 @@ const dynamicFormArray = (dataArray) =>  {
     },
     ParentId: {
       required: true,
-      value: "value",
+      value: (dataArray.formData.ParentId !== undefined) ? dataArray.formData.ParentId : '',
       fieldType: "hidden",
       label: "Parent Id",
       id: "cat_parent",
@@ -63,7 +63,7 @@ const dynamicFormArray = (dataArray) =>  {
     },
     Active: {
       required: true,
-      value: "value",
+      value: (dataArray.formData.Active !== undefined) ? dataArray.formData.Active : '',
       fieldType: "select",
       label: "Active",
       statusArray: {
@@ -76,8 +76,8 @@ const dynamicFormArray = (dataArray) =>  {
       placeholder: "",
     },
     CreatedDate: {
-      required: true,
-      value: "value",
+      required: false,
+      value: (dataArray.formData.CreatedDate !== undefined) ? dataArray.formData.CreatedDate : '',
       label: "Created Date",
       fieldType: "date",
       id: "created_date",
@@ -85,8 +85,8 @@ const dynamicFormArray = (dataArray) =>  {
       placeholder: "",
     },
     ModifiedDate: {
-      required: true,
-      value: "value",
+      required: false,
+      value: (dataArray.formData.ModifiedDate !== undefined) ? dataArray.formData.ModifiedDate : '',     
       label: "Update Date",
       fieldType: "date",
       id: "cat_modification_date",
@@ -95,7 +95,8 @@ const dynamicFormArray = (dataArray) =>  {
     },
     ExternalId: {
       required: true,
-      value: "value",
+      value: (dataArray.formData.ExternalId !== undefined) ? dataArray.formData.ExternalId : '',      
+      label: "Update Date",
       label: "External  Id",
       fieldType: "text",
       id: "cat_external_id",
@@ -104,7 +105,7 @@ const dynamicFormArray = (dataArray) =>  {
     },
     ChannelId: {
       required: true,
-      value: "value",
+      value: (dataArray.formData.ChannelId !== undefined) ? dataArray.formData.ChannelId : '',      
       label: "Channel",
       fieldType: "select",
       id: "cat_channel",
@@ -118,7 +119,7 @@ const dynamicFormArray = (dataArray) =>  {
     },
     UpdateRequired: {
       required: true,
-      value: "value",
+      value: (dataArray.formData.UpdateRequired !== undefined) ? dataArray.formData.UpdateRequired : '',      
       label: "Update  Required",
       fieldType: "select",
       id: "cat_update_req",
@@ -129,10 +130,19 @@ const dynamicFormArray = (dataArray) =>  {
       },
       class: "form-control1",
       placeholder: "",
+    },CategoryImage: {
+      required: false,
+      value: (dataArray.formData.CategoryImage !== undefined) ? dataArray.formData.CategoryImage : '',      
+      label: "Category Image",
+      id: "category_image",
+      fieldType: "upload",
+      class: "form-control1",
+      upload_path : '/admin/uploads/',
+      placeholder: "",
     },
     sync_error: {
       required: false,
-      value: "value",
+      value: (dataArray.formData.sync_error !== undefined) ? dataArray.formData.sync_error : '',      
       label: "Sync Error",
       id: "cat_sync_error",
       fieldType: "text",
@@ -141,7 +151,7 @@ const dynamicFormArray = (dataArray) =>  {
     },
     magento_sync_status: {
       required: false,
-      value: "value",
+      value: (dataArray.formData.magento_sync_status !== undefined) ? dataArray.formData.magento_sync_status : '',      
       label: "Magento Sync Status",
       fieldType: "select",
       id: "cat_mage_sync_status",
@@ -154,7 +164,8 @@ const dynamicFormArray = (dataArray) =>  {
       placeholder: "",
     },
     submit: {
-      required: true,
+      required: false,
+      value: (dataArray.formData.submit !== undefined) ? dataArray.formData.submit : '',      
       value: "Submit",
       label: "Submit",
       fieldType: "submit",
@@ -194,11 +205,11 @@ catSchema = {
   },
   CreatedDate: {
     type: String,
-    required: true,
+    required: false,
   },
   ModifiedDate: {
     type: String,
-    required: true,
+    required: false,
   },
   ExternalId: {
     type: String,
@@ -211,6 +222,10 @@ catSchema = {
   UpdateRequired: {
     type: String,
     required: true,
+  },
+  CategoryImage: {
+    type: String,
+    required: false,
   },
   sync_error: {
     type: String,

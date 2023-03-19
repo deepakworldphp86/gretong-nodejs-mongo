@@ -41,10 +41,10 @@ var categories_content = response.categories_content  || '';
 											<label for="exampleInputFile">File input</label> 
 											<input type="file" id="categories_image" name="categories_image"> 
 											<p class="help-block">For Category Image</p>
-                                                                                <% if(categories_image) { %>
-                                                                                <input type="hidden" name="categories_image" value="<%= categories_image %>" />
-                                                                                <img id="myImg" src="/admin/uploads/<%= categories_image %>" width="107" height="98">
-                                                                                <% } %>
+											<% if(categories_image) { %>
+											<input type="hidden" name="categories_image" value="<%= categories_image %>" />
+											<img id="myImg" src="/admin/uploads/<%= categories_image %>" width="107" height="98">
+											<% } %>
 										</div>	
                                                                                							
                                                                                 <label for="field-4">Short Description : (required)&nbsp;<span class="at-required-highlight">*</span>&nbsp;<span class="at-required-highlight">*</span></label>

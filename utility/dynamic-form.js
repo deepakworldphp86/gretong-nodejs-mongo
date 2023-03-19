@@ -15,21 +15,20 @@ module.exports = {
           value.class +
           " autocomplete=" +
           value.autocomplete +
-          " novalidate=" +
-          value.novalidate +
           " enctype=" +
           value.enctype +
-          ">";
+          " novalidate >";
       }
       if (value.fieldType === "hidden") {
         form =
           form +
           '<input type="hidden" name="' +
-          value.id +
+          key +
           '" value="' +
           value.value +
           '" />';
       }
+     
       if (value.fieldType === "text") {
         form = form + '<div class="form-group">';
         form =
@@ -45,11 +44,13 @@ module.exports = {
           "<input  required=" +
           value.required +
           ' type="text" name="' +
-          value.label +
+          key +
           '" class="' +
           value.class +
           '" id="' +
           value.id +
+          '" value="' +
+          value.value +
           '" placeholder="' +
           value.placeholder +
           '">';
@@ -66,7 +67,7 @@ module.exports = {
         form =
           form +
           '<div class="col-sm-8"><select name="' +
-          value.label +
+          key +
           '" id="' +
           value.id +
           '" class="form-control1">';
@@ -75,13 +76,30 @@ module.exports = {
           for (const [key, value] of Object.entries(arrVal)) {
             var val = "";
             var val = key == 0 ? " " : key;
-            form = form + "<option id=" + val + ">" + value + "</option>";
+            form = form + '<option id=' + val + '>' + value + '</option>';
           }
         }
 
         form = form + "</select></div>";
         form = form + "</div>";
       }
+
+
+
+      if (value.fieldType === "upload") {
+        form = form + '<div class="form-group">'; 
+        form = form + '<label for="selector1" class="col-sm-2 control-label">'+value.label+'</label>';
+        form = form + '<label for="exampleInputFile">File input</label>';
+        form = form + '<input type="file" id="'+value.id+'" name="'+key+'">'; 
+        form = form + '<p class="help-block">For '+value.label+'</p>';
+       if(value.value) { 
+        form = form + '<input type="hidden" name="'+key+'" value="'+key+'" />';
+        form = form + '<img id="'+value.id+'" src="'+ formArray.upload_path+key+'" width="107" height="98">';
+       } 
+      form = form + ' </div>';	
+      }
+
+
 
       if (value.fieldType === "submit" || value.fieldType === "button") {
         form = form + " <p>";
