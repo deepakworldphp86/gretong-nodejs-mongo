@@ -31,10 +31,10 @@
 </script>
 <!-- //tables -->
                        <div class="main-grid">
-			<div class="agile-grids">
-                        <div class="bs-component mb40">
-                         <a href="/admin/category/add/<%= id %>" class="btn btn-category btn-block" >Add Category</a>
-                        </div>
+        <div class="agile-grids">
+        <div class="bs-component mb40">
+          <a href="/admin/category/add/<%= Id %>" class="btn btn-category btn-block" >Add Category</a>
+        </div>
 				<!-- tables -->
 			         <h3>Categories Listing</h3>
 				  <table id="table-two-axis" class="two-axis">
@@ -44,26 +44,30 @@
 						<th>Category Code </th>
 						<th>Content</th>
 						<th>Image</th>
+            <th>View Child Category</th>
+            <th>Add</th>
 						<th>Edit</th>
 						<th>Action</th>
 					  </tr>
 					</thead>
 					<tbody>
-                                        <% console.log(responce.length); %>
-                                        <% for (var i = 0; i < responce.length; ++i) { %>
+            <% console.log(responce.length); %>
+            <% for (var i = 0; i < responce.length; ++i) { %>
 					  <tr>
 						<td><a href="/admin/categories?id=<%= responce[i]._id %>"><%= responce[i].Name %><a/></td>
 						<td><%= responce[i].Code %></td>
 						<td><%= responce[i].categories_content %></td>
 						<td>
-                                                <% if(responce[i].categories_image) { %>
-                                                <img id="myImg" src="/admin/uploads/<%= responce[i].categories_image %>" width="107" height="98">
-                                                <% } %>
-                                                </td>
-						<td><a href="/admin/category/edit?id=<%= responce[i]._id %>">Edit</td>
-						<td><a href="/admin/category/delete?id=<%= responce[i]._id %> & parent_id=<%= responce[i].parent_category %>">Delete</td>
+              <% if(responce[i].categories_image) { %>
+              <img id="myImg" src="/admin/uploads/<%= responce[i].categories_image %>" width="107" height="98">
+              <% } %>
+              </td>
+            <td><a href="/admin/category/list/<%= responce[i].Id %>/1">View Child Category</td>
+            <td><a href="/admin/category/add/<%= responce[i].Id %>">Add Child Category</td>
+            <td><a href="/admin/category/edit/<%- responce[i].Id %>">Edit</td>
+            <td><a href="/admin/category/delete/<%= responce[i]._id %> & parent_id=<%= responce[i].ParentId %>">Delete</td>
 					  </tr>
-                                          <% } %>
+              <% } %>
 					 </tbody>
 				  </table>
 

@@ -4,12 +4,13 @@ module.exports = {
 
     return url;
   },
-  getPaginate: async function (model, req, pageUrl,perPage,currentPage) {
+  getPaginate: async function (model, filter,req, pageUrl,perPage,currentPage) {
     var perPage = perPage || 10 ;
     const limit = req.query.limit ? parseInt(req.query.limit) : 100;
     const offset = req.query.skip ? parseInt(req.query.skip) : 1;
-    const collectionData = await model.find().skip(offset).limit(limit);
-    const collectionCount = await model.count();
+    
+    const collectionData = await model.find(filter).skip(offset).limit(limit);
+    const collectionCount = await model.find(filter).count();
     const pages = Math.ceil(collectionCount / perPage);
     // var perPage = 9;
     // var currentPage = req.params.page || 1;

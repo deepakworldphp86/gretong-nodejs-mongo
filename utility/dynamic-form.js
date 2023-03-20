@@ -93,8 +93,8 @@ module.exports = {
         form = form + '<input type="file" id="'+value.id+'" name="'+key+'">'; 
         form = form + '<p class="help-block">For '+value.label+'</p>';
        if(value.value) { 
-        form = form + '<input type="hidden" name="'+key+'" value="'+key+'" />';
-        form = form + '<img id="'+value.id+'" src="'+ formArray.upload_path+key+'" width="107" height="98">';
+        form = form + '<input type="hidden" name="'+key+'" value="'+value.value+'" />';
+        form = form + '<img id="'+value.id+'" src="'+value.upload_path+value.value+'" width="107" height="98">';
        } 
       form = form + ' </div>';	
       }

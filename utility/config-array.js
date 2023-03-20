@@ -32,7 +32,7 @@ module.exports = {
        
         var arrays = [
             {'sales': {orders: 'orders/list', invoices: 'invoices/list', shipments: 'shipments/list'}},
-            {'catalog': {product: 'product/list/1', category: 'category/list/1'}},
+            {'catalog': {product: 'product/list/1', category: 'category/list/0/1'}},
             {'customers': {allcustomer: 'customer/list', nowonline: 'customer/online'}},
             {'marketing': {catalogrule: 'promotion/catalog', cartrule: 'promotion/cart'}},
             {'content': {pages: 'pages/cms', blocks: 'pages/block'}},

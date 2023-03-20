@@ -11,22 +11,21 @@ const paginate = require("../utility/pagination");
 const Response = require("../utility/response");
 const customEvents = require("../utility/custom-events");
 const dynamicForm = require("../utility/dynamic-form");
+const { formArray } = require("../models/categories.form.js");
+
 const { getValidate } = require("../utility/validation");
+var dateTime = require("node-datetime");
 
 const async = require("async");
 const app = express();
 const _mongodb = require("../config/database.js");
 /*************************** Model *********************************/
-let {
-  CategoriesModel,
-  schema,
-  formArray,
-} = require("../models/categories.model.js");
+let { CategoriesModel, schema } = require("../models/categories.model.js");
 
 /************************** Upload Config *************************/
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./public/admin/uploads");
+    cb(null, "./public/admin/uploads/category_image/");
   },
   filename: function (req, file, cb) {
     cb(null, file.fieldname + "-" + Date.now());
@@ -50,7 +49,7 @@ app.use(
 
 var loginPromise = new Promise(function (resolve, reject) {
   // do a thing, possibly async, then…
-
+  //console.log('In===================Login Param****************');
   if (1) {
     resolve("Stuff worked!");
   } else {
@@ -60,59 +59,68 @@ var loginPromise = new Promise(function (resolve, reject) {
 
 /********************************** Rendering to categories Listing ********************************************************************/
 
-router.get("/list/:page", auth.isAuthorized, async function (req, res, next) {
-  var data = [];
-  var id = req.query.id ? req.query.id : 0;
-  var perPage = 9;
-  var currentPage = req.params.page || 1;
-  var url = req.url;
-  var pageUrl = "/admin/category/list/";
-
-  //console.log(url);
-  CategoriesModel.find({})
-    .skip(perPage * currentPage - perPage)
-    .limit(perPage)
-    .exec(function (err, catCollection) {
-      customEvents.emit("categoryLoaded", catCollection);
-      Response.successResponse(req);
-
-      //CategoriesModel.count().exec(function (err, count) {
-      paginate
-        .getPaginate(CategoriesModel, req, pageUrl, perPage, currentPage)
-        .then((pagaintion) => {
-          if (err) return next(err);
-          res.render("admin/categories_list", {
-            menuHtml: html.getMenuHtml(),
-            title: "Categorys",
-            collection: catCollection,
-            paginationHtml: pagaintion,
-            responce: catCollection,
-            id: id,
-            data: data,
+router.get(
+  "/list/:Id/:page",
+  auth.isAuthorized,
+  async function (req, res, next) {
+    var data = [];
+    var Id = req.params.Id ? req.params.Id : 0;
+    var perPage = 9;
+    var currentPage = req.params.page || 1;
+    var pageUrl = "/admin/category/list/" + Id + "/";
+    var filter = { ParentId: Id };
+    CategoriesModel.find({ ParentId: Id })
+      .skip(perPage * currentPage - perPage)
+      .limit(perPage)
+      .exec(function (err, catCollection) {
+        customEvents.emit("categoryLoaded", catCollection);
+        Response.successResponse(req);
+        paginate
+          .getPaginate(
+            CategoriesModel,
+            filter,
+            req,
+            pageUrl,
+            perPage,
+            currentPage
+          )
+          .then((pagaintion) => {
+            if (err) return next(err);
+            res.render("admin/categories_list", {
+              menuHtml: html.getMenuHtml(),
+              title: "Categorys",
+              collection: catCollection,
+              paginationHtml: pagaintion,
+              responce: catCollection,
+              Id: Id,
+              data: data,
+            });
           });
-        });
-      ///});
-    });
-});
+      });
+  }
+);
 
 /********************************** Edit categories action  ********************************************************************/
 
-router.get("/edit", auth.isAuthorized, function (req, res, next) {
-  var id = req.query.id ? req.query.id : 0;
+router.get("/edit/:Id", auth.isAuthorized, function (req, res, next) {
+  var Id = req.params.Id ? req.params.Id : 0;
   const dataArray = new Object();
 
-  CategoriesModel.find({ _id: id }, async function (err, response) {
-    var postUrl = "/admin/category/update";
+  CategoriesModel.find({ Id: Id }, async function (err, response) {
+    var postUrl = "/admin/category/update/" + Id;
     var response = response.pop();
     dataArray.formData = response;
-    dataArray.upload_path = '/admin/uploads/';
+    //console.log(dataArray);return;
     if (response !== undefined) {
       dataArray.action = postUrl;
     }
-    var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
 
-    // console.log(dataArray);
-    // return;
+    //Date Format for Modified
+    var dt = dateTime.create();
+    var formatted = dt.format("Y-m-d H:M:S");
+    dataArray.formData.ModifiedDate = formatted; // ModifiedDate Date
+
+    var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
     res.render("admin/categories_add", {
       menuHtml: html.getMenuHtml(),
       collection: response,
@@ -120,7 +128,7 @@ router.get("/edit", auth.isAuthorized, function (req, res, next) {
       response: response,
       schemaModel: schema,
       form: dynamicFormHtml,
-      id: id,
+      Id: Id,
     });
   });
 });
@@ -128,26 +136,29 @@ router.get("/edit", auth.isAuthorized, function (req, res, next) {
 /********************************** Add categories action  ********************************************************************/
 
 router.get(
-  "/add/:id",
+  "/add/:ParentId",
   auth.isAuthorized,
   async function (request, response, next) {
     const dataArray = new Object();
-    var id = request.params.id ? request.params.id : 0;
     var postUrl = "/admin/category/save";
     dataArray.formData = {};
     dataArray.action = postUrl;
-    dataArray.formData.entity_id = (await CategoriesModel.count()) + 1;
-    dataArray.formData.Id =  dataArray.formData.entity_id;
-    dataArray.formData.ParentId = (request.params.ParentId) ? request.params.ParentId : 0; 
+    dataArray.formData.Id = (await CategoriesModel.count()) + 1; // Int Id of Category
+    dataArray.formData.ParentId = request.params.ParentId
+      ? request.params.ParentId
+      : 0; // Parent Id of Category
+
+    //Date Format for CreatedDate
+    var dt = dateTime.create();
+    var formatted = dt.format("Y-m-d H:M:S");
+    dataArray.formData.CreatedDate = formatted; // Created Date
 
     var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
     response.render("admin/categories_add", {
       menuHtml: html.getMenuHtml(),
       title: "Categorys Form",
       response: response,
-      schemaModel: schema,
       form: dynamicFormHtml,
-      id: id,
     });
   }
 );
@@ -155,44 +166,63 @@ router.get(
 /********************************** Update categories action  ********************************************************************/
 
 router.post(
-  "/update",
+  "/update/:Id",
   upload.single("CategoryImage"),
-  function (req, res, next) {
+  async function (req, res, next) {
     auth.isAuthorized;
-    callback();
-    const id = req.body.id;
-    var categories_image = req.body.categories_image;
-    if (req.file != undefined) {
-      var CategoryImage = req.file.filename;
-    }
+    // callback();
+    const Id = req.body.Id;
+    var CategoryImage = '';
 
+    const dataArray = new Object();
+    dataArray.formData = {};
+    dataArray.formData.Id = req.body.Id;
+    dataArray.formData.ParentId = req.body.ParentId;
+
+    // Start Image and Validation
     var errors = [];
     errors = getValidate(req, formArray(dataArray));
-    if (!req.file && !errors) {
-      errors = [];
-      errors.push({ msg: "Image is required filed" });
-    } else if (!req.file) {
-      errors.push({ msg: "Image is required filed" });
-    }
 
-    if (errors || !categories_image) {
+    //Exist image
+    if (req.file == undefined) {
+       CategoryImage = req.body.CategoryImage;
+    } else {
+      if (!req.file && errors) {
+        errors = [];
+        errors.push({ msg: "Image is required filed" });
+      } else if (!req.file) {
+        {
+          errors.push({ msg: "Image is required filed" });
+        }
+      }
+       CategoryImage = req.body.CategoryImage;
+    }
+    // Start Image and Validation
+    if (errors || !CategoryImage) {
       req.flash("error_msg", errors);
       res.redirect(
         url.format({
-          pathname: "/admin/category/edit?id=" + id,
+          pathname: "/admin/category/edit/" + Id,
           response: req.body,
         })
       );
     } else {
       var objectCat = new Object();
-      objectCat.categories = req.body.categories;
-      objectCat.categories_description = req.body.categories_description;
-      objectCat.categories_content = req.body.categories_content;
-      objectCat.categories_image = categories_image;
-      objectCat.parent_id = req.body.parent_id;
-      //console.log(objectCat);return;
+      objectCat.Id = req.body.Id;
+      objectCat.Code = req.body.Code;
+      objectCat.Name = req.body.Name;
+      objectCat.ParentId = req.body.ParentId;
+      objectCat.Active = req.body.Active;
+      objectCat.CreatedDate = req.body.CreatedDate;
+      objectCat.ModifiedDate = req.body.ModifiedDate;
+      objectCat.ExternalId = req.body.ExternalId;
+      objectCat.StoreId = req.body.StoreId;
+      objectCat.UpdateRequired = req.body.UpdateRequired;
+      objectCat.CategoryImage = CategoryImage;
+      const ParentId = req.body.ParentId;
+      ///console.log(objectCat);return;
       CategoriesModel.findByIdAndUpdate(
-        req.body.id,
+        req.body._id,
         objectCat,
         { upsert: true },
         function (err, num, n) {
@@ -201,7 +231,7 @@ router.post(
           } else {
             //console.log(newCategory);
             req.flash("success_msg", "You successfully Update this category");
-            res.redirect("/admin/category/list/1");
+            res.redirect("/admin/category/list/" + ParentId + "/1");
           }
         }
       );
@@ -218,12 +248,13 @@ router.post(
     const dataArray = new Object();
     dataArray.formData = {};
     dataArray.action = "";
-    const ParentId = (req.body.ParentId) ? req.body.ParentId : 0; 
-    dataArray.formData.ParentId  = ParentId;
+    const ParentId = req.body.ParentId ? req.body.ParentId : 0;
+    dataArray.formData.ParentId = ParentId;
     auth.isAuthorized;
-    const id = req.body.id;
+    const Id = req.body.Id;
     var errors = [];
     errors = getValidate(req, formArray(dataArray));
+    //console.log('^^^^^^^^^^^^^^^^^^^^^^^');
     if (!req.file && !errors) {
       errors = [];
       errors.push({ msg: "Image is required filed" });
@@ -234,7 +265,7 @@ router.post(
       req.flash("error_msg", errors);
       res.redirect(
         url.format({
-          pathname: "/admin/category/add/" + id,
+          pathname: "/admin/category/add/" + ParentId,
           query: req.body,
         })
       );
@@ -242,7 +273,6 @@ router.post(
       const image = req.file.filename;
       const id = req.file.Id;
       let newCategory = new CategoriesModel({
-        entity_id: req.body.entity_id,
         Id: req.body.Id,
         Code: req.body.Code,
         Name: req.body.Name,
@@ -251,7 +281,7 @@ router.post(
         CreatedDate: req.body.CreatedDate,
         ModifiedDate: req.body.ModifiedDate,
         ExternalId: req.body.ExternalId,
-        ChannelId: req.body.ChannelId,
+        StoreId: req.body.StoreId,
         UpdateRequired: req.body.UpdateRequired,
         CategoryImage: image,
       });
@@ -260,7 +290,7 @@ router.post(
           return;
         } else {
           req.flash("success_msg", "You successfully save this category");
-          res.redirect("/admin/category/list/1");
+          res.redirect("/admin/category/list/0/1");
         }
       });
     }
@@ -281,7 +311,7 @@ router.get("/delete", function (req, res) {
       "Count of child categorys" + count
     );
     if (count === 0) {
-      Categories.findOneAndRemove(objectCat, function (err) {
+      CategoriesModel.findOneAndRemove(objectCat, function (err) {
         if (err) {
           customEvents.emit("categoryDeleteFailed", err);
           res.redirect("/admin/category/list?id=" + parent_id);
