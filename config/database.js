@@ -25,11 +25,14 @@ const client = new MongoClient(url);
 })();
 
 let myConn = async () => {
-  const client = new MongoClient(url);
+  const client = new MongoClient(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  });
   await client.connect();
   console.log("Connected successfully to server..........");
   const db = client.db(dbName);
-  const collection = db.collection("admin");
   const myPromise = new Promise((resolve, reject) => {
     resolve(db);
     db.close();

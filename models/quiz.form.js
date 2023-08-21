@@ -15,25 +15,16 @@ const dynamicFormArray = (dataArray) =>  {
       fieldType: "hidden",
       id: "hexadecimal_id"
     },
-    Id: {
+    id: {
       required: true,
       value: ('Id' in dataArray.formData) ? dataArray.formData.Id : '',
       fieldType: "hidden",
       label: "Id",
-      id: "cat_id",
+      id: "id",
       class: "form-control1",
       placeholder: "",
     },
-    ParentId: {
-      required: true,
-      value: ('ParentId' in dataArray.formData) ? dataArray.formData.ParentId : '',
-      fieldType: "hidden",
-      label: "Parent Id",
-      id: "cat_parent",
-      class: "form-control1",
-      placeholder: "",
-    },
-    CreatedDate: {
+    created_date: {
       required: false,
       value: (dataArray.formData.CreatedDate !== undefined) ? dataArray.formData.CreatedDate : '',
       label: "Created Date",
@@ -42,34 +33,34 @@ const dynamicFormArray = (dataArray) =>  {
       class: "form-control1",
       placeholder: "",
     },
-    ModifiedDate: {
+    modified_date: {
       required: false,
       value: (dataArray.formData.ModifiedDate !== undefined) ? dataArray.formData.ModifiedDate : '',     
       label: "Update Date",
       fieldType: "hidden",
-      id: "cat_modification_date",
+      id: "modification_date",
       class: "form-control1",
       placeholder: "",
     },
-    Code: {
+    code: {
       required: true,
       value: ('Code' in dataArray.formData) ? dataArray.formData.Code : '',
       fieldType: "text",
-      label: "Code",
-      id: "cat_code",
+      label: "Quiz Code",
+      id: "code",
       class: "form-control1",
-      placeholder: "Code",
+      placeholder: "Quiz Code",
     },
-    Name: {
+    name: {
       required: true,
       value: (dataArray.formData.Name !== undefined) ? dataArray.formData.Name : '',
       fieldType: "text",
-      label: "Name",
-      id: "cat_name",
+      label: "name",
+      id: "name",
       class: "form-control1",
-      placeholder: "Name",
+      placeholder: "Quiz Name",
     },
-    Active: {
+    active: {
       required: true,
       value: (dataArray.formData.Active !== undefined) ? dataArray.formData.Active : '',
       fieldType: "select",
@@ -83,22 +74,12 @@ const dynamicFormArray = (dataArray) =>  {
       class: "form-control1",
       placeholder: "",
     },
-    ExternalId: {
-      required: true,
-      value: (dataArray.formData.ExternalId !== undefined) ? dataArray.formData.ExternalId : '',      
-      label: "Update Date",
-      label: "External  Id",
-      fieldType: "text",
-      id: "cat_external_id",
-      class: "form-control1",
-      placeholder: "",
-    },
-    StoreId: {
+    store_id: {
       required: true,
       value: (dataArray.formData.StoreId !== undefined) ? dataArray.formData.StoreId : '',      
       label: "Store",
       fieldType: "select",
-      id: "cat_store",
+      id: "store",
       statusArray: {
         0: "---------Please Select ------------------",
         1: "1",
@@ -107,12 +88,12 @@ const dynamicFormArray = (dataArray) =>  {
       class: "form-control1",
       placeholder: "",
     },
-    UpdateRequired: {
+    update_required: {
       required: true,
       value: (dataArray.formData.UpdateRequired !== undefined) ? dataArray.formData.UpdateRequired : '',      
       label: "Update  Required",
       fieldType: "select",
-      id: "cat_update_req",
+      id: "update_req",
       statusArray: {
         0: "---------Please Select ------------------",
         1: "Yes",
@@ -120,14 +101,15 @@ const dynamicFormArray = (dataArray) =>  {
       },
       class: "form-control1",
       placeholder: "",
-    },CategoryImage: {
+    },
+    image: {
       required: false,
       value: (dataArray.formData.CategoryImage !== undefined) ? dataArray.formData.CategoryImage : '',      
-      label: "Category Image",
-      id: "CategoryImage",
+      label: "Quiz Image",
+      id: "image",
       fieldType: "upload",
       class: "form-control1",
-      upload_path : '/admin/uploads/category_image/',
+      upload_path : '/admin/uploads/quiz_image/',
       placeholder: "",
     },
     submit: {
@@ -136,7 +118,7 @@ const dynamicFormArray = (dataArray) =>  {
       value: "Submit",
       label: "Submit",
       fieldType: "submit",
-      id: "cat_submit",
+      id: "quiz_submit",
       class: 'btn btn-default w3ls-button',
       placeholder: "",
     },

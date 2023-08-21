@@ -11,7 +11,7 @@ const paginate = require("../utility/pagination");
 const Response = require("../utility/response");
 const customEvents = require("../utility/custom-events");
 const dynamicForm = require("../utility/dynamic-form");
-const { formArray } = require("../models/categories.form.js");
+const { formArray } = require("../models/quiz.form.js");
 
 const { getValidate } = require("../utility/validation");
 var dateTime = require("node-datetime");
@@ -20,7 +20,7 @@ const async = require("async");
 const app = express();
 const _mongodb = require("../config/database.js");
 /*************************** Model *********************************/
-let { CategoriesModel, schema } = require("../models/categories.model.js");
+let { QuizModel, schema } = require("../models/quiz.model.js");
 
 /************************** Upload Config *************************/
 var storage = multer.diskStorage({
@@ -57,27 +57,27 @@ var loginPromise = new Promise(function (resolve, reject) {
   }
 });
 
-/********************************** Rendering to categories Listing ********************************************************************/
+/********************************** Rendering to Quiz Listing ********************************************************************/
 
 router.get(
-  "/list/:Id/:page",
+  "/list",
   mBackend.isAuthorized,
   async function (req, res, next) {
     var data = [];
     var Id = req.params.Id ? req.params.Id : 0;
     var perPage = 9;
     var currentPage = req.params.page || 1;
-    var pageUrl = "/admin/category/list/" + Id + "/";
+    var pageUrl = "/admin/quiz/list/" + Id + "/";
     var filter = { ParentId: Id };
-    CategoriesModel.find({ ParentId: Id })
+    QuizModel.find({ ParentId: Id })
       .skip(perPage * currentPage - perPage)
       .limit(perPage)
       .exec(function (err, catCollection) {
-        customEvents.emit("categoryLoaded", catCollection);
+        customEvents.emit("quizLoaded", catCollection);
         Response.successResponse(req);
         paginate
           .getPaginate(
-            CategoriesModel,
+            QuizModel,
             filter,
             req,
             pageUrl,
@@ -86,9 +86,9 @@ router.get(
           )
           .then((pagaintion) => {
             if (err) return next(err);
-            res.render("admin/categories_list", {
+            res.render("admin/quiz/list", {
               menuHtml: html.getMenuHtml(),
-              title: "Categorys",
+              title: "Quiz List",
               collection: catCollection,
               paginationHtml: pagaintion,
               responce: catCollection,
@@ -100,13 +100,13 @@ router.get(
   }
 );
 
-/********************************** Edit categories action  ********************************************************************/
+/********************************** Edit Quiz action  ********************************************************************/
 
 router.get("/edit/:Id", mBackend.isAuthorized, function (req, res, next) {
   var Id = req.params.Id ? req.params.Id : 0;
   const dataArray = new Object();
 
-  CategoriesModel.find({ Id: Id }, async function (err, response) {
+  QuizModel.find({ Id: Id }, async function (err, response) {
     var postUrl = "/admin/category/update/" + Id;
     var response = response.pop();
     dataArray.formData = response;
@@ -133,17 +133,17 @@ router.get("/edit/:Id", mBackend.isAuthorized, function (req, res, next) {
   });
 });
 
-/********************************** Add categories action  ********************************************************************/
+/********************************** Add Quiz action  ********************************************************************/
 
 router.get(
-  "/add/:ParentId",
+  "/add",
   mBackend.isAuthorized,
   async function (request, response, next) {
     const dataArray = new Object();
-    var postUrl = "/admin/category/save";
+    var postUrl = "/admin/quiz/save";
     dataArray.formData = {};
     dataArray.action = postUrl;
-    dataArray.formData.Id = (await CategoriesModel.count()) + 1; // Int Id of Category
+    dataArray.formData.Id = (await QuizModel.count()) + 1; // Int Id of Category
     dataArray.formData.ParentId = request.params.ParentId
       ? request.params.ParentId
       : 0; // Parent Id of Category
@@ -154,16 +154,16 @@ router.get(
     dataArray.formData.CreatedDate = formatted; // Created Date
 
     var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
-    response.render("admin/categories_add", {
+    response.render("admin/quiz/add", {
       menuHtml: html.getMenuHtml(),
-      title: "Categorys Form",
+      title: "Quiz Form",
       response: response,
       form: dynamicFormHtml,
     });
   }
 );
 
-/********************************** Update categories action  ********************************************************************/
+/********************************** Update Quiz action  ********************************************************************/
 
 router.post(
   "/update/:Id",
@@ -212,7 +212,7 @@ router.post(
       objectCat.CategoryImage = CategoryImage;
       const ParentId = req.body.ParentId;
       ///console.log(objectCat);return;
-      CategoriesModel.findByIdAndUpdate(
+      QuizModel.findByIdAndUpdate(
         req.body._id,
         objectCat,
         { upsert: true },
@@ -230,7 +230,7 @@ router.post(
   }
 );
 
-/********************************** Save categories action  ********************************************************************/
+/********************************** Save Quiz action  ********************************************************************/
 
 router.post(
   "/save",
@@ -261,7 +261,7 @@ router.post(
       );
     } else {
       const image = req.file.filename;
-      let newCategory = new CategoriesModel({
+      let newCategory = new QuizModel({
         Id: req.body.Id,
         Code: req.body.Code,
         Name: req.body.Name,
@@ -286,7 +286,7 @@ router.post(
   }
 );
 
-/********************************** Delete categories action  ********************************************************************/
+/********************************** Delete Quiz action  ********************************************************************/
 
 router.get("/delete", function (req, res) {
   var id = req.query.id ? req.query.id : 0;
@@ -294,13 +294,13 @@ router.get("/delete", function (req, res) {
   var objectCat = new Object();
   objectCat._id = id.trim();
 
-  CategoriesModel.count({ parent_category: id.trim() }).then((count) => {
+  QuizModel.count({ parent_category: id.trim() }).then((count) => {
     customEvents.emit(
       "categoryDeleteBefore",
       "Count of child categorys" + count
     );
     if (count === 0) {
-      CategoriesModel.findOneAndRemove(objectCat, function (err) {
+      QuizModel.findOneAndRemove(objectCat, function (err) {
         if (err) {
           customEvents.emit("categoryDeleteFailed", err);
           res.redirect("/admin/category/list?id=" + parent_id);

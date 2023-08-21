@@ -6,7 +6,7 @@ const url = require("url");
 const mongoosePaginate = require("mongoose-paginate-v2");
 
 const session = require("express-session");
-const auth = require("../middleware/auth_backend");
+const auth = require("../middleware/middleware_backend");
 const config = require("../utility/config-array");
 const html = require("../utility/dynamic-html");
 const Response = require("../utility/response");

@@ -4,9 +4,11 @@ const router = express.Router();
 const path = require("path");
 const url = require("url");
 const mongoosePaginate = require("mongoose-paginate-v2");
+const jwt = require("jsonwebtoken");
+const mBackend = require("../middleware/middleware_backend");
 
 const session = require("express-session");
-const auth = require("../middleware/auth_backend");
+const auth = require("../middleware/middleware_backend");
 const config = require("../utility/config-array");
 const html = require("../utility/dynamic-html");
 const Response = require("../utility/response");
@@ -57,7 +59,15 @@ var loginPromise = new Promise(function (resolve, reject) {
 /*************************************** Login view rendering *****************************************************************/
 
 router.get("/login", function (req, res, next) {
-  res.render("admin/login", { title: "Express" });
+  if(req.session.isAdminActive === undefined){
+     res.render("admin/login", { title: "Express" });
+  }else{
+
+    res.render("admin/dashboard", {
+      menuHtml: html.getMenuHtml(),
+      title: "Gretong Admin",
+    });
+  }
 });
 
 /************************************** Login data post ***********************************************************************/
@@ -74,6 +84,19 @@ router.post("/login/post", function (req, res) {
         req.session.isAdminActive = true;
         req.session.user = Username;
         customEvents.emit("login", message, user.username);
+
+        //JWT auth
+        let jwtSecretKey = process.env.JWT_SECRET_KEY || responseSecret.JWT_SECRET_KEY;
+
+        let data = {
+          time: Date(),
+          userId: user._id,
+        };
+        var token = jwt.sign(data, jwtSecretKey,{ expiresIn: '1800s'});
+        
+        req.session.jwtToken = token;
+
+        //Success Redirect
         res.redirect("/admin");
       } else {
         var message = "Invalid login";

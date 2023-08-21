@@ -4,6 +4,8 @@
 require("./config/database.js");
 var createError = require("http-errors");
 var express = require("express");
+require('dotenv').config();
+
 var app = express();
 var path = require("path");
 var expressValidator = require("express-validator");
@@ -22,11 +24,12 @@ var session = require("express-session");
 var common = require("./middleware/middleware_frontend.js");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
-var apiRouter = require("./routes/api");
+var apiRouter = require("./routes/rest/api");
 var registerRouter = require("./routes/register");
 var adminRouter = require("./routes/admin");
 var productRouter = require("./routes/product");
 var categoryRouter = require("./routes/category");
+var quizRouter = require("./routes/quiz");
 
 
 // configuration ===============================================================
@@ -35,6 +38,7 @@ app.use(morgan("dev")); // log every request to the console
 app.use(cookieParser()); // read cookies (needed for auth)
 app.use(bodyParser.json()); // get information from html forms
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.set("view engine", "ejs"); // set up ejs for templating
 // Set Public Folder
@@ -88,11 +92,13 @@ app.use(function (req, res, next) {
 // launch ======================================================================
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
-app.use("/api", apiRouter);
+app.use("/rest/api", apiRouter);
 app.use("/register", registerRouter);
 app.use("/admin", adminRouter);
 app.use("/admin/product", productRouter);
 app.use("/admin/category", categoryRouter);
+app.use("/admin/quiz", quizRouter);
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   res.status(400);

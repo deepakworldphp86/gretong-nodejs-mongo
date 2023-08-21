@@ -1,14 +1,15 @@
 module.exports = {
     arrayCategory: function () {
         var arrays = [
-            {key: 'sales', value: 'Sales'},
+            //{key: 'sales', value: 'Sales'},
             {key: 'catalog', value: 'Catalog'},
-            {key: 'customers', value: 'Customers'},
-            {key: 'marketing', value: 'Marketing'},
-            {key: 'content', value: 'Content'},
-            {key: 'reports', value: 'Reports'},
-            {key: 'stores', value: 'Stores'},
-            {key: 'system', value: 'System'}
+            //{key: 'customers', value: 'Customers'},
+            //{key: 'marketing', value: 'Marketing'},
+            {key: 'quiz', value: 'Quiz'},
+            //{key: 'content', value: 'Content'},
+            //{key: 'reports', value: 'Reports'},
+            //{key: 'stores', value: 'Stores'},
+            //{key: 'system', value: 'System'}
 
         ];
         return arrays;
@@ -16,13 +17,14 @@ module.exports = {
     logoArray: function () {
         var arrays = [
             'fa fa-cogs',
-            'fa fa-check-square-o nav_icon',
-            'fa fa-file-text-o nav_icon',
-            'fa fa-bar-chart nav_icon',
-            'icon-font nav-icon',
-            'icon-table nav-icon',
-            'fa fa-map-marker',
-            'fa fa-exclamation-triangle',
+            // 'fa fa-check-square-o nav_icon',
+            // 'fa fa-file-text-o nav_icon',
+            // 'fa fa-bar-chart nav_icon',
+            // 'icon-font nav-icon',
+            // 'icon-font nav-icon',
+            // 'icon-table nav-icon',
+            // 'fa fa-map-marker',
+            // 'fa fa-exclamation-triangle',
             'fa fa-list-ul'
 
         ]
@@ -31,14 +33,15 @@ module.exports = {
     adminMenus: function () {
        
         var arrays = [
-            {'sales': {orders: 'orders/list', invoices: 'invoices/list', shipments: 'shipments/list'}},
+            // {'sales': {orders: 'orders/list', invoices: 'invoices/list', shipments: 'shipments/list'}},
             {'catalog': {product: 'product/list/1', category: 'category/list/0/1'}},
-            {'customers': {allcustomer: 'customer/list', nowonline: 'customer/online'}},
-            {'marketing': {catalogrule: 'promotion/catalog', cartrule: 'promotion/cart'}},
-            {'content': {pages: 'pages/cms', blocks: 'pages/block'}},
-            {'reports': {productsincart: 'abandoned/cart', totalsales: 'reports/sales'}},
-            {'stores': {allstore: 'allstore/list', configurations: 'stores/configurations'}},
-            {'system': {import: 'system/import', export: 'system/export'}}
+            // {'customers': {allcustomer: 'customer/list', nowonline: 'customer/online'}},
+            // {'marketing': {catalogrule: 'promotion/catalog', cartrule: 'promotion/cart'}},
+            {'quiz': {quiz: 'quiz/list'}},
+            // {'content': {pages: 'pages/cms', blocks: 'pages/block'}},
+            // {'reports': {productsincart: 'abandoned/cart', totalsales: 'reports/sales'}},
+            // {'stores': {allstore: 'allstore/list', configurations: 'stores/configurations'}},
+            // {'system': {import: 'system/import', export: 'system/export'}}
         ];
         return arrays;
 
