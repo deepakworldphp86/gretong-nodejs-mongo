@@ -4,23 +4,23 @@ const mongoosePaginate = require("mongoose-paginate-v2");
 
 //Quiz
 
-var quizSchema = mongoose.Schema(
+var quizSchema = new mongoose.Schema(
   {
     id: {
       type: String,
-      required: true,
+      required: false,
     },
     name: {
       type: String,
-      required: true,
+      required: false,
     },
     code: {
       type: String,
-      required: true,
+      required: false,
     },
     description: {
       type: String,
-      required: true,
+      required: false,
     },
    difficulty: {
       type: String,
@@ -32,11 +32,11 @@ var quizSchema = mongoose.Schema(
     },
     total_question: {
       type: String,
-      required: true,
+      required: false,
     },
     active: {
       type: String,
-      required: true,
+      required: false,
     },
     created_date: {
       type: String,
@@ -54,6 +54,15 @@ var quizSchema = mongoose.Schema(
       type: String,
       required: false,
     },
+    update_required: {
+      type: String,
+      required: false,
+    },
+    store_id: {
+      type: String,
+      required: false,
+    },
+
   },
   { strict: false }
 );
@@ -62,13 +71,12 @@ var quizSchema = mongoose.Schema(quizSchema);
 
 quizSchema.plugin(mongoosePaginate);
 
-const Quiz = mongoose.model("Quiz", quizSchema);
+const QuizModel = mongoose.model("QuizModel", quizSchema);
 
-Quiz.paginate().then({}); // Usage
-
+QuizModel.paginate().then({}); // Usage
 
 // Define schema
-var quizQuestionAnswerSchema = mongoose.Schema(
+var quizQuestionAnswerSchema = new mongoose.Schema(
   {
     id: {
       type: String,
@@ -120,7 +128,7 @@ QuizQuestionAnswer.paginate().then({}); // Usage
 
 // create the model for users and expose it to our app
 module.exports = {
-  QuizModel: Quiz,
+  QuizModel: QuizModel,
   QuizQuestionAnswerModel: QuizQuestionAnswer,
   quizSchema: quizSchema,
   quizQuestionAnswerSchema: quizQuestionAnswerSchema,

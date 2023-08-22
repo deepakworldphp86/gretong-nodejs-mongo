@@ -54,16 +54,17 @@
             <% console.log(responce.length); %>
             <% for (var i = 0; i < responce.length; ++i) { %>
 					  <tr>
-						<td><a href="/admin/quiz?id=<%= responce[i]._id %>"><%= responce[i].quizName %><a/></td>
-						<td><%= responce[i].quizCode %></td>
-						<td><%= responce[i].quizDescription %></td>
+						<td><a href="/admin/quiz?id=<%= responce[i]._id %>"><%= responce[i].name %><a/></td>
+						<td><%= responce[i].code %></td>
+						<td><%= responce[i].description %></td>
 						<td>
-              <% if(responce[i].quizThumb) { %>
-              <img id="myImg" src="/admin/uploads/<%= responce[i].quizThumb %>" width="107" height="98">
+              <% if(responce[i].image) { %>
+              <img id="myImg" src="/admin/uploads/<%= responce[i].image %>" width="107" height="98">
               <% } %>
               </td>
-            <td><a href="/admin/quiz/list/<%= responce[i].Id %>">View Quiz</td>
-            <td><a href="/admin/quiz/edit/<%- responce[i].Id %>">Edit</td>
+            <td><%= responce[i].difficulty %></td>
+            <td><a href="/admin/quiz/list/<%= responce[i]._id %>">View Quiz</td>
+            <td><a href="/admin/quiz/edit/<%- responce[i]._id %>">Edit</td>
             <td><a href="/admin/quiz/delete/<%= responce[i]._id  %>">Delete</td>
 					  </tr>
               <% } %>
@@ -74,6 +75,6 @@
 
 				</div>
 				<!-- //tables -->
-        <%- paginationHtml %>
+        
 			</div>
 		

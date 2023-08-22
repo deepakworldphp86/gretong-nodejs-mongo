@@ -67,6 +67,7 @@ router.get(
     var Id = req.params.Id ? req.params.Id : 0;
     var perPage = 9;
     var currentPage = req.params.page || 1;
+    console.log(req.params);
     var pageUrl = "/admin/category/list/" + Id + "/";
     var filter = { ParentId: Id };
     CategoriesModel.find({ ParentId: Id })
@@ -86,7 +87,7 @@ router.get(
           )
           .then((pagaintion) => {
             if (err) return next(err);
-            res.render("admin/categories_list", {
+            res.render("admin/category/list", {
               menuHtml: html.getMenuHtml(),
               title: "Categorys",
               collection: catCollection,
@@ -121,7 +122,7 @@ router.get("/edit/:Id", mBackend.isAuthorized, function (req, res, next) {
     dataArray.formData.ModifiedDate = formatted; // ModifiedDate Date
 
     var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
-    res.render("admin/categories_add", {
+    res.render("admin/category/add", {
       menuHtml: html.getMenuHtml(),
       collection: response,
       title: "Category Edit",
@@ -154,7 +155,7 @@ router.get(
     dataArray.formData.CreatedDate = formatted; // Created Date
 
     var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
-    response.render("admin/categories_add", {
+    response.render("admin/category/add", {
       menuHtml: html.getMenuHtml(),
       title: "Categorys Form",
       response: response,

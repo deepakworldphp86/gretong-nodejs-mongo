@@ -20,12 +20,17 @@ const async = require("async");
 const app = express();
 const _mongodb = require("../config/database.js");
 /*************************** Model *********************************/
-let { QuizModel, schema } = require("../models/quiz.model.js");
+let {
+  QuizModel,
+  QuizQuestionAnswerModel,
+  quizSchema,
+  quizQuestionAnswerSchema,
+} = require("../models/quiz.model.js");
 
 /************************** Upload Config *************************/
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./public/admin/uploads/category_image/");
+    cb(null, "./public/admin/uploads/quiz_image/");
   },
   filename: function (req, file, cb) {
     cb(null, file.fieldname + "-" + Date.now());
@@ -60,39 +65,27 @@ var loginPromise = new Promise(function (resolve, reject) {
 /********************************** Rendering to Quiz Listing ********************************************************************/
 
 router.get(
-  "/list",
+  "/list/:page",
   mBackend.isAuthorized,
   async function (req, res, next) {
     var data = [];
-    var Id = req.params.Id ? req.params.Id : 0;
     var perPage = 9;
     var currentPage = req.params.page || 1;
-    var pageUrl = "/admin/quiz/list/" + Id + "/";
-    var filter = { ParentId: Id };
-    QuizModel.find({ ParentId: Id })
-      .skip(perPage * currentPage - perPage)
-      .limit(perPage)
-      .exec(function (err, catCollection) {
-        customEvents.emit("quizLoaded", catCollection);
+    var id = 1;
+    var pageUrl = "/admin/quiz/list/" + 1 + "/";
+    QuizModel.find().skip(perPage * currentPage - perPage).limit(perPage)
+      .exec(function (err, quizCollection) {
+        customEvents.emit("quizLoaded", quizCollection);
         Response.successResponse(req);
-        paginate
-          .getPaginate(
-            QuizModel,
-            filter,
-            req,
-            pageUrl,
-            perPage,
-            currentPage
-          )
+        paginate.getPaginate(QuizModel, req, pageUrl, perPage, currentPage)
           .then((pagaintion) => {
             if (err) return next(err);
             res.render("admin/quiz/list", {
               menuHtml: html.getMenuHtml(),
               title: "Quiz List",
-              collection: catCollection,
+              collection: quizCollection,
               paginationHtml: pagaintion,
-              responce: catCollection,
-              Id: Id,
+              responce: quizCollection,
               data: data,
             });
           });
@@ -143,11 +136,7 @@ router.get(
     var postUrl = "/admin/quiz/save";
     dataArray.formData = {};
     dataArray.action = postUrl;
-    dataArray.formData.Id = (await QuizModel.count()) + 1; // Int Id of Category
-    dataArray.formData.ParentId = request.params.ParentId
-      ? request.params.ParentId
-      : 0; // Parent Id of Category
-
+    dataArray.formData.id = (await QuizModel.count()) + 1; // Int Id of Category
     //Date Format for CreatedDate
     var dt = dateTime.create();
     var formatted = dt.format("Y-m-d H:M:S");
@@ -167,7 +156,7 @@ router.get(
 
 router.post(
   "/update/:Id",
-  upload.single("CategoryImage"),
+  upload.single("image"),
   async function (req, res, next) {
     var errors = [];
     const dataArray = new Object();
@@ -176,7 +165,7 @@ router.post(
     dataArray.formData.ParentId = req.body.ParentId;
 
     mBackend.isAuthorized;
-    errors = mBackend.isFormValidated(req,res,formArray(dataArray),next);
+    errors = mBackend.isFormValidated(req, res, formArray(dataArray), next);
 
     // callback();
     const Id = req.body.Id;
@@ -204,8 +193,8 @@ router.post(
       objectCat.Name = req.body.Name;
       objectCat.ParentId = req.body.ParentId;
       objectCat.Active = req.body.Active;
-      objectCat.CreatedDate = req.body.CreatedDate ;
-      objectCat.ModifiedDate = req.body.ModifiedDate || '';
+      objectCat.CreatedDate = req.body.CreatedDate;
+      objectCat.ModifiedDate = req.body.ModifiedDate || "";
       objectCat.ExternalId = req.body.ExternalId;
       objectCat.StoreId = req.body.StoreId;
       objectCat.UpdateRequired = req.body.UpdateRequired;
@@ -232,59 +221,54 @@ router.post(
 
 /********************************** Save Quiz action  ********************************************************************/
 
-router.post(
-  "/save",
-  upload.single("CategoryImage"),
-  async function (req, res, next) {
-    var errors = [];
-    const dataArray = new Object();
-    dataArray.formData = {};
-    dataArray.action = "";
-    const ParentId = req.body.ParentId ? req.body.ParentId : 0;
-    dataArray.formData.ParentId = ParentId;
-    mBackend.isAuthorized;
-    errors = mBackend.isFormValidated(req,res,formArray(dataArray),next);
-    
-    if (!req.file && !errors) {
-      errors = [];
-      errors.push({ msg: "Image is required filed" });
-    } else if (!req.file) {
-      errors.push({ msg: "Image is required filed" });
-    }
-    if (errors || !req.file.filename) {
-      req.flash("error_msg", errors);
-      res.redirect(
-        url.format({
-          pathname: "/admin/category/add/" + ParentId,
-          query: req.body,
-        })
-      );
-    } else {
-      const image = req.file.filename;
-      let newCategory = new QuizModel({
-        Id: req.body.Id,
-        Code: req.body.Code,
-        Name: req.body.Name,
-        ParentId: ParentId,
-        Active: req.body.Active,
-        CreatedDate: req.body.CreatedDate,
-        ModifiedDate: req.body.ModifiedDate,
-        ExternalId: req.body.ExternalId,
-        StoreId: req.body.StoreId,
-        UpdateRequired: req.body.UpdateRequired,
-        CategoryImage: image,
-      });
-      newCategory.save(function (err) {
-        if (err) {
-          return;
-        } else {
-          req.flash("success_msg", "You successfully save this category");
-          res.redirect("/admin/category/list/0/1");
-        }
-      });
-    }
+router.post("/save", upload.single("image"), async function (req, res, next) {
+  var errors = [];
+  const dataArray = new Object();
+  dataArray.formData = {};
+  dataArray.action = "";
+  const id = req.body.id ? req.body.id : 0;
+  dataArray.formData.id = id;
+  mBackend.isAuthorized;
+  errors = mBackend.isFormValidated(req, res, formArray(dataArray), next);
+
+  if (!req.file && !errors) {
+    errors = [];
+    errors.push({ msg: "Image is required filed" });
+  } else if (!req.file) {
+    errors.push({ msg: "Image is required filed" });
   }
-);
+
+  if (errors || !req.file.filename) {
+    req.flash("error_msg", errors);
+    res.redirect(
+      url.format({
+        pathname: "/admin/quiz/add/",
+        query: req.body,
+      })
+    );
+  } else {
+    const image = req.file.filename;
+    let newQuiz = new QuizModel({
+      id: req.body.id,
+      code: req.body.code,
+      name: req.body.name,
+      active: req.body.active,
+      created_date: req.body.created_date,
+      modified_date: req.body.modified_date,
+      store_id: req.body.store_id,
+      update_required: req.body.update_required,
+      image: image,
+    });
+    newQuiz.save(function (err) {
+      if (err) {
+        return;
+      } else {
+        req.flash("success_msg", "You successfully save this quiz");
+        res.redirect("/admin/quiz/list/" + id);
+      }
+    });
+  }
+});
 
 /********************************** Delete Quiz action  ********************************************************************/
 

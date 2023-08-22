@@ -37,7 +37,7 @@ module.exports = {
             {'catalog': {product: 'product/list/1', category: 'category/list/0/1'}},
             // {'customers': {allcustomer: 'customer/list', nowonline: 'customer/online'}},
             // {'marketing': {catalogrule: 'promotion/catalog', cartrule: 'promotion/cart'}},
-            {'quiz': {quiz: 'quiz/list'}},
+            {'quiz': {quiz: 'quiz/list/1'}},
             // {'content': {pages: 'pages/cms', blocks: 'pages/block'}},
             // {'reports': {productsincart: 'abandoned/cart', totalsales: 'reports/sales'}},
             // {'stores': {allstore: 'allstore/list', configurations: 'stores/configurations'}},
