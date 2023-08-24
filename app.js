@@ -1,35 +1,36 @@
 /**** SetUp Start ****/
 
 /*************************************************** All Required Pack *********************************************************/
-require("./config/database.js");
-var createError = require("http-errors");
 var express = require("express");
-require('dotenv').config();
-
 var app = express();
 var path = require("path");
+//Modules
+var modulePath = require("./config.js").modulePath();
+var createError = require("http-errors");
+require('dotenv').config();
+
 var expressValidator = require("express-validator");
 var port = process.env.PORT || 5007;
 
 var mongoose = require("mongoose");
 var passport = require("passport");
 var flash = require("connect-flash");
-
+var url = require('url');
 var morgan = require("morgan");
 var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 var session = require("express-session");
 ///var MongoDBStore = require('connect-mongodb-session')(session);
 
-var common = require("./middleware/middleware_frontend.js");
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
-var apiRouter = require("./routes/rest/api");
-var registerRouter = require("./routes/register");
-var adminRouter = require("./routes/admin");
-var productRouter = require("./routes/product");
-var categoryRouter = require("./routes/category");
-var quizRouter = require("./routes/quiz");
+var common = require(modulePath+"/middleware/helper/middleware_frontend.js");
+var indexRouter = require(modulePath+"/frontend/routes/index");
+var usersRouter = require(modulePath+"/customer/routes/users");
+var apiRouter = require(modulePath+"/rest/routes/api");
+var registerRouter = require(modulePath+"/customer/routes/register");
+var adminRouter = require(modulePath+"/admin/routes/admin");
+var productRouter = require(modulePath+"/catalog/routes/product/product");
+var categoryRouter = require(modulePath+"/catalog/routes/category/category");
+var quizRouter = require(modulePath+"/quiz/routes/quiz");
 
 
 // configuration ===============================================================
@@ -43,6 +44,7 @@ app.use(express.json());
 app.set("view engine", "ejs"); // set up ejs for templating
 // Set Public Folder
 app.use(express.static(path.join(__dirname, "public")));
+
 //Validation
 app.use(expressValidator());
 
@@ -72,7 +74,7 @@ app.use(
 const MongoDbStore = require("connect-mongodb-session")(session);
 
 // Passport Config
-require("./config/passport")(passport);
+require(modulePath+"/security/helper/passport")(passport);
 // Passport Middleware
 app.use(passport.initialize());
 app.use(passport.session());
@@ -105,6 +107,7 @@ app.use(function (req, res, next) {
   res.render("404", { title: "404: File Not Found" });
 });
 // error handler
+app.set('views', modulePath + '/ejs_templates/views');
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
@@ -112,7 +115,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("error");
+  res.render("frontend/error");
 });
 
 //Middleware function to log request protocol
