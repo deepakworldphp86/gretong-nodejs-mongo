@@ -107,7 +107,7 @@ app.use(function (req, res, next) {
   res.render("404", { title: "404: File Not Found" });
 });
 // error handler
-app.set('views', modulePath + '/ejs_templates/views');
+app.set('views', modulePath+'/');
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
@@ -115,7 +115,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("frontend/error");
+  res.render("frontend/views/error");
 });
 
 //Middleware function to log request protocol

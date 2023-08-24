@@ -69,10 +69,10 @@ var loginPromise = new Promise(function (resolve, reject) {
 
 router.get("/login", function (req, res, next) {
   if(req.session.isAdminActive === undefined){
-     res.render("admin/login", { title: "Express" });
+     res.render("admin/views/login", { title: "Express" });
   }else{
 
-    res.render("admin/dashboard", {
+    res.render("admin/views/dashboard", {
       menuHtml: html.getMenuHtml(),
       title: "Gretong Admin",
       layoutBackend :layoutBackend
@@ -127,7 +127,7 @@ router.post("/login/post", function (req, res) {
 router.get("/", auth.isAuthorized, function (req, res, next) {
   var message = "Dash Board Loaded";
   customEvents.emit("dashBoardLoaded", message);
-  res.render("admin/dashboard", {
+  res.render("admin/views/dashboard", {
     menuHtml: html.getMenuHtml(),
     layoutBackend :layoutBackend,
     title: "Gretong Admin",
