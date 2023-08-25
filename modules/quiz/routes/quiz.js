@@ -28,7 +28,7 @@ let {
   quizSchema,
   quizQuestionAnswerSchema,
 } = require("../models/quiz.model.js");
-
+console.log('img'+publicPath);
 /************************** Upload Config *************************/
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
