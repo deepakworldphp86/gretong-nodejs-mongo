@@ -6,7 +6,7 @@ const passport = require("passport");
 let User = require("../models/user.model");
 /* GET home page. */
 router.get("/", function (req, res, next) {
-  res.render("register", { title: "Express" });
+  res.render("customer/views/register", { title: "Express" });
 });
 // Register Proccess
 router.post("/register", function (req, res, next) {

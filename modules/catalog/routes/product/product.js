@@ -96,7 +96,7 @@ router.post("/login/post", function (req, res) {
 router.get("/", auth.isAuthorized, function (req, res, next) {
   var message = "Dash Board Loaded";
   customEvents.emit("dashBoardLoaded", message);
-  res.render("admin/dashboard", {
+  res.render("admin/views/dashboard", {
     menuHtml: html.getMenuHtml(),
     title: "Gretong Admin",
   });

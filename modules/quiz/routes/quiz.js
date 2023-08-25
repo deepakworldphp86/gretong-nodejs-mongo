@@ -82,7 +82,7 @@ router.get(
         paginate.getPaginate(QuizModel, req, pageUrl, perPage, currentPage)
           .then((pagaintion) => {
             if (err) return next(err);
-            res.render("admin/quiz/list", {
+            res.render("quiz/views/quiz/list", {
               menuHtml: html.getMenuHtml(),
               title: "Quiz List",
               collection: quizCollection,
@@ -116,7 +116,7 @@ router.get("/edit/:Id", mBackend.isAuthorized, function (req, res, next) {
     dataArray.formData.ModifiedDate = formatted; // ModifiedDate Date
 
     var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
-    res.render("admin/categories_add", {
+    res.render("quiz/views/quiz/add", {
       menuHtml: html.getMenuHtml(),
       collection: response,
       title: "Category Edit",
@@ -145,7 +145,7 @@ router.get(
     dataArray.formData.CreatedDate = formatted; // Created Date
 
     var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
-    response.render("admin/quiz/add", {
+    response.render("quiz/views/quiz/add", {
       menuHtml: html.getMenuHtml(),
       title: "Quiz Form",
       response: response,

@@ -89,7 +89,7 @@ router.get(
           )
           .then((pagaintion) => {
             if (err) return next(err);
-            res.render("admin/category/list", {
+            res.render("catalog/views/category/list", {
               menuHtml: html.getMenuHtml(),
               title: "Categorys",
               collection: catCollection,
@@ -124,7 +124,7 @@ router.get("/edit/:Id", mBackend.isAuthorized, function (req, res, next) {
     dataArray.formData.ModifiedDate = formatted; // ModifiedDate Date
 
     var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
-    res.render("admin/category/add", {
+    res.render("catalog/views/category/add", {
       menuHtml: html.getMenuHtml(),
       collection: response,
       title: "Category Edit",
@@ -157,7 +157,7 @@ router.get(
     dataArray.formData.CreatedDate = formatted; // Created Date
 
     var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
-    response.render("admin/category/add", {
+    response.render("catalog/views/category/add", {
       menuHtml: html.getMenuHtml(),
       title: "Categorys Form",
       response: response,

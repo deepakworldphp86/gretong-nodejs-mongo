@@ -104,7 +104,7 @@ app.use("/admin/quiz", quizRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   res.status(400);
-  res.render("404", { title: "404: File Not Found" });
+  res.render("frontend/views/404", { title: "404: File Not Found" });
 });
 // error handler
 app.set('views', modulePath+'/');
