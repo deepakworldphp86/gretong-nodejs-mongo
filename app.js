@@ -1,131 +1,107 @@
-/**** SetUp Start ****/
+/************ SetUp Start ************/
 
-/*************************************************** All Required Pack *********************************************************/
+// Required Packages
 const express = require("express");
-var app = require('./app_config.js');
-const modulesPath = app.locals.modulesPath;
-const corePath = app.locals.corePath;
-var path = require("path");
-//Modules
-var modulePath = require("./config.js").modulePath();
-var createError = require("http-errors");
-require('dotenv').config();
-
-var expressValidator = require("express-validator");
-var port = process.env.PORT || 5007;
-
-var mongoose = require("mongoose");
-var passport = require("passport");
-var flash = require("connect-flash");
-var url = require('url');
-var morgan = require("morgan");
-var cookieParser = require("cookie-parser");
-var bodyParser = require("body-parser");
-var session = require("express-session");
-///var MongoDBStore = require('connect-mongodb-session')(session);
-
-var common = require(corePath+"/middleware/helper/middleware_frontend.js");
-var indexRouter = require(modulesPath+"/frontend/routes/index");
-var usersRouter = require(modulesPath+"/customer/routes/users");
-var apiRouter = require(modulesPath+"/rest/routes/api");
-var registerRouter = require(modulesPath+"/customer/routes/register");
-var adminRouter = require(modulesPath+"/admin/routes/admin");
-var productRouter = require(modulesPath+"/product/routes/product");
-var categoryRouter = require(modulesPath+"/category/routes/category");
-var quizRouter = require(modulesPath+"/quiz/routes/quiz");
-
-
-// configuration ===============================================================
-// set up our express application
-app.use(morgan("dev")); // log every request to the console
-app.use(cookieParser()); // read cookies (needed for auth)
-app.use(bodyParser.json()); // get information from html forms
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json());
-
-app.set("view engine", "ejs"); // set up ejs for templating
-app.set('views', modulePath+'/');
-
-// Set Public Folder
-app.use(express.static(path.join(__dirname, "public")));
-
-//Validation
-app.use(expressValidator());
-
-/*var store = new MongoDBStore({
- uri: 'mongodb://localhost:27017/greatcart',
- collection: 'mySessions'
- });*/
-
-// Catch errors
-/*store.on('error', function(error) {
- assert.ifError(error);
- assert.ok(false);
- });*/
-//required for passport
-app.use(
-  session({
-    secret: "ilovescotchscotchyscotchscotch", // session secret
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
-    },
-    resave: true,
-    //store: store,
-    saveUninitialized: true,
-  })
-);
-
+const app = require('./app_config.js');
+const path = require("path");
+const dotenv = require('dotenv').config();
+const expressValidator = require("express-validator");
+const passport = require("passport");
+const flash = require("connect-flash");
+const morgan = require("morgan");
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
+const session = require("express-session");
 const MongoDbStore = require("connect-mongodb-session")(session);
 
-// Passport Config
-require(corePath+"/security/helper/passport")(passport);
-// Passport Middleware
+// Paths
+const modulesPath = app.locals.modulesPath;
+const corePath = app.locals.corePath;
+
+// Middleware
+const common = require(corePath + "/middleware/middleware_frontend.js");
+
+// Routers
+const indexRouter = require(modulesPath + "/frontend/routes/index");
+const usersRouter = require(modulesPath + "/customer/routes/users");
+const apiRouter = require(modulesPath + "/rest/routes/api");
+const registerRouter = require(modulesPath + "/customer/routes/register");
+const adminRouter = require(modulesPath + "/admin/routes/admin");
+const productRouter = require(modulesPath + "/product/routes/product");
+const categoryRouter = require(modulesPath + "/category/routes/category");
+const quizRouter = require(modulesPath + "/quiz/routes/quiz");
+
+// Configuration
+app.set("view engine", "ejs");
+app.set('views', modulesPath + '/');
+app.use(express.static(path.join(__dirname, "public")));
+app.use(morgan("dev"));
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(expressValidator());
+
+// Session Setup
+app.use(session({
+  secret: "ilovescotchscotchyscotchscotch",
+  cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 }, // 1 week
+  resave: true,
+  saveUninitialized: true,
+  store: new MongoDbStore({
+    uri: 'mongodb://localhost:27017/greatcart',
+    collection: 'mySessions'
+  })
+}));
+
+// Passport Setup
+require(corePath + "/config/passport")(passport);
 app.use(passport.initialize());
 app.use(passport.session());
-app.get("*", function (req, res, next) {
-  res.locals.user = req.user || null;
-  next();
-});
-app.use(flash()); // use connect-flash for flash messages stored in session
-//Global variables
+
+// Flash Messages
+app.use(flash());
 app.use(function (req, res, next) {
   res.locals.success_msg = req.flash("success_msg");
   res.locals.error_msg = req.flash("error_msg");
   res.locals.error = req.flash("error");
+  res.locals.user = req.user || null;
   next();
 });
 
-// launch ======================================================================
+// Routes
 app.use("/", indexRouter);
- app.use("/users", usersRouter);
- app.use("/rest/api", apiRouter);
- app.use("/register", registerRouter);
+app.use("/users", usersRouter);
+app.use("/rest/api", apiRouter);
+app.use("/register", registerRouter);
 app.use("/admin", adminRouter);
- app.use("/admin/product", productRouter);
+app.use("/admin/product", productRouter);
 app.use("/admin/category", categoryRouter);
 app.use("/admin/quiz", quizRouter);
 
-// catch 404 and forward to error handler
+// Error Handlers
 app.use(function (req, res, next) {
-  res.status(400);
+  res.status(404);
   res.render("frontend/views/404", { title: "404: File Not Found" });
 });
 
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
   res.render("frontend/views/error");
 });
 
-//Middleware function to log request protocol
+// Middleware to log request protocol
 app.use("/admin", function (req, res, next) {
   console.log("A request for things received at " + Date.now());
   next();
 });
-app.listen(port);
-console.log("The magic happens on port " + port);
+
+// Start Server
+const port = process.env.PORT || 5007;
+app.listen(port, () => {
+  console.log("The magic happens on port " + port);
+});
+
 module.exports = app;

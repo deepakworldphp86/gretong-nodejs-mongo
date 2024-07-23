@@ -70,7 +70,34 @@ module.exports = {
           key +
           '" id="' +
           value.id +
-          '" class="form-control1">';
+          '" class="form-control1" >';
+        if (value.statusArray) {
+          var arrVal = value.statusArray;
+          for (const [key, value] of Object.entries(arrVal)) {
+            var val = "";
+            var val = key == 0 ? " " : key;
+            form = form + '<option id=' + val + '>' + value + '</option>';
+          }
+        }
+
+        form = form + "</select></div>";
+        form = form + "</div>";
+      }
+
+      if (value.fieldType === "multiselect") {
+        form = form + '<div class="form-group">';
+        form =
+          form +
+          '<label for="selector1" class="col-sm-2 control-label">' +
+          value.label +
+          "</label>";
+        form =
+          form +
+          '<div class="col-sm-8"><select name="' +
+          key +
+          '" id="' +
+          value.id +
+          '" class="form-control1" multiple>';
         if (value.statusArray) {
           var arrVal = value.statusArray;
           for (const [key, value] of Object.entries(arrVal)) {

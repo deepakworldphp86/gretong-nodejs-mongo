@@ -1,113 +1,100 @@
+// Required modules and configurations
 const express = require("express");
-var app = require('../../../app_config.js');
+const app = require("../../../app_config.js");
 const corePath = app.locals.corePath;
 const modulesPath = app.locals.modulesPath;
 const publicPath = app.locals.publicPath;
 const layoutBackendPath = app.locals.layoutBackendPath;
 
 const router = express.Router();
-var path = require("path");
-
-
+const path = require("path");
 const multer = require("multer");
-
 const url = require("url");
+const session = require("express-session");
 const mongoosePaginate = require("mongoose-paginate-v2");
 const jwt = require("jsonwebtoken");
-const mBackend = require(corePath+"/middleware/helper/middleware_backend.js");
-
-const session = require("express-session");
-const auth = require(corePath+"/middleware/helper/middleware_backend.js");
-const config = require(corePath+"/utility/helper/config-array");
-const html = require(corePath+"/utility/helper/dynamic-html");
-const Response = require(corePath+"/utility/helper/response");
-const customEvents = require(corePath+"/utility/helper/custom-events");
+const mBackend = require(corePath + "/middleware/middleware_backend.js");
+const auth = require(corePath + "/middleware/middleware_backend.js");
+const config = require(corePath + "/utility/config-array");
+const html = require(corePath + "/utility/dynamic-html");
+const Response = require(corePath + "/utility/response");
+const customEvents = require(corePath + "/utility/custom-events");
 const async = require("async");
+const _mongodb = require(corePath + "/config/database.js");
 
+// Models
+const CategoriesModel = require(modulesPath + "/category/models/categories.model.js");
+const AdminModel = require(modulesPath + "/admin/models/admin.model.js");
+const UserModel = require(modulesPath + "/customer/models/user.model.js");
 
-const _mongodb = require(corePath+"/security/helper/database.js");
-/*************************** Model *********************************/
-let CategoriesModel = require(modulesPath+"/category/models/categories.model.js");
-let AdminModel = require(modulesPath+"/admin/models/admin.model.js");
-let UserModel = require(modulesPath+"/customer/models/user.model.js");
-
-/************************** Upload Config *************************/
-var storage = multer.diskStorage({
+// Multer setup for file uploads
+const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, publicPath+"/admin/uploads");
+    cb(null, publicPath + "/admin/uploads");
   },
   filename: function (req, file, cb) {
     cb(null, file.fieldname + "-" + Date.now());
   },
 });
-var upload = multer({ storage: storage });
-/*************************** Session Config ************************/
-app.use(
+const upload = multer({ storage: storage });
+
+// Express session configuration
+router.use(
   session({
-    secret: "ilovebeer", // session secret
+    secret: "ilovebeer",
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
     },
     resave: true,
-    //store: store,
     saveUninitialized: true,
   })
 );
 
-/*************************************** Promises *****************************************************************************/
-
-var loginPromise = new Promise(function (resolve, reject) {
-  // do a thing, possibly async, then…
-
-  if (1) {
-    resolve("Stuff worked!");
-  } else {
-    reject(Error("It broke"));
-  }
+// Promises and asynchronous operations
+const loginPromise = new Promise(function (resolve, reject) {
+  // Promise logic
 });
 
-/*************************************** Login view rendering *****************************************************************/
+// Routes
 
+// Login view rendering
 router.get("/login", function (req, res, next) {
-  if(req.session.isAdminActive === undefined){
-     res.render("admin/views/login", { title: "Express" });
-  }else{
-
+  if (req.session.isAdminActive === undefined) {
+    res.render("admin/views/login", { title: "Express" });
+  } else {
     res.render("admin/views/dashboard", {
       menuHtml: html.getMenuHtml(),
       title: "Gretong Admin",
-      layoutBackendPath :layoutBackendPath
+      layoutBackendPath: layoutBackendPath,
     });
   }
 });
 
-/************************************** Login data post ***********************************************************************/
-
+// Login data post
 router.post("/login/post", function (req, res) {
   var Username = String(req.body.Username).trim();
   var Password = String(req.body.Password).trim();
   _mongodb().then((db) => {
     var query = { username: Username, password: Password };
     db.collection("admin").findOne(query, function (err, user) {
-      //console.log(user);
       if (user !== null) {
         var message = "Successfully login";
         req.session.isAdminActive = true;
         req.session.user = Username;
         customEvents.emit("login", message, user.username);
 
-        //JWT auth
+        // JWT auth
         let jwtSecretKey = process.env.JWT_SECRET_KEY || responseSecret.JWT_SECRET_KEY;
 
         let data = {
           time: Date(),
           userId: user._id,
         };
-        var token = jwt.sign(data, jwtSecretKey,{ expiresIn: '1800s'});
-        
+        var token = jwt.sign(data, jwtSecretKey, { expiresIn: "1800s" });
+
         req.session.jwtToken = token;
 
-        //Success Redirect
+        // Success Redirect
         res.redirect("/admin");
       } else {
         var message = "Invalid login";
@@ -123,22 +110,18 @@ router.post("/login/post", function (req, res) {
   });
 });
 
-/********************************** Rendering to dashboard ********************************************************************/
-
+// Rendering to dashboard
 router.get("/", auth.isAuthorized, function (req, res, next) {
   var message = "Dash Board Loaded";
   customEvents.emit("dashBoardLoaded", message);
   res.render("admin/views/dashboard", {
     menuHtml: html.getMenuHtml(),
-    layoutBackendPath :layoutBackendPath,
+    layoutBackendPath: layoutBackendPath,
     title: "Gretong Admin",
   });
 });
 
-
-
-/********************************** logout action  ********************************************************************/
-
+// Logout action
 router.get("/logout/", function (req, res) {
   req.session.destroy(function (err) {
     if (err) {
@@ -152,8 +135,8 @@ router.get("/logout/", function (req, res) {
         query: message,
       })
     );
-    //return res.send({ authenticated: req.isAuthenticated() });
   });
 });
 
+// Export the router
 module.exports = router;

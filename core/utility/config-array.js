@@ -2,10 +2,10 @@ module.exports = {
     arrayCategory: function () {
         var arrays = [
             //{key: 'sales', value: 'Sales'},
-            {key: 'catalog', value: 'Catalog'},
+            { key: 'catalog', value: 'Catalog' },
             //{key: 'customers', value: 'Customers'},
             //{key: 'marketing', value: 'Marketing'},
-            {key: 'quiz', value: 'Quiz'},
+            { key: 'quiz', value: 'Quiz' },
             //{key: 'content', value: 'Content'},
             //{key: 'reports', value: 'Reports'},
             //{key: 'stores', value: 'Stores'},
@@ -31,13 +31,13 @@ module.exports = {
         return arrays;
     },
     adminMenus: function () {
-       
+
         var arrays = [
             // {'sales': {orders: 'orders/list', invoices: 'invoices/list', shipments: 'shipments/list'}},
-            {'catalog': {product: 'product/list/1', category: 'category/list/0/1'}},
+            { 'catalog': { product: 'product/list/1', category: 'category/list/0/1' } },
             // {'customers': {allcustomer: 'customer/list', nowonline: 'customer/online'}},
             // {'marketing': {catalogrule: 'promotion/catalog', cartrule: 'promotion/cart'}},
-            {'quiz': {quiz: 'quiz/list/1'}},
+            { 'quiz': { quiz: 'quiz/list/1' } },
             // {'content': {pages: 'pages/cms', blocks: 'pages/block'}},
             // {'reports': {productsincart: 'abandoned/cart', totalsales: 'reports/sales'}},
             // {'stores': {allstore: 'allstore/list', configurations: 'stores/configurations'}},
@@ -55,9 +55,12 @@ module.exports = {
         }
         return size;
     },
-  getMenuHtml : function(){
-      console.log()
-  }  
-    
+    getMenuHtml: function () {
+        console.log()
+    },
+    capitalize: function (s) {
+        return s && s[0].toUpperCase() + s.slice(1);
+    }
+
 };
 

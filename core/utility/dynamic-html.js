@@ -19,7 +19,7 @@ module.exports = {
             menuHtml = menuHtml + '<a href="/admin/' + keys + '">';
             menuHtml = menuHtml + '<i class="' + logo[i] + '" aria-hidden="true"></i>';
             menuHtml = menuHtml + '<span class="nav-text">';
-            menuHtml = menuHtml + keys;
+            menuHtml = menuHtml + configArr.capitalize(keys);
             menuHtml = menuHtml + '</span>';
             menuHtml = menuHtml + '<i class="icon-angle-right"></i><i class="icon-angle-down"></i>';
             menuHtml = menuHtml + '</a>';
@@ -31,7 +31,7 @@ module.exports = {
 
                 menuHtml = menuHtml + '<li>';
                 menuHtml = menuHtml + '<a class="subnav-text" href="/admin/' + childArrValues[k] + '">';
-                menuHtml = menuHtml + childArrKeys[k];
+                menuHtml = menuHtml + configArr.capitalize(childArrKeys[k])
                 menuHtml = menuHtml + '</a>';
                 menuHtml = menuHtml + '</li>';
 

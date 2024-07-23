@@ -10,20 +10,20 @@ const router = express.Router();
 const path = require("path");
 const url = require("url");
 const session = require("express-session");
-const mBackend = require(corePath+"/middleware/helper/middleware_backend.js");
-const config = require(corePath+"/utility/helper/config-array");
-const html = require(corePath+"/utility/helper/dynamic-html");
-const paginate = require(corePath+"/utility/helper/pagination");
-const Response = require(corePath+"/utility/helper/response");
-const customEvents = require(corePath+"/utility/helper/custom-events");
-const dynamicForm = require(corePath+"/utility/helper/dynamic-form");
+const mBackend = require(corePath+"/middleware/middleware_backend.js");
+const config = require(corePath+"/utility/config-array");
+const html = require(corePath+"/utility/dynamic-html");
+const paginate = require(corePath+"/utility/pagination");
+const Response = require(corePath+"/utility/response");
+const customEvents = require(corePath+"/utility/custom-events");
+const dynamicForm = require(corePath+"/utility/dynamic-form");
 const { formArray } = require("../models/categories.form.js");
 
-const { getValidate } = require(corePath+"/utility/helper/validation");
+const { getValidate } = require(corePath+"/utility/validation");
 var dateTime = require("node-datetime");
 
 const async = require("async");
-const _mongodb = require(corePath+"/security/helper/database.js");
+const _mongodb = require(corePath+"/config/database.js");
 /*************************** Model *********************************/
 let { CategoriesModel, schema } = require("../models/categories.model.js");
 
@@ -37,30 +37,6 @@ var storage = multer.diskStorage({
   },
 });
 var upload = multer({ storage: storage });
-/*************************** Session Config ************************/
-app.use(
-  session({
-    secret: "ilovebeer", // session secret
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
-    },
-    resave: true,
-    //store: store,
-    saveUninitialized: true,
-  })
-);
-
-/*************************************** Promises *****************************************************************************/
-
-var loginPromise = new Promise(function (resolve, reject) {
-  // do a thing, possibly async, then…
-  //console.log('In===================Login Param****************');
-  if (1) {
-    resolve("Stuff worked!");
-  } else {
-    reject(Error("It broke"));
-  }
-});
 
 /********************************** Rendering to categories Listing ********************************************************************/
 
@@ -72,10 +48,11 @@ router.get(
     var Id = req.params.Id ? req.params.Id : 0;
     var perPage = 2;
     var currentPage = req.params.page || 1;
-    console.log(req.params);
+   
     var pageUrl = "/admin/category/list/" + Id + "/";
     var filter = { ParentId: Id };
-    CategoriesModel.find({ ParentId: Id })
+
+    CategoriesModel.find(filter)
       .skip(perPage * currentPage - perPage)
       .limit(perPage)
       .exec(function (err, catCollection) {
@@ -83,8 +60,7 @@ router.get(
         Response.successResponse(req);
         paginate
           .getPaginate(
-            CategoriesModel,
-            filter,
+            CategoriesModel.find(filter),
             req,
             pageUrl,
             perPage,
@@ -149,7 +125,7 @@ router.get(
     var postUrl = "/admin/category/save";
     dataArray.formData = {};
     dataArray.action = postUrl;
-    dataArray.formData.Id = (await CategoriesModel.count()) + 1; // Int Id of Category
+    dataArray.formData.Id = (await CategoriesModel.countDocuments()) + 1; // Int Id of Category
     dataArray.formData.ParentId = request.params.ParentId
       ? request.params.ParentId
       : 0; // Parent Id of Category
@@ -217,7 +193,6 @@ router.post(
       objectCat.UpdateRequired = req.body.UpdateRequired;
       objectCat.CategoryImage = CategoryImage;
       const ParentId = req.body.ParentId;
-      ///console.log(objectCat);return;
       CategoriesModel.findByIdAndUpdate(
         req.body._id,
         objectCat,
@@ -300,7 +275,7 @@ router.get("/delete", function (req, res) {
   var objectCat = new Object();
   objectCat._id = id.trim();
 
-  CategoriesModel.count({ parent_category: id.trim() }).then((count) => {
+  CategoriesModel.countDocuments({ parent_category: id.trim() }).then((count) => {
     customEvents.emit(
       "categoryDeleteBefore",
       "Count of child categorys" + count
@@ -309,11 +284,11 @@ router.get("/delete", function (req, res) {
       CategoriesModel.findOneAndRemove(objectCat, function (err) {
         if (err) {
           customEvents.emit("categoryDeleteFailed", err);
-          res.redirect("/admin/category/list?id=" + parent_id);
+          res.redirect("/admin/category/list?id="+parent_id);
         } else {
           customEvents.emit("categoryDeleted", "Category Has been Deleted");
           req.flash("success_msg", "You successfully deleted this category.");
-          res.redirect("/admin/category/list?id=" + parent_id);
+          res.redirect("/admin/category/list?id="+parent_id);
         }
       });
     } else {
@@ -322,7 +297,7 @@ router.get("/delete", function (req, res) {
       errors.push({ msg: "Please delete child category first." });
       customEvents.emit("categoryDeleteFailed", errors);
       req.flash("error_msg", errors);
-      res.redirect("/admin/category/list?id=" + parent_id);
+      res.redirect("/admin/category/list?id="+parent_id);
     }
   });
 });

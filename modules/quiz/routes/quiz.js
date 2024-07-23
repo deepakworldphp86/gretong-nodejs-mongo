@@ -12,20 +12,20 @@ const router = express.Router();
 const path = require("path");
 const url = require("url");
 const session = require("express-session");
-const mBackend = require(corePath+"/middleware/helper/middleware_backend");
-const config = require(corePath+"/utility//helper/config-array");
-const html = require(corePath+"/utility//helper/dynamic-html");
-const paginate = require(corePath+"/utility//helper/pagination");
-const Response = require(corePath+"/utility//helper/response");
-const customEvents = require(corePath+"/utility//helper/custom-events");
-const dynamicForm = require(corePath+"/utility//helper/dynamic-form");
+const mBackend = require(corePath+"/middleware/middleware_backend");
+const config = require(corePath+"/utility//config-array");
+const html = require(corePath+"/utility//dynamic-html");
+const paginate = require(corePath+"/utility//pagination");
+const Response = require(corePath+"/utility//response");
+const customEvents = require(corePath+"/utility//custom-events");
+const dynamicForm = require(corePath+"/utility//dynamic-form");
 const { formArray } = require("../models/quiz.form.js");
 
-const { getValidate } = require(corePath+"/utility/helper/validation");
+const { getValidate } = require(corePath+"/utility/validation");
 var dateTime = require("node-datetime");
 
 const async = require("async");
-const _mongodb = require(corePath+"/security/helper/database.js");
+const _mongodb = require(corePath+"/config/database.js");
 /*************************** Model *********************************/
 let {
   QuizModel,
@@ -104,34 +104,44 @@ router.get(
 
 router.get("/edit/:Id", mBackend.isAuthorized, function (req, res, next) {
   var Id = req.params.Id ? req.params.Id : 0;
-  const dataArray = new Object();
-
+  const dataArray = {};
+  dataArray.formData = {};
+  
+  // Initialize ModifiedDate property inside formData
+  dataArray.formData.ModifiedDate = ""; // Assuming ModifiedDate is a string
+  
   QuizModel.find({ Id: Id }, async function (err, response) {
     var postUrl = "/admin/category/update/" + Id;
-    var response = response.pop();
-    dataArray.formData = response;
-    //console.log(dataArray);return;
-    if (response !== undefined) {
+    var categoryResponse = response.pop();
+    
+    if (categoryResponse !== undefined) {
       dataArray.action = postUrl;
+      // Assign categoryResponse to formData
+      dataArray.formData = categoryResponse;
     }
 
-    //Date Format for Modified
+    // Date Format for Modified
     var dt = dateTime.create();
     var formatted = dt.format("Y-m-d H:M:S");
-    dataArray.formData.ModifiedDate = formatted; // ModifiedDate Date
+    
+    // Assign formatted date to ModifiedDate property
+    dataArray.formData.ModifiedDate = formatted;
 
+    // Generate dynamic form HTML
     var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
+    
     res.render("quiz/views/quiz/add", {
       menuHtml: html.getMenuHtml(),
-      collection: response,
-      title: "Category Edit",
-      response: response,
-      schemaModel: schema,
+      collection: categoryResponse, // Use categoryResponse for collection
+      title: "Quiz Edit",
+      response: categoryResponse,
+      schemaModel: quizSchema,
       form: dynamicFormHtml,
       Id: Id,
     });
   });
 });
+
 
 /********************************** Add Quiz action  ********************************************************************/
 
@@ -143,7 +153,7 @@ router.get(
     var postUrl = "/admin/quiz/save";
     dataArray.formData = {};
     dataArray.action = postUrl;
-    dataArray.formData.id = (await QuizModel.count()) + 1; // Int Id of Category
+    dataArray.formData.id = (await QuizModel.countDocuments()) + 1; // Int Id of Category
     //Date Format for CreatedDate
     var dt = dateTime.create();
     var formatted = dt.format("Y-m-d H:M:S");
@@ -285,7 +295,7 @@ router.get("/delete", function (req, res) {
   var objectCat = new Object();
   objectCat._id = id.trim();
 
-  QuizModel.count({ parent_category: id.trim() }).then((count) => {
+  QuizModel.countDocuments({ parent_category: id.trim() }).then((count) => {
     customEvents.emit(
       "categoryDeleteBefore",
       "Count of child categorys" + count
