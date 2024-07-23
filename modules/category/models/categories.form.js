@@ -1,9 +1,9 @@
-const dynamicFormArray = (dataArray) =>  {
+const dynamicFormArray = (dataArray) => {
   form = {
     form: {
       required: false,
       method: "post",
-      action:(dataArray.action !== undefined) ? dataArray.action : '',
+      action: (dataArray.action !== undefined) ? dataArray.action : '',
       autocomplete: "off",
       //novalidate: "novalidate",
       class: "form-horizontal",
@@ -44,7 +44,7 @@ const dynamicFormArray = (dataArray) =>  {
     },
     ModifiedDate: {
       required: false,
-      value: (dataArray.formData.ModifiedDate !== undefined) ? dataArray.formData.ModifiedDate : '',     
+      value: (dataArray.formData.ModifiedDate !== undefined) ? dataArray.formData.ModifiedDate : '',
       label: "Update Date",
       fieldType: "hidden",
       id: "cat_modification_date",
@@ -69,12 +69,22 @@ const dynamicFormArray = (dataArray) =>  {
       class: "form-control1",
       placeholder: "Name",
     },
+    ExternalId: {
+      required: true,
+      value: (dataArray.formData.ExternalId !== undefined) ? dataArray.formData.ExternalId : '',
+      label: "Update Date",
+      label: "External  Id",
+      fieldType: "text",
+      id: "cat_external_id",
+      class: "form-control1",
+      placeholder: "",
+    },
     Active: {
       required: true,
       value: (dataArray.formData.Active !== undefined) ? dataArray.formData.Active : '',
       fieldType: "select",
       label: "Active",
-      statusArray: {
+      optionArray: {
         0: "---------Please Select ------------------",
         1: "Active",
         2: "InActive",
@@ -83,23 +93,14 @@ const dynamicFormArray = (dataArray) =>  {
       class: "form-control1",
       placeholder: "",
     },
-    ExternalId: {
-      required: true,
-      value: (dataArray.formData.ExternalId !== undefined) ? dataArray.formData.ExternalId : '',      
-      label: "Update Date",
-      label: "External  Id",
-      fieldType: "text",
-      id: "cat_external_id",
-      class: "form-control1",
-      placeholder: "",
-    },
+
     StoreId: {
       required: true,
-      value: (dataArray.formData.StoreId !== undefined) ? dataArray.formData.StoreId : '',      
+      value: (dataArray.formData.StoreId !== undefined) ? dataArray.formData.StoreId : '',
       label: "Store",
       fieldType: "select",
       id: "cat_store",
-      statusArray: {
+      optionArray: {
         0: "---------Please Select ------------------",
         1: "1",
         2: "2",
@@ -109,30 +110,30 @@ const dynamicFormArray = (dataArray) =>  {
     },
     UpdateRequired: {
       required: true,
-      value: (dataArray.formData.UpdateRequired !== undefined) ? dataArray.formData.UpdateRequired : '',      
+      value: (dataArray.formData.UpdateRequired !== undefined) ? dataArray.formData.UpdateRequired : '',
       label: "Update  Required",
       fieldType: "select",
       id: "cat_update_req",
-      statusArray: {
+      optionArray: {
         0: "---------Please Select ------------------",
         1: "Yes",
         2: "No",
       },
       class: "form-control1",
       placeholder: "",
-    },CategoryImage: {
+    }, CategoryImage: {
       required: false,
-      value: (dataArray.formData.CategoryImage !== undefined) ? dataArray.formData.CategoryImage : '',      
+      value: (dataArray.formData.CategoryImage !== undefined) ? dataArray.formData.CategoryImage : '',
       label: "Category Image",
       id: "CategoryImage",
       fieldType: "upload",
       class: "form-control1",
-      upload_path : '/admin/uploads/category_image/',
+      upload_path: '/admin/uploads/category_image/',
       placeholder: "",
     },
     submit: {
       required: false,
-      value: (dataArray.formData.submit !== undefined) ? dataArray.formData.submit : '',      
+      value: (dataArray.formData.submit !== undefined) ? dataArray.formData.submit : '',
       value: "Submit",
       label: "Submit",
       fieldType: "submit",

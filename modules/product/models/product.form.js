@@ -85,7 +85,6 @@ const dynamicFormArray = (dataArray) => {
       label: "Product Categories",
       fieldType: "multiselect",
       id: "prod_categories",
-
       statusArray: dataArray.formData.Categories,
       class: "form-control1",
       placeholder: "",
@@ -95,7 +94,7 @@ const dynamicFormArray = (dataArray) => {
       value: (dataArray.formData.active !== undefined) ? dataArray.formData.active : '',
       fieldType: "select",
       label: "Active",
-      statusArray: {
+      optionArray: {
         0: "---------Please Select ------------------",
         1: "Active",
         2: "InActive",
@@ -110,7 +109,7 @@ const dynamicFormArray = (dataArray) => {
       label: "Store",
       fieldType: "select",
       id: "prod_store",
-      statusArray: {
+      optionArray: {
         0: "---------Please Select ------------------",
         1: "1",
         2: "2",
@@ -124,7 +123,7 @@ const dynamicFormArray = (dataArray) => {
       label: "Update  Required",
       fieldType: "select",
       id: "prod_update_req",
-      statusArray: {
+      optionArray: {
         0: "---------Please Select ------------------",
         1: "Yes",
         2: "No",

@@ -225,7 +225,7 @@ router.post(
     dataArray.formData.ParentId = ParentId;
     mBackend.isAuthorized;
     errors = mBackend.isFormValidated(req,res,formArray(dataArray),next);
-    
+    console.log(req.body.Active);return;
     if (!req.file && !errors) {
       errors = [];
       errors.push({ msg: "Image is required filed" });

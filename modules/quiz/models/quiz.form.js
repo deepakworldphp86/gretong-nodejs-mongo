@@ -83,7 +83,7 @@ const dynamicFormArray = (dataArray) =>  {
       value: (dataArray.formData.difficulty !== undefined) ? dataArray.formData.difficulty : '',
       fieldType: "select",
       label: "Difficulty",
-      statusArray: {
+      optionArray: {
         0: "---------Please Select ------------------",
         1: "Medium",
         2: "High",
@@ -97,7 +97,7 @@ const dynamicFormArray = (dataArray) =>  {
       value: (dataArray.formData.active !== undefined) ? dataArray.formData.active : '',
       fieldType: "select",
       label: "Active",
-      statusArray: {
+      optionArray: {
         0: "---------Please Select ------------------",
         1: "Active",
         2: "InActive",
@@ -112,7 +112,7 @@ const dynamicFormArray = (dataArray) =>  {
       label: "Store",
       fieldType: "select",
       id: "store_id",
-      statusArray: {
+      optionArray: {
         0: "---------Please Select ------------------",
         1: "1",
         2: "2",
@@ -126,7 +126,7 @@ const dynamicFormArray = (dataArray) =>  {
       label: "Update  Required",
       fieldType: "select",
       id: "update_required",
-      statusArray: {
+      optionArray: {
         0: "---------Please Select ------------------",
         1: "Yes",
         2: "No",
