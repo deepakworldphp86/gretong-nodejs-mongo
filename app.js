@@ -1,8 +1,10 @@
 /**** SetUp Start ****/
 
 /*************************************************** All Required Pack *********************************************************/
-var express = require("express");
-var app = express();
+const express = require("express");
+var app = require('./app_config.js');
+const modulesPath = app.locals.modulesPath;
+const corePath = app.locals.corePath;
 var path = require("path");
 //Modules
 var modulePath = require("./config.js").modulePath();
@@ -22,15 +24,15 @@ var bodyParser = require("body-parser");
 var session = require("express-session");
 ///var MongoDBStore = require('connect-mongodb-session')(session);
 
-var common = require(modulePath+"/middleware/helper/middleware_frontend.js");
-var indexRouter = require(modulePath+"/frontend/routes/index");
-var usersRouter = require(modulePath+"/customer/routes/users");
-var apiRouter = require(modulePath+"/rest/routes/api");
-var registerRouter = require(modulePath+"/customer/routes/register");
-var adminRouter = require(modulePath+"/admin/routes/admin");
-var productRouter = require(modulePath+"/catalog/routes/product/product");
-var categoryRouter = require(modulePath+"/catalog/routes/category/category");
-var quizRouter = require(modulePath+"/quiz/routes/quiz");
+var common = require(corePath+"/middleware/helper/middleware_frontend.js");
+var indexRouter = require(modulesPath+"/frontend/routes/index");
+var usersRouter = require(modulesPath+"/customer/routes/users");
+var apiRouter = require(modulesPath+"/rest/routes/api");
+var registerRouter = require(modulesPath+"/customer/routes/register");
+var adminRouter = require(modulesPath+"/admin/routes/admin");
+var productRouter = require(modulesPath+"/product/routes/product");
+var categoryRouter = require(modulesPath+"/category/routes/category");
+var quizRouter = require(modulesPath+"/quiz/routes/quiz");
 
 
 // configuration ===============================================================
@@ -42,6 +44,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.set("view engine", "ejs"); // set up ejs for templating
+app.set('views', modulePath+'/');
+
 // Set Public Folder
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -74,7 +78,7 @@ app.use(
 const MongoDbStore = require("connect-mongodb-session")(session);
 
 // Passport Config
-require(modulePath+"/security/helper/passport")(passport);
+require(corePath+"/security/helper/passport")(passport);
 // Passport Middleware
 app.use(passport.initialize());
 app.use(passport.session());
@@ -93,11 +97,11 @@ app.use(function (req, res, next) {
 
 // launch ======================================================================
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
-app.use("/rest/api", apiRouter);
-app.use("/register", registerRouter);
+ app.use("/users", usersRouter);
+ app.use("/rest/api", apiRouter);
+ app.use("/register", registerRouter);
 app.use("/admin", adminRouter);
-app.use("/admin/product", productRouter);
+ app.use("/admin/product", productRouter);
 app.use("/admin/category", categoryRouter);
 app.use("/admin/quiz", quizRouter);
 
@@ -106,8 +110,7 @@ app.use(function (req, res, next) {
   res.status(400);
   res.render("frontend/views/404", { title: "404: File Not Found" });
 });
-// error handler
-app.set('views', modulePath+'/');
+
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;

@@ -1,13 +1,10 @@
 //Modules
-const express = require("express");
-var app = require('../../../app_config.js');
-const corePath = app.locals.corePath;
-
+var express = require("express");
 var modulePath = require("./../../../config.js").modulePath();
 const jwt = require("jsonwebtoken");
-const _mongodb = require(corePath+"/security/helper/database.js");
-const customEvents = require(corePath+"/utility/helper/custom-events");
-const auth = require(corePath+"/middleware/helper/auth_api.js");
+const _mongodb = require(modulePath+"/security/helper/database.js");
+const customEvents = require(modulePath+"/utility/helper/custom-events");
+const auth = require(modulePath+"/middleware/helper/auth_api.js");
 var router = express.Router();
 
 //Temp

@@ -1,28 +1,31 @@
-var modulePath = require("./../../../../config.js").modulePath();
-var publicPath = require("./../../../../config.js").publicPath();
-const multer = require("multer");
 const express = require("express");
+var app = require('../../../app_config.js');
+const corePath = app.locals.corePath;
+const modulesPath = app.locals.modulesPath;
+const publicPath = app.locals.publicPath;
+const layoutBackendPath = app.locals.layoutBackendPath;
+
+const multer = require("multer");
 const router = express.Router();
 const path = require("path");
 const url = require("url");
 const session = require("express-session");
-const mBackend = require(modulePath+"/middleware/helper/middleware_backend.js");
-const config = require(modulePath+"/utility/helper/config-array");
-const html = require(modulePath+"/utility/helper/dynamic-html");
-const paginate = require(modulePath+"/utility/helper/pagination");
-const Response = require(modulePath+"/utility/helper/response");
-const customEvents = require(modulePath+"/utility/helper/custom-events");
-const dynamicForm = require(modulePath+"/utility/helper/dynamic-form");
-const { formArray } = require("../../models/categories.form.js");
+const mBackend = require(corePath+"/middleware/helper/middleware_backend.js");
+const config = require(corePath+"/utility/helper/config-array");
+const html = require(corePath+"/utility/helper/dynamic-html");
+const paginate = require(corePath+"/utility/helper/pagination");
+const Response = require(corePath+"/utility/helper/response");
+const customEvents = require(corePath+"/utility/helper/custom-events");
+const dynamicForm = require(corePath+"/utility/helper/dynamic-form");
+const { formArray } = require("../models/categories.form.js");
 
-const { getValidate } = require(modulePath+"/utility/helper/validation");
+const { getValidate } = require(corePath+"/utility/helper/validation");
 var dateTime = require("node-datetime");
 
 const async = require("async");
-const app = express();
-const _mongodb = require(modulePath+"/security/helper/database.js");
+const _mongodb = require(corePath+"/security/helper/database.js");
 /*************************** Model *********************************/
-let { CategoriesModel, schema } = require("../../models/categories.model.js");
+let { CategoriesModel, schema } = require("../models/categories.model.js");
 
 /************************** Upload Config *************************/
 var storage = multer.diskStorage({
@@ -89,7 +92,7 @@ router.get(
           )
           .then((pagaintion) => {
             if (err) return next(err);
-            res.render("catalog/views/category/list", {
+            res.render(modulesPath+"/category/views/list", {
               menuHtml: html.getMenuHtml(),
               title: "Categorys",
               collection: catCollection,
@@ -124,7 +127,7 @@ router.get("/edit/:Id", mBackend.isAuthorized, function (req, res, next) {
     dataArray.formData.ModifiedDate = formatted; // ModifiedDate Date
 
     var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
-    res.render("catalog/views/category/add", {
+    res.render(modulesPath+"/category/views/add", {
       menuHtml: html.getMenuHtml(),
       collection: response,
       title: "Category Edit",
@@ -157,7 +160,7 @@ router.get(
     dataArray.formData.CreatedDate = formatted; // Created Date
 
     var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
-    response.render("catalog/views/category/add", {
+    response.render(modulesPath+"/category/views/add", {
       menuHtml: html.getMenuHtml(),
       title: "Categorys Form",
       response: response,
@@ -324,11 +327,5 @@ router.get("/delete", function (req, res) {
   });
 });
 
-/********************************** forwarding 404 action  ********************************************************************/
-app.use(function (req, res, next) {
-  //next(createError(404));
-  res.status(400);
-  res.render("404", { title: "404: File Not Found" });
-});
 
 module.exports = router;

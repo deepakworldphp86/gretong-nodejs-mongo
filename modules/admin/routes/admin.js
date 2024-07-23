@@ -1,11 +1,12 @@
-var configGlobal = require("./../../../config.js");
-var modulePath =  configGlobal.modulePath();
-var publicPath = configGlobal.publicPath();
-var layoutBackend = configGlobal.layoutBackend();
 const express = require("express");
+var app = require('../../../app_config.js');
+const corePath = app.locals.corePath;
+const modulesPath = app.locals.modulesPath;
+const publicPath = app.locals.publicPath;
+const layoutBackendPath = app.locals.layoutBackendPath;
+
 const router = express.Router();
 var path = require("path");
-const app = express();
 
 
 const multer = require("multer");
@@ -13,22 +14,22 @@ const multer = require("multer");
 const url = require("url");
 const mongoosePaginate = require("mongoose-paginate-v2");
 const jwt = require("jsonwebtoken");
-const mBackend = require(modulePath+"/middleware/helper/middleware_backend.js");
+const mBackend = require(corePath+"/middleware/helper/middleware_backend.js");
 
 const session = require("express-session");
-const auth = require(modulePath+"/middleware/helper/middleware_backend.js");
-const config = require(modulePath+"/utility/helper/config-array");
-const html = require(modulePath+"/utility/helper/dynamic-html");
-const Response = require(modulePath+"/utility/helper/response");
-const customEvents = require(modulePath+"/utility/helper/custom-events");
+const auth = require(corePath+"/middleware/helper/middleware_backend.js");
+const config = require(corePath+"/utility/helper/config-array");
+const html = require(corePath+"/utility/helper/dynamic-html");
+const Response = require(corePath+"/utility/helper/response");
+const customEvents = require(corePath+"/utility/helper/custom-events");
 const async = require("async");
 
 
-const _mongodb = require(modulePath+"/security/helper/database.js");
+const _mongodb = require(corePath+"/security/helper/database.js");
 /*************************** Model *********************************/
-let CategoriesModel = require(modulePath+"/catalog/models/categories.model.js");
-let AdminModel = require(modulePath+"/admin/models/admin.model.js");
-let UserModel = require(modulePath+"/customer/models/user.model.js");
+let CategoriesModel = require(modulesPath+"/category/models/categories.model.js");
+let AdminModel = require(modulesPath+"/admin/models/admin.model.js");
+let UserModel = require(modulesPath+"/customer/models/user.model.js");
 
 /************************** Upload Config *************************/
 var storage = multer.diskStorage({
@@ -75,7 +76,7 @@ router.get("/login", function (req, res, next) {
     res.render("admin/views/dashboard", {
       menuHtml: html.getMenuHtml(),
       title: "Gretong Admin",
-      layoutBackend :layoutBackend
+      layoutBackendPath :layoutBackendPath
     });
   }
 });
@@ -129,7 +130,7 @@ router.get("/", auth.isAuthorized, function (req, res, next) {
   customEvents.emit("dashBoardLoaded", message);
   res.render("admin/views/dashboard", {
     menuHtml: html.getMenuHtml(),
-    layoutBackend :layoutBackend,
+    layoutBackendPath :layoutBackendPath,
     title: "Gretong Admin",
   });
 });

@@ -1,11 +1,12 @@
-var express = require("express");
+const express = require("express");
+var app = require('../../../app_config');
+const corePath = app.locals.corePath;
 //Modules
-var modulePath = require("./../../../config.js").modulePath();
 /*****************JWT TOEKN CONFIG *****************/
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
-const secretKey = require(modulePath+"/security/helper/secretKeyGenerator.js");
-const config = require(modulePath+"/security/helper/config.js");
+const secretKey = require(corePath+"/security/helper/secretKeyGenerator.js");
+const config = require(corePath+"/security/helper/config.js");
 
 dotenv.config();
 

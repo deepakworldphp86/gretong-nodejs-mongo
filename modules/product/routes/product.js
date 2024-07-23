@@ -1,25 +1,29 @@
-var modulePath = require("./../../../../config.js").modulePath();
-var publicPath = require("./../../../../config.js").publicPath();
-const multer = require("multer");
 const express = require("express");
+var app = require('../../../app_config.js');
+const corePath = app.locals.corePath;
+const modulesPath = app.locals.modulesPath;
+const publicPath = app.locals.publicPath;
+const layoutBackendPath = app.locals.layoutBackendPath;
+
+
+const multer = require("multer");
 const router = express.Router();
 const path = require("path");
 const url = require("url");
 const mongoosePaginate = require("mongoose-paginate-v2");
 
 const session = require("express-session");
-const auth = require(modulePath+"/middleware/helper/middleware_backend");
-const config = require(modulePath+"/utility//helper/config-array");
-const html = require(modulePath+"/utility//helper/dynamic-html");
-const Response = require(modulePath+"/utility//helper/response");
-const customEvents = require(modulePath+"/utility//helper/custom-events");
+const auth = require(corePath+"/middleware/helper/middleware_backend");
+const config = require(corePath+"/utility//helper/config-array");
+const html = require(corePath+"/utility//helper/dynamic-html");
+const Response = require(corePath+"/utility//helper/response");
+const customEvents = require(corePath+"/utility//helper/custom-events");
 const async = require("async");
-const app = express();
-const _mongodb = require(modulePath+"/security/helper//database.js");
+const _mongodb = require(corePath+"/security/helper//database.js");
 /*************************** Model *********************************/
-let CategoriesModel = require(modulePath+"/catalog/models/categories.model.js");
-let AdminModel = require(modulePath+"/admin/models/admin.model.js");
-let UserModel = require(modulePath+"/customer/models/user.model.js");
+let CategoriesModel = require(modulesPath+"/category/models/categories.model.js");
+let AdminModel = require(modulesPath+"/admin/models/admin.model.js");
+let UserModel = require(modulesPath+"/customer/models/user.model.js");
 
 /************************** Upload Config *************************/
 var storage = multer.diskStorage({
@@ -303,13 +307,6 @@ router.get("/category/delete", function (req, res) {
       res.redirect("/admin/categories?id=" + parent_id);
     }
   });
-});
-
-/********************************** forwarding 404 action  ********************************************************************/
-app.use(function (req, res, next) {
-  //next(createError(404));
-  res.status(400);
-  res.render("404", { title: "404: File Not Found" });
 });
 
 /********************************** logout action  ********************************************************************/
