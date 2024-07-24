@@ -56,7 +56,7 @@ module.exports = {
         return size;
     },
     getMenuHtml: function () {
-        console.log()
+        //console.log()
     },
     capitalize: function (s) {
         return s && s[0].toUpperCase() + s.slice(1);

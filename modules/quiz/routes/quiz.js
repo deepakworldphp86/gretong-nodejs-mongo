@@ -14,7 +14,7 @@ const url = require("url");
 const session = require("express-session");
 const mBackend = require(corePath+"/middleware/middleware_backend");
 const config = require(corePath+"/utility//config-array");
-const html = require(corePath+"/utility//dynamic-html");
+const html = require(corePath+"/utility//backend-menu-html");
 const paginate = require(corePath+"/utility//pagination");
 const Response = require(corePath+"/utility//response");
 const customEvents = require(corePath+"/utility//custom-events");
@@ -33,7 +33,6 @@ let {
   quizSchema,
   quizQuestionAnswerSchema,
 } = require("../models/quiz.model.js");
-console.log('img'+publicPath);
 /************************** Upload Config *************************/
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -82,8 +81,6 @@ router.get(
     QuizModel.find().skip(perPage * currentPage - perPage).limit(perPage)
       .exec(function (err, quizCollection) {
         customEvents.emit("quizLoaded", quizCollection);
-        Response.successResponse(req);
-        console.log(req.params);
         paginate.getPaginate(QuizModel, req, pageUrl, perPage, currentPage)
           .then((pagaintion) => {
             if (err) return next(err);
@@ -196,7 +193,7 @@ router.post(
     }
 
     if (errors || !CategoryImage) {
-      req.flash("error_msg", errors);
+      req.flash("errorMsg", errors);
       res.redirect(
         url.format({
           pathname: "/admin/category/edit/" + Id,
@@ -227,7 +224,7 @@ router.post(
             throw err;
           } else {
             //console.log(newCategory);
-            req.flash("success_msg", "You successfully Update this category");
+            req.flash("successMsg", "You successfully Update this category");
             res.redirect("/admin/category/list/1");
           }
         }
@@ -256,7 +253,7 @@ router.post("/save", upload.single("image"), async function (req, res, next) {
   }
 
   if (errors || !req.file.filename) {
-    req.flash("error_msg", errors);
+    req.flash("errorMsg", errors);
     res.redirect(
       url.format({
         pathname: "/admin/quiz/add/",
@@ -280,7 +277,7 @@ router.post("/save", upload.single("image"), async function (req, res, next) {
       if (err) {
         return;
       } else {
-        req.flash("success_msg", "You successfully save this quiz");
+        req.flash("successMsg", "You successfully save this quiz");
         res.redirect("/admin/quiz/list/1");
       }
     });
@@ -307,7 +304,7 @@ router.get("/delete", function (req, res) {
           res.redirect("/admin/category/list?id=" + parent_id);
         } else {
           customEvents.emit("categoryDeleted", "Category Has been Deleted");
-          req.flash("success_msg", "You successfully deleted this category.");
+          req.flash("successMsg", "You successfully deleted this category.");
           res.redirect("/admin/category/list?id=" + parent_id);
         }
       });
@@ -316,7 +313,7 @@ router.get("/delete", function (req, res) {
 
       errors.push({ msg: "Please delete child category first." });
       customEvents.emit("categoryDeleteFailed", errors);
-      req.flash("error_msg", errors);
+      req.flash("errorMsg", errors);
       res.redirect("/admin/category/list?id=" + parent_id);
     }
   });

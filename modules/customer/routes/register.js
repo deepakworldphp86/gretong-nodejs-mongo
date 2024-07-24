@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 // Bring in User Model
-let User = require("../models/user.model");
+let User = require("../models/customer.model");
 /* GET home page. */
 router.get("/", function (req, res, next) {
   res.render("customer/views/register", { title: "Express" });
@@ -26,7 +26,7 @@ router.post("/register", function (req, res, next) {
     .equals(req.body.password);
   let errors = req.validationErrors();
   if (errors) {
-    req.flash("error_msg", errors);
+    req.flash("errorMsg", errors);
     res.redirect("/register");
   } else {
     let newUser = new User({
@@ -47,8 +47,7 @@ router.post("/register", function (req, res, next) {
           if (err) {
             return;
           } else {
-            console.log(newUser);
-            req.flash("success_msg", "You are now registered and can log in");
+            req.flash("successMsg", "You are now registered and can log in");
             res.redirect("/register");
           }
         });

@@ -1,14 +1,14 @@
-  <% if (success_msg.length > 0) { %>
+  <% if (successMsg.length > 0) { %>
         <div class="alert alert-success"><%- 
 
-            success_msg 
+            successMsg 
 
             %></div>
-        <% } else if(error_msg.length > 0) { %>
+        <% } else if(errorMsg.length > 0) { %>
         <div class="alert alert-danger">
 
-            <% for(var i=0; i < error_msg.length; i++) { %>
-             </br><span><%- error_msg[i].msg %></span>
+            <% for(var i=0; i < errorMsg.length; i++) { %>
+             </br><span><%- errorMsg[i].msg %></span>
             <% } %>
         </div>
  <% } %>

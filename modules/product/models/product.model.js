@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
 
 // Define the product schema
-const productSchema = new mongoose.Schema({
+const prodSchema = new mongoose.Schema({
   id: {
     type: String,
     required: true,
@@ -29,8 +29,8 @@ const productSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  active: {
-    type: Boolean,
+  status: {
+    type: String,
     required: true,
     default: true,
   },
@@ -48,11 +48,11 @@ const productSchema = new mongoose.Schema({
     trim: true,
   },
   updateRequired: {
-    type: Boolean,
+    type: String,
     required: true,
     default: false,
   },
-  imageUrl: {
+  productGalleryImage: {
     type: String,
     trim: true,
   },
@@ -65,21 +65,24 @@ const productSchema = new mongoose.Schema({
     trim: true,
   },
   categories: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category',
+    type:String,
+    trim: true,
   }]
 });
 
+
+
+var productSchema = mongoose.Schema(prodSchema);
 // Apply pagination plugin
 productSchema.plugin(mongoosePaginate);
 
 // Create the Product model
-const Product = mongoose.model("Product", productSchema);
+const products = mongoose.model("products", productSchema);
 
-Product.paginate().then({}); // Usage
+products.paginate().then({}); // Usage
 
 // create the model for users and expose it to our app
 module.exports = {
-  ProductModel: Product,
-  schema: productSchema
+  productModel: products,
+  schema: prodSchema
 };

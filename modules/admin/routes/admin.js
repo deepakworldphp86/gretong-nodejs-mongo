@@ -16,16 +16,16 @@ const jwt = require("jsonwebtoken");
 const mBackend = require(corePath + "/middleware/middleware_backend.js");
 const auth = require(corePath + "/middleware/middleware_backend.js");
 const config = require(corePath + "/utility/config-array");
-const html = require(corePath + "/utility/dynamic-html");
+const html = require(corePath + "/utility/backend-menu-html");
 const Response = require(corePath + "/utility/response");
 const customEvents = require(corePath + "/utility/custom-events");
 const async = require("async");
 const _mongodb = require(corePath + "/config/database.js");
 
 // Models
-const CategoriesModel = require(modulesPath + "/category/models/categories.model.js");
+const CategoriesModel = require(modulesPath + "/category/models/category.model.js");
 const AdminModel = require(modulesPath + "/admin/models/admin.model.js");
-const UserModel = require(modulesPath + "/customer/models/user.model.js");
+const UserModel = require(modulesPath + "/customer/models/customer.model.js");
 
 // Multer setup for file uploads
 const storage = multer.diskStorage({

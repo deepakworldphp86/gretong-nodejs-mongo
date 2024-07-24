@@ -33,7 +33,7 @@
                        <div class="main-grid">
         <div class="agile-grids">
         <div class="bs-component mb40">
-          <a href="/admin/category/add/<%= Id %>" class="btn btn-category btn-block" >Add Category</a>
+          <a href="/admin/category/add/<%= id %>" class="btn btn-category btn-block" >Add Category</a>
         </div>
 				<!-- tables -->
 			         <h3>Categories Listing</h3>
@@ -51,21 +51,21 @@
 					  </tr>
 					</thead>
 					<tbody>
-            <% console.log(responce.length); %>
+            <% <!--console.log(responce.length);--> %>
             <% for (var i = 0; i < responce.length; ++i) { %>
 					  <tr>
-						<td><a href="/admin/categories?id=<%= responce[i]._id %>"><%= responce[i].Name %><a/></td>
-						<td><%= responce[i].Code %></td>
-						<td><%= responce[i].categories_content %></td>
+						<td><a href="/admin/category?id=<%= responce[i]._id %>"><%= responce[i].name %></a></td>
+						<td><%= responce[i].code %></td>
+						<td><%= responce[i].description %></td>
 						<td>
-              <% if(responce[i].categories_image) { %>
-              <img id="myImg" src="/admin/uploads/<%= responce[i].categories_image %>" width="107" height="98">
+              <% if(responce[i].categoryImage) { %>
+              <img id="myImg" src="/admin/uploads/category_image/<%= responce[i].categoryImage %>" width="107" height="98">
               <% } %>
               </td>
-            <td><a href="/admin/category/list/<%= responce[i].Id %>/1">View Child Category</td>
-            <td><a href="/admin/category/add/<%= responce[i].Id %>">Add Child Category</td>
-            <td><a href="/admin/category/edit/<%- responce[i].Id %>">Edit</td>
-            <td><a href="/admin/category/delete/<%= responce[i]._id %> & parent_id=<%= responce[i].ParentId %>">Delete</td>
+            <td><a href="/admin/category/list/<%= responce[i].id %>/1">View Child Category</td>
+            <td><a href="/admin/category/add/<%= responce[i].id %>">Add Child Category</td>
+            <td><a href="/admin/category/edit/<%- responce[i].id %>">Edit</td>
+            <td><a href="/admin/category/delete/<%= responce[i].id %>/<%= responce[i].parentId %>">Delete</td>
 					  </tr>
               <% } %>
 					 </tbody>

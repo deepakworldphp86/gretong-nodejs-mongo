@@ -4,7 +4,7 @@ const app = require('../../app_config.js');
 const modulesPath = app.locals.modulesPath;
 
 const LocalStrategy = require('passport-local').Strategy;
-const User = require(modulesPath+"/customer/models/user.model");
+const User = require(modulesPath+"/customer/models/customer.model");
 const config = require('./database.js');
 const bcrypt = require('bcryptjs');
 

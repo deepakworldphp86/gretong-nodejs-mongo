@@ -18,7 +18,6 @@ router.post("/token", (req, res, next) => {
   _mongodb().then((db) => {
     var query = { username: Username, password: Password };
     db.collection("admin").findOne(query, function (err, user) {
-      console.log(user);
       if (user !== null) {
         var message = "Successfully login";
         customEvents.emit("login", message, user.username);
@@ -30,7 +29,6 @@ router.post("/token", (req, res, next) => {
           time: Date(),
           userId: user._id,
         };
-        console.log({ ok1: data });
         const token = jwt.sign(data, jwtSecretKey,{ expiresIn: '1800s'});
         var tokenResponse = { token: token };
         res.status(200).send(tokenResponse);

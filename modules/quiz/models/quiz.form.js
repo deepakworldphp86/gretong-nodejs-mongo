@@ -92,9 +92,9 @@ const dynamicFormArray = (dataArray) =>  {
       class: "form-control1",
       placeholder: "",
     },
-    active: {
+    status: {
       required: true,
-      value: (dataArray.formData.active !== undefined) ? dataArray.formData.active : '',
+      value: (dataArray.formData.status !== undefined) ? dataArray.formData.status : '',
       fieldType: "select",
       label: "Active",
       optionArray: {

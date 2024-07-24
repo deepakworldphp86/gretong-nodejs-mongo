@@ -1,17 +1,14 @@
 module.exports = {
-    errorResponse: function (message, res) {
-        //return res.status(500).json({result: {}, message: message, success: 0, statusCode: 500});
+    errorResponse: function (req, message) {
+        req.flash('errorMsg', message);
     },
-    successResponse: function (req) {
-        req.flash('success_msg', 'You successfully Update this category');
-        //return res.status(200).json({result: data, message: message, success: 1, statusCode: 200});
-        //console.log(res.status(200).json({result: data, message: message, success: 1, statusCode: 200}));
+    successResponse: function (req, message) {
+        req.flash('successMsg', message);
     },
-    notFoundResponse: function (message, req, res) {
-        req.flash('success_msg', message);
-        //return res.status(404).json({result: {}, message: message, success: 0, statusCode: 404});
+    notFoundResponse: function (req, message) {
+        req.flash('errorMsg', message);
     },
-    unauthorizedRequest: function (message, res) {
-       // return res.status(401).json({result: {}, message: message, success: 0, statusCode: 401});
+    unauthorizedRequest: function (req, message) {
+        req.flash('errorMsg', message);
     }
 }

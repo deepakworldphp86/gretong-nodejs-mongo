@@ -14,8 +14,7 @@ module.exports = {
     var pages = Math.ceil(dataCount / perPageView);
 
     var pagination = "";
-    console.log(dataCount);
-    console.log(perPage);
+  
 
     if (pages > 1 && pageUrl && currentPage <= pages) {
 

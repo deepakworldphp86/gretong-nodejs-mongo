@@ -50,21 +50,20 @@
 					  </tr>
 					</thead>
 					<tbody>
-            <% console.log(responce.length); %>
             <% for (var i = 0; i < responce.length; ++i) { %>
 					  <tr>
-						<td><a href="/admin/categories?id=<%= responce[i]._id %>"><%= responce[i].Name %><a/></td>
-						<td><%= responce[i].Sku %></td>
+						<td><%= responce[i].name %></td>
+						<td><%= responce[i].sku %></td>
             <td><%= responce[i].price %></td>
 						<td><%= responce[i].description %></td>
 
 						<td>
-              <% if(responce[i].imageUrl) { %>
-              <img id="myImg" src="/admin/uploads/<%= responce[i].imageUrl %>" width="107" height="98">
+              <% if(responce[i].productGalleryImage) { %>
+              <img id="myImg" src="/admin/uploads/product_images/<%= responce[i].productGalleryImage %>" width="107" height="98">
               <% } %>
               </td>
-            <td><a href="/admin/category/edit/<%- responce[i].Id %>">Edit</td>
-            <td><a href="/admin/category/delete/<%= responce[i]._id %> & parent_id=<%= responce[i].id %>">Delete</td>
+            <td><a href="/admin/product/edit/<%- responce[i].id %>">Edit</td>
+            <td><a href="/admin/product/delete/<%= responce[i]._id %>">Delete</td>
 					  </tr>
               <% } %>
 					 </tbody>

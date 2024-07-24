@@ -12,12 +12,12 @@ const url = require("url");
 const session = require("express-session");
 const mBackend = require(corePath+"/middleware/middleware_backend.js");
 const config = require(corePath+"/utility/config-array");
-const html = require(corePath+"/utility/dynamic-html");
+const html = require(corePath+"/utility/backend-menu-html");
 const paginate = require(corePath+"/utility/pagination");
 const Response = require(corePath+"/utility/response");
 const customEvents = require(corePath+"/utility/custom-events");
 const dynamicForm = require(corePath+"/utility/dynamic-form");
-const { formArray } = require("../models/categories.form.js");
+const { formArray } = require("../models/category.form.js");
 
 const { getValidate } = require(corePath+"/utility/validation");
 var dateTime = require("node-datetime");
@@ -25,7 +25,7 @@ var dateTime = require("node-datetime");
 const async = require("async");
 const _mongodb = require(corePath+"/config/database.js");
 /*************************** Model *********************************/
-let { CategoriesModel, schema } = require("../models/categories.model.js");
+let { categoriesModel, schema } = require("../models/category.model.js");
 
 /************************** Upload Config *************************/
 var storage = multer.diskStorage({
@@ -41,26 +41,25 @@ var upload = multer({ storage: storage });
 /********************************** Rendering to categories Listing ********************************************************************/
 
 router.get(
-  "/list/:Id/:page",
+  "/list/:id/:page",
   mBackend.isAuthorized,
   async function (req, res, next) {
     var data = [];
-    var Id = req.params.Id ? req.params.Id : 0;
+    var id = req.params.id ? req.params.id : 0;
     var perPage = 2;
     var currentPage = req.params.page || 1;
    
-    var pageUrl = "/admin/category/list/" + Id + "/";
-    var filter = { ParentId: Id };
-
-    CategoriesModel.find(filter)
+    var pageUrl = "/admin/category/list/" + id + "/";
+    var filter = { parentId: id };
+    
+    categoriesModel.find(filter)
       .skip(perPage * currentPage - perPage)
       .limit(perPage)
       .exec(function (err, catCollection) {
         customEvents.emit("categoryLoaded", catCollection);
-        Response.successResponse(req);
         paginate
           .getPaginate(
-            CategoriesModel.find(filter),
+            categoriesModel.find(filter),
             req,
             pageUrl,
             perPage,
@@ -74,7 +73,7 @@ router.get(
               collection: catCollection,
               paginationHtml: pagaintion,
               responce: catCollection,
-              Id: Id,
+              id: id,
               data: data,
             });
           });
@@ -84,15 +83,16 @@ router.get(
 
 /********************************** Edit categories action  ********************************************************************/
 
-router.get("/edit/:Id", mBackend.isAuthorized, function (req, res, next) {
-  var Id = req.params.Id ? req.params.Id : 0;
+router.get("/edit/:id", mBackend.isAuthorized, function (req, res, next) {
+  var id = req.params.id ? req.params.id : 0;
   const dataArray = new Object();
 
-  CategoriesModel.find({ Id: Id }, async function (err, response) {
-    var postUrl = "/admin/category/update/" + Id;
+  categoriesModel.find({ id: id }, async function (err, response) {
+    var postUrl = "/admin/category/update/" + id;
     var response = response.pop();
     dataArray.formData = response;
-    //console.log(dataArray);return;
+   
+
     if (response !== undefined) {
       dataArray.action = postUrl;
     }
@@ -100,8 +100,8 @@ router.get("/edit/:Id", mBackend.isAuthorized, function (req, res, next) {
     //Date Format for Modified
     var dt = dateTime.create();
     var formatted = dt.format("Y-m-d H:M:S");
-    dataArray.formData.ModifiedDate = formatted; // ModifiedDate Date
-
+    dataArray.formData.modifiedDate = formatted; // ModifiedDate Date
+    
     var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
     res.render(modulesPath+"/category/views/add", {
       menuHtml: html.getMenuHtml(),
@@ -110,7 +110,7 @@ router.get("/edit/:Id", mBackend.isAuthorized, function (req, res, next) {
       response: response,
       schemaModel: schema,
       form: dynamicFormHtml,
-      Id: Id,
+      id: id,
     });
   });
 });
@@ -118,22 +118,22 @@ router.get("/edit/:Id", mBackend.isAuthorized, function (req, res, next) {
 /********************************** Add categories action  ********************************************************************/
 
 router.get(
-  "/add/:ParentId",
+  "/add/:parentId",
   mBackend.isAuthorized,
   async function (request, response, next) {
     const dataArray = new Object();
     var postUrl = "/admin/category/save";
     dataArray.formData = {};
     dataArray.action = postUrl;
-    dataArray.formData.Id = (await CategoriesModel.countDocuments()) + 1; // Int Id of Category
-    dataArray.formData.ParentId = request.params.ParentId
-      ? request.params.ParentId
+    dataArray.formData.id = (await categoriesModel.countDocuments()) + 1; // Int Id of Category
+    dataArray.formData.parentId = request.params.parentId
+      ? request.params.parentId
       : 0; // Parent Id of Category
 
     //Date Format for CreatedDate
     var dt = dateTime.create();
     var formatted = dt.format("Y-m-d H:M:S");
-    dataArray.formData.CreatedDate = formatted; // Created Date
+    dataArray.formData.createdDate = formatted; // Created Date
 
     var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
     response.render(modulesPath+"/category/views/add", {
@@ -148,31 +148,31 @@ router.get(
 /********************************** Update categories action  ********************************************************************/
 
 router.post(
-  "/update/:Id",
-  upload.single("CategoryImage"),
+  "/update/:id",
+  upload.single("categoryImage"),
   async function (req, res, next) {
     var errors = [];
     const dataArray = new Object();
     dataArray.formData = {};
-    dataArray.formData.Id = req.body.Id;
-    dataArray.formData.ParentId = req.body.ParentId;
+    dataArray.formData.id = req.body.id;
+    dataArray.formData.parentId = req.body.parentId;
 
     mBackend.isAuthorized;
     errors = mBackend.isFormValidated(req,res,formArray(dataArray),next);
 
     // callback();
-    const Id = req.body.Id;
-    var CategoryImage = "";
+    const Id = req.body.id;
+    var categoryImage = "";
 
     // Start Image and Validation
     if (req.file == undefined) {
-      CategoryImage = req.body.CategoryImage;
+      categoryImage = req.body.categoryImage;
     } else {
-      CategoryImage = req.file.filename;
+      categoryImage = req.file.filename;
     }
 
-    if (errors || !CategoryImage) {
-      req.flash("error_msg", errors);
+    if (errors || !categoryImage) {
+      req.flash("errorMsg", errors);
       res.redirect(
         url.format({
           pathname: "/admin/category/edit/" + Id,
@@ -181,19 +181,21 @@ router.post(
       );
     } else {
       var objectCat = new Object();
-      objectCat.Id = req.body.Id;
-      objectCat.Code = req.body.Code;
-      objectCat.Name = req.body.Name;
-      objectCat.ParentId = req.body.ParentId;
-      objectCat.Active = req.body.Active;
-      objectCat.CreatedDate = req.body.CreatedDate ;
-      objectCat.ModifiedDate = req.body.ModifiedDate || '';
-      objectCat.ExternalId = req.body.ExternalId;
-      objectCat.StoreId = req.body.StoreId;
-      objectCat.UpdateRequired = req.body.UpdateRequired;
-      objectCat.CategoryImage = CategoryImage;
-      const ParentId = req.body.ParentId;
-      CategoriesModel.findByIdAndUpdate(
+      objectCat.id = req.body.id;
+      objectCat.code = req.body.code;
+      objectCat.name = req.body.name;
+      objectCat.description = req.body.description;
+      objectCat.parentId = req.body.parentId;
+      objectCat.status = req.body.status;
+      objectCat.createdDate = req.body.createdDate ;
+      objectCat.modifiedDate = req.body.modifiedDate || '';
+      objectCat.externalId = req.body.externalId;
+      objectCat.storeId = req.body.storeId;
+      objectCat.updateRequired = req.body.updateRequired;
+      objectCat.categoryImage = categoryImage;
+      const parentId = req.body.parentId;
+      
+      categoriesModel.findByIdAndUpdate(
         req.body._id,
         objectCat,
         { upsert: true },
@@ -201,9 +203,8 @@ router.post(
           if (err) {
             throw err;
           } else {
-            //console.log(newCategory);
-            req.flash("success_msg", "You successfully Update this category");
-            res.redirect("/admin/category/list/" + ParentId + "/1");
+            req.flash("successMsg", "You successfully Update this category");
+            res.redirect("/admin/category/list/" + parentId + "/1");
           }
         }
       );
@@ -215,17 +216,17 @@ router.post(
 
 router.post(
   "/save",
-  upload.single("CategoryImage"),
+  upload.single("categoryImage"),
   async function (req, res, next) {
     var errors = [];
     const dataArray = new Object();
     dataArray.formData = {};
     dataArray.action = "";
-    const ParentId = req.body.ParentId ? req.body.ParentId : 0;
-    dataArray.formData.ParentId = ParentId;
+    const parentId = req.body.parentId ? req.body.parentId : 0;
+    dataArray.formData.parentId = parentId;
     mBackend.isAuthorized;
     errors = mBackend.isFormValidated(req,res,formArray(dataArray),next);
-    console.log(req.body.Active);return;
+   
     if (!req.file && !errors) {
       errors = [];
       errors.push({ msg: "Image is required filed" });
@@ -233,33 +234,34 @@ router.post(
       errors.push({ msg: "Image is required filed" });
     }
     if (errors || !req.file.filename) {
-      req.flash("error_msg", errors);
+      req.flash("errorMsg", errors);
       res.redirect(
         url.format({
-          pathname: "/admin/category/add/" + ParentId,
+          pathname: "/admin/category/add/" + parentId,
           query: req.body,
         })
       );
     } else {
-      const image = req.file.filename;
-      let newCategory = new CategoriesModel({
-        Id: req.body.Id,
-        Code: req.body.Code,
-        Name: req.body.Name,
-        ParentId: ParentId,
-        Active: req.body.Active,
-        CreatedDate: req.body.CreatedDate,
-        ModifiedDate: req.body.ModifiedDate,
-        ExternalId: req.body.ExternalId,
-        StoreId: req.body.StoreId,
-        UpdateRequired: req.body.UpdateRequired,
-        CategoryImage: image,
+      const categoryImage = req.file.filename;
+      let newCategory = new categoriesModel({
+        id: req.body.id,
+        code: req.body.code,
+        name: req.body.name,
+        description: req.body.description,
+        parentId: parentId,
+        status: req.body.status,
+        createdDate: req.body.createdDate,
+        modifiedDate: req.body.modifiedDate,
+        externalId: req.body.externalId,
+        storeId: req.body.storeId,
+        updateRequired: req.body.updateRequired,
+        categoryImage: categoryImage,
       });
       newCategory.save(function (err) {
         if (err) {
-          return;
+          if (err) return next(err);
         } else {
-          req.flash("success_msg", "You successfully save this category");
+          req.flash("successMsg", "You successfully save this category");
           res.redirect("/admin/category/list/0/1");
         }
       });
@@ -269,26 +271,29 @@ router.post(
 
 /********************************** Delete categories action  ********************************************************************/
 
-router.get("/delete", function (req, res) {
-  var id = req.query.id ? req.query.id : 0;
-  var parent_id = req.query.parent_id ? req.query.parent_id : 0;
+router.get("/delete/:id/:parentId", function (req, res) {
+  var id = req.params.id ? req.params.id : 0;
+  var parentId = req.params.parentId ? req.params.parentId : 0;
   var objectCat = new Object();
-  objectCat._id = id.trim();
+  objectCat.id = id;
 
-  CategoriesModel.countDocuments({ parent_category: id.trim() }).then((count) => {
+  categoriesModel.countDocuments({ parentId: id }).then((count) => {
     customEvents.emit(
       "categoryDeleteBefore",
       "Count of child categorys" + count
     );
+
+    console.log('count',count,id,parentId,req.params);
     if (count === 0) {
-      CategoriesModel.findOneAndRemove(objectCat, function (err) {
+      categoriesModel.findOneAndRemove(objectCat, function (err) {
         if (err) {
           customEvents.emit("categoryDeleteFailed", err);
-          res.redirect("/admin/category/list?id="+parent_id);
+          res.redirect(`/admin/category/list/${parentId}/1`);
         } else {
           customEvents.emit("categoryDeleted", "Category Has been Deleted");
-          req.flash("success_msg", "You successfully deleted this category.");
-          res.redirect("/admin/category/list?id="+parent_id);
+          req.flash("successMsg", "You successfully deleted this category.");
+          res.redirect(`/admin/category/list/${parentId}/1`);
+         
         }
       });
     } else {
@@ -296,8 +301,8 @@ router.get("/delete", function (req, res) {
 
       errors.push({ msg: "Please delete child category first." });
       customEvents.emit("categoryDeleteFailed", errors);
-      req.flash("error_msg", errors);
-      res.redirect("/admin/category/list?id="+parent_id);
+      req.flash("errorMsg", errors);
+      res.redirect(`/admin/category/list/${parentId}/1`);
     }
   });
 });

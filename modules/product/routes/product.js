@@ -4,7 +4,8 @@ const corePath = app.locals.corePath;
 const modulesPath = app.locals.modulesPath;
 const publicPath = app.locals.publicPath;
 const layoutBackendPath = app.locals.layoutBackendPath;
-
+const { v4: uuidv4 } = require('uuid');
+const mongoose = require("mongoose");
 const multer = require("multer");
 const router = express.Router();
 const path = require("path");
@@ -12,7 +13,7 @@ const url = require("url");
 const session = require("express-session");
 const mBackend = require(corePath + "/middleware/middleware_backend.js");
 const config = require(corePath + "/utility/config-array");
-const html = require(corePath + "/utility/dynamic-html");
+const html = require(corePath + "/utility/backend-menu-html");
 const paginate = require(corePath + "/utility/pagination");
 const Response = require(corePath + "/utility/response");
 const customEvents = require(corePath + "/utility/custom-events");
@@ -25,8 +26,8 @@ var dateTime = require("node-datetime");
 const async = require("async");
 const _mongodb = require(corePath + "/config/database.js");
 /*************************** Model *********************************/
-let { ProductModel, schema } = require("../models/product.model.js");
-let { CategoriesModel, schemaCategories } = require('../../category/models/categories.model.js');
+let { productModel, schema } = require("../models/product.model.js");
+let { categoriesModel, schemaCategories } = require('../../category/models/category.model.js');
 
 
 /************************** Upload Config *************************/
@@ -43,26 +44,23 @@ var upload = multer({ storage: storage });
 /********************************** Rendering to Product Listing ********************************************************************/
 
 router.get(
-  "/list/:Id",
+  "/list/:page",
   mBackend.isAuthorized,
   async function (req, res, next) {
     var data = [];
-    var Id = req.params.Id ? req.params.Id : 0;
     var perPage = 2;
     var currentPage = req.params.page || 1;
+    var filter = {};
+    var pageUrl = "/admin/product/list/";
 
-    var pageUrl = "/admin/product/list/" + Id + "/";
-    var filter = { ParentId: Id };
-
-    ProductModel.find(filter)
+    productModel.find(filter)
       .skip(perPage * currentPage - perPage)
       .limit(perPage)
       .exec(function (err, productCollection) {
         customEvents.emit("Product List Loaded", productCollection);
-        Response.successResponse(req);
         paginate
           .getPaginate(
-            ProductModel.find(filter),
+            productModel.find(filter),
             req,
             pageUrl,
             perPage,
@@ -76,7 +74,6 @@ router.get(
               collection: productCollection,
               paginationHtml: pagaintion,
               responce: productCollection,
-              Id: Id,
               data: data,
             });
           });
@@ -86,25 +83,36 @@ router.get(
 
 /********************************** Edit Product action  ********************************************************************/
 
-router.get("/edit/:Id", mBackend.isAuthorized, function (req, res, next) {
-  var Id = req.params.Id ? req.params.Id : 0;
+router.get("/edit/:id", mBackend.isAuthorized, function (req, res, next) {
+  var id = req.params.id ? req.params.id : 0;
   const dataArray = new Object();
 
-  ProductModel.find({ Id: Id }, async function (err, response) {
-    var postUrl = "/admin/product/update/" + Id;
+  productModel.find({ id: id }, async function (err, response) {
+    var postUrl = "/admin/product/update/" + id;
     var response = response.pop();
     dataArray.formData = response;
     //console.log(dataArray);return;
     if (response !== undefined) {
       dataArray.action = postUrl;
     }
+    var filter = {};
+    const categories = await categoriesModel.find(filter);
 
+    // Create key-value pairs
+    const mappedCategoryData = categories.reduce((categoryMap, category) => {
+      categoryMap[category.id] = category.name;
+      return categoryMap;
+    }, {});
+
+   
     //Date Format for Modified
     var dt = dateTime.create();
     var formatted = dt.format("Y-m-d H:M:S");
-    dataArray.formData.ModifiedDate = formatted; // ModifiedDate Date
+    dataArray.formData.modifiedDate = formatted; // ModifiedDate Date
+    dataArray.formData.categoriesOption = mappedCategoryData;
 
     var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
+
     res.render(modulesPath + "/product/views/add", {
       menuHtml: html.getMenuHtml(),
       collection: response,
@@ -112,7 +120,7 @@ router.get("/edit/:Id", mBackend.isAuthorized, function (req, res, next) {
       response: response,
       schemaModel: schema,
       form: dynamicFormHtml,
-      Id: Id,
+      id: id,
     });
   });
 });
@@ -127,33 +135,29 @@ router.get(
 
     // Fetch all categories
     const filter = {};
-    const categories = await CategoriesModel.find(filter);
+    const categories = await categoriesModel.find(filter);
 
     // Create key-value pairs
-    const Categories = categories.reduce((categoryMap, category) => {
-      categoryMap[category.Id] = category.Name;
+    const mappedCategoryData = categories.reduce((categoryMap, category) => {
+      categoryMap[category.id] = category.name;
       return categoryMap;
     }, {});
 
     var postUrl = "/admin/product/save";
-
     dataArray.action = postUrl;
     dataArray.formData = {};
-    dataArray.formData.Categories = Categories;
-    dataArray.formData.Id = (await ProductModel.countDocuments()) + 1; // Int Id of Category
-    dataArray.formData.ParentId = request.params.ParentId
-      ? request.params.ParentId
-      : 0; // Parent Id of Category
+    dataArray.formData.categoriesOption = mappedCategoryData;
+    dataArray.formData.id = (await productModel.countDocuments()) + 1;
 
     //Date Format for CreatedDate
     var dt = dateTime.create();
     var formatted = dt.format("Y-m-d H:M:S");
-    dataArray.formData.CreatedDate = formatted; // Created Date
+    dataArray.formData.createdDate = formatted; // Created Date
 
     var dynamicFormHtml = dynamicForm.getFrom(formArray(dataArray));
-    response.render(modulesPath + "/category/views/add", {
+    response.render(modulesPath + "/product/views/add", {
       menuHtml: html.getMenuHtml(),
-      title: "Categorys Form",
+      title: "Product Form",
       response: response,
       form: dynamicFormHtml,
     });
@@ -163,62 +167,61 @@ router.get(
 /********************************** Update categories action  ********************************************************************/
 
 router.post(
-  "/update/:Id",
-  upload.single("ProductImage"),
+  "/update/:id",
+  upload.single("productGalleryImage"),
   async function (req, res, next) {
     var errors = [];
     const dataArray = new Object();
     dataArray.formData = {};
-    dataArray.formData.Id = req.body.Id;
-    dataArray.formData.ParentId = req.body.ParentId;
-
+    dataArray.formData.id = req.body.id;
+   
     mBackend.isAuthorized;
     errors = mBackend.isFormValidated(req, res, formArray(dataArray), next);
 
     // callback();
-    const Id = req.body.Id;
-    var CategoryImage = "";
+    const id = req.body.id;
+    var productGalleryImage = "";
 
     // Start Image and Validation
     if (req.file == undefined) {
-      CategoryImage = req.body.CategoryImage;
+      productGalleryImage = req.body.productGalleryImage;
     } else {
-      CategoryImage = req.file.filename;
+      productGalleryImage = req.file.filename;
     }
 
-    if (errors || !CategoryImage) {
-      req.flash("error_msg", errors);
+    if (errors || !productGalleryImage) {
+      req.flash("errorMsg", errors);
       res.redirect(
         url.format({
-          pathname: "/admin/category/edit/" + Id,
+          pathname: "/admin/product/edit/" + id,
           response: req.body,
         })
       );
     } else {
-      var objectCat = new Object();
-      objectCat.Id = req.body.Id;
-      objectCat.Code = req.body.Code;
-      objectCat.Name = req.body.Name;
-      objectCat.ParentId = req.body.ParentId;
-      objectCat.Active = req.body.Active;
-      objectCat.CreatedDate = req.body.CreatedDate;
-      objectCat.ModifiedDate = req.body.ModifiedDate || '';
-      objectCat.ExternalId = req.body.ExternalId;
-      objectCat.StoreId = req.body.StoreId;
-      objectCat.UpdateRequired = req.body.UpdateRequired;
-      objectCat.CategoryImage = CategoryImage;
-      const ParentId = req.body.ParentId;
-      ProductModel.findByIdAndUpdate(
+      var objectProd = new Object();
+      objectProd.id = req.body.id;
+      objectProd.sku = req.body.sku;
+      objectProd.name = req.body.name;
+      objectProd.status = req.body.status;
+      objectProd.description = req.body.description;
+      objectProd.categories = req.body.categories;
+      objectProd.createdDate = req.body.createdDate;
+      objectProd.modifiedDate = req.body.modifiedDate || '';
+      objectProd.storeId = req.body.storeId;
+      objectProd.updateRequired = req.body.updateRequired;
+      objectProd.productGalleryImage = productGalleryImage;
+
+     
+      productModel.findByIdAndUpdate(
         req.body._id,
-        objectCat,
+        objectProd,
         { upsert: true },
         function (err, num, n) {
           if (err) {
             throw err;
           } else {
-            //console.log(newCategory);
-            req.flash("success_msg", "You successfully Update this category");
-            res.redirect("/admin/category/list/" + ParentId + "/1");
+            req.flash("successMsg", "You successfully Update this product");
+            res.redirect("/admin/product/list/1");
           }
         }
       );
@@ -230,16 +233,18 @@ router.post(
 
 router.post(
   "/save",
-  upload.single("CategoryImage"),
+  upload.single("productGalleryImage"),
   async function (req, res, next) {
     var errors = [];
     const dataArray = new Object();
     dataArray.formData = {};
     dataArray.action = "";
-    const ParentId = req.body.ParentId ? req.body.ParentId : 0;
-    dataArray.formData.ParentId = ParentId;
+
     mBackend.isAuthorized;
     errors = mBackend.isFormValidated(req, res, formArray(dataArray), next);
+    // Generate a unique sequential ID
+    let productId = await generateUniqueProductId();
+
 
     if (!req.file && !errors) {
       errors = [];
@@ -248,34 +253,37 @@ router.post(
       errors.push({ msg: "Image is required filed" });
     }
     if (errors || !req.file.filename) {
-      req.flash("error_msg", errors);
+      req.flash("errorMsg", errors);
       res.redirect(
         url.format({
-          pathname: "/admin/category/add/" + ParentId,
+          pathname: "/admin/product/add/",
           query: req.body,
         })
       );
     } else {
-      const image = req.file.filename;
-      let newCategory = new ProductModel({
-        Id: req.body.Id,
-        Code: req.body.Code,
-        Name: req.body.Name,
-        ParentId: ParentId,
-        Active: req.body.Active,
-        CreatedDate: req.body.CreatedDate,
-        ModifiedDate: req.body.ModifiedDate,
-        ExternalId: req.body.ExternalId,
-        StoreId: req.body.StoreId,
-        UpdateRequired: req.body.UpdateRequired,
-        CategoryImage: image,
+      const productGalleryImage = req.file.filename;
+     
+      let newProduct = new productModel({
+        id: productId,
+        sku: req.body.sku,
+        name: req.body.name,
+        description: req.body.description,
+        price: req.body.price,
+        categories: req.body.categories,
+        status: req.body.status,
+        createdDate: req.body.createdDate,
+        modifiedDate: req.body.modifiedDate || '',
+        storeId: req.body.storeId,
+        updateRequired: req.body.updateRequired,
+        productGalleryImage: productGalleryImage
       });
-      newCategory.save(function (err) {
+
+      newProduct.save(function (err) {
         if (err) {
-          return;
+          if (err) return next(err);
         } else {
-          req.flash("success_msg", "You successfully save this category");
-          res.redirect("/admin/category/list/0/1");
+          req.flash("successMsg", "You successfully save this product");
+          res.redirect("/admin/product/list/1");
         }
       });
     }
@@ -284,38 +292,44 @@ router.post(
 
 /********************************** Delete categories action  ********************************************************************/
 
-router.get("/delete", function (req, res) {
-  var id = req.query.id ? req.query.id : 0;
-  var parent_id = req.query.parent_id ? req.query.parent_id : 0;
-  var objectCat = new Object();
-  objectCat._id = id.trim();
-
-  ProductModel.countDocuments({ parent_category: id.trim() }).then((count) => {
-    customEvents.emit(
-      "categoryDeleteBefore",
-      "Count of child categorys" + count
-    );
-    if (count === 0) {
-      ProductModel.findOneAndRemove(objectCat, function (err) {
-        if (err) {
-          customEvents.emit("categoryDeleteFailed", err);
-          res.redirect("/admin/category/list?id=" + parent_id);
-        } else {
-          customEvents.emit("categoryDeleted", "Category Has been Deleted");
-          req.flash("success_msg", "You successfully deleted this category.");
-          res.redirect("/admin/category/list?id=" + parent_id);
-        }
-      });
+router.get("/delete/:_id", function (req, res) {
+ 
+  var id = req.params._id ? req.params._id : 0;
+  var objectProd = new Object();
+  objectProd._id = id.trim();
+  productModel.findOneAndRemove(objectProd, function (err) {
+    if (err) {
+      customEvents.emit("productDeleteBefore", err);
+      res.redirect("/admin/product/list/1");
     } else {
-      let errors = [];
-
-      errors.push({ msg: "Please delete child category first." });
-      customEvents.emit("categoryDeleteFailed", errors);
-      req.flash("error_msg", errors);
-      res.redirect("/admin/category/list?id=" + parent_id);
+      customEvents.emit("productDeleted", "Product Has been Deleted");
+      req.flash("successMsg", "You successfully deleted this Product.");
+      res.redirect("/admin/product/list/1");
     }
   });
 });
+
+// Function to generate a unique sequential ID
+async function generateUniqueProductId() {
+  let productId = await findNextAvailableId(1); // Start checking from ID 1
+
+  return productId;
+}
+
+// Recursive function to find the next available unique ID
+async function findNextAvailableId(candidateId) {
+  // Check if the candidate ID exists in the database
+  let product = await productModel.findOne({ id: candidateId }).exec();
+
+  if (product) {
+    // If the ID exists, recursively call findNextAvailableId with incremented candidateId
+    return findNextAvailableId(candidateId + 1);
+  } else {
+    // If the ID does not exist, return the candidateId as the next available ID
+    return candidateId;
+  }
+}
+
 
 
 module.exports = router;

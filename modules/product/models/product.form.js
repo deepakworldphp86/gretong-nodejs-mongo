@@ -1,5 +1,4 @@
 const dynamicFormArray = (dataArray) => {
-
   form = {
     form: {
       required: false,
@@ -14,86 +13,107 @@ const dynamicFormArray = (dataArray) => {
       required: false,
       value: ('_id' in dataArray.formData) ? dataArray.formData._id : '',
       fieldType: "hidden",
-      id: "hexadecimal_id"
+      id: "hexadecimal_id",
+      name: "_id"
     },
-    Id: {
+    id: {
       required: true,
-      value: ('Id' in dataArray.formData) ? dataArray.formData.id : '',
+      value: ('id' in dataArray.formData) ? dataArray.formData.id : '',
       fieldType: "hidden",
       label: "Id",
       id: "prod_id",
       class: "form-control1",
+      name: "id",
       placeholder: "",
     },
-    Sku: {
+    sku: {
       required: true,
-      value: ('Sku' in dataArray.formData) ? dataArray.formData.sku : '',
+      value: ('sku' in dataArray.formData) ? dataArray.formData.sku : '',
       fieldType: "hidden",
       label: "Product sku",
       id: "sku",
       class: "form-control1",
+      name: "sku",
       placeholder: "",
     },
-    CreatedDate: {
+    createdDate: {
       required: false,
-      value: (dataArray.formData.CreatedDate !== undefined) ? dataArray.formData.CreatedDate : '',
+      value: (dataArray.formData.createdDate !== undefined) ? dataArray.formData.createdDate : '',
       label: "Created Date",
       fieldType: "hidden",
       id: "created_date",
       class: "form-control1",
+      name: "createdDate",
       placeholder: "",
     },
-    ModifiedDate: {
+    modifiedDate: {
       required: false,
-      value: (dataArray.formData.ModifiedDate !== undefined) ? dataArray.formData.ModifiedDate : '',
+      value: (dataArray.formData.modifiedDate !== undefined) ? dataArray.formData.modifiedDate : '',
       label: "Update Date",
       fieldType: "hidden",
       id: "cat_modification_date",
       class: "form-control1",
+      name: "modifiedDate",
       placeholder: "",
     },
-    Sku: {
+    sku: {
       required: true,
-      value: ('Sku' in dataArray.formData) ? dataArray.formData.sku : '',
+      value: (dataArray.formData.sku !== undefined) ? dataArray.formData.sku : '',
       fieldType: "text",
       label: "Sku",
       id: "prod_code",
       class: "form-control1",
+      name: "sku",
       placeholder: "Sku",
     },
-    Name: {
+    name: {
       required: true,
-      value: (dataArray.formData.Name !== undefined) ? dataArray.formData.name : '',
+      value: (dataArray.formData.name !== undefined) ? dataArray.formData.name : '',
       fieldType: "text",
       label: "Name",
       id: "prod_name",
       class: "form-control1",
+      name: "name",
       placeholder: "Name",
     },
-    Price: {
+    price: {
       required: true,
-      value: ('Price' in dataArray.formData) ? dataArray.formData.price : '',
+      value: ('price' in dataArray.formData) ? dataArray.formData.price : '',
       fieldType: "text",
       label: "Price",
       id: "prod_price",
       class: "form-control1",
+      name: "price",
       placeholder: "1.00",
     },
-    Categories: {
+    description: {
       required: true,
-      value: (dataArray.formData.storeId !== undefined) ? dataArray.formData.storeId : '',
+      value: (dataArray.formData.description !== undefined) ? dataArray.formData.description : '',
+      fieldType: "textarea",
+      label: "Description",
+      id: "prod_description",
+      rows: "4",
+      cols: "50",
+      class: "form-control",
+      name: "description",
+      placeholder: "Product Description",
+    },
+    categories: {
+      required: true,
+      value: ('categories' in dataArray.formData) ? dataArray.formData.categories : '',
       label: "Product Categories",
       fieldType: "multiselect",
       id: "prod_categories",
-      statusArray: dataArray.formData.Categories,
+      optionArray: dataArray.formData.categoriesOption,
       class: "form-control1",
+      name: "categories",
       placeholder: "",
     },
-    Active: {
+    status: {
       required: true,
-      value: (dataArray.formData.active !== undefined) ? dataArray.formData.active : '',
+      value: (dataArray.formData.status !== undefined) ? dataArray.formData.status : '',
       fieldType: "select",
-      label: "Active",
+      label: "Status",
       optionArray: {
         0: "---------Please Select ------------------",
         1: "Active",
@@ -101,9 +121,10 @@ const dynamicFormArray = (dataArray) => {
       },
       id: "cat_active",
       class: "form-control1",
+      name: "status",
       placeholder: "",
     },
-    StoreId: {
+    storeId: {
       required: true,
       value: (dataArray.formData.storeId !== undefined) ? dataArray.formData.storeId : '',
       label: "Store",
@@ -115,9 +136,10 @@ const dynamicFormArray = (dataArray) => {
         2: "2",
       },
       class: "form-control1",
+      name: "storeId",
       placeholder: "",
     },
-    UpdateRequired: {
+    updateRequired: {
       required: true,
       value: (dataArray.formData.updateRequired !== undefined) ? dataArray.formData.updateRequired : '',
       label: "Update  Required",
@@ -129,15 +151,17 @@ const dynamicFormArray = (dataArray) => {
         2: "No",
       },
       class: "form-control1",
+      name: "updateRequired",
       placeholder: "",
-    }, ProductImage: {
+    }, productGalleryImage: {
       required: false,
-      value: (dataArray.formData.imageUrl !== undefined) ? dataArray.formData.imageUrl : '',
+      value: (dataArray.formData.productGalleryImage !== undefined) ? dataArray.formData.productGalleryImage : '',
       label: "Product Image",
       id: "ProductImage",
       fieldType: "upload",
       class: "form-control1",
       upload_path: '/admin/uploads/product_images/',
+      name: "productGalleryImage",
       placeholder: "",
     },
     submit: {
@@ -148,6 +172,7 @@ const dynamicFormArray = (dataArray) => {
       fieldType: "submit",
       id: "prod_submit",
       class: 'btn btn-default w3ls-button',
+      name: "submit",
       placeholder: "",
     },
   };
