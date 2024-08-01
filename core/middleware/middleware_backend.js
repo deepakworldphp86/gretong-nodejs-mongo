@@ -1,26 +1,31 @@
 const jwt = require("jsonwebtoken");
 
-var ObjectBK = {};
-
 var isAuthorized = function (req, res, next) {
   const token = req.session.jwtToken || "";
-  let jwtSecretKey = process.env.JWT_SECRET_KEY;
+  const jwtSecretKey = process.env.JWT_SECRET_KEY;
 
-  if (
-    token &&
-    jwtSecretKey &&
-    token !== undefined &&
-    jwtSecretKey !== undefined
-  ) {
-    const verified = jwt.verify(token, jwtSecretKey);
-    if (verified) {
-      next();
-    }
-  } else {
-    // Access Denied
-    res.redirect("/admin/login");
+  if (!token || !jwtSecretKey) {
+    req.session.isAdminActive = false;
+    return res.redirect("/admin/login");
   }
+
+  jwt.verify(token, jwtSecretKey, (err, decoded) => {
+    if (err) {
+      req.session.isAdminActive = false;
+      if (err.name === 'TokenExpiredError') {
+        return res.redirect("/admin/login");
+      }
+      return res.status(401).send({ message: 'Unauthorized access' });
+    }
+
+    req.user = decoded;
+    req.session.isAdminActive = true;
+    next();
+  });
 };
+
+module.exports = isAuthorized;
+
 
 var isAuthorizedSession = function (req, res, next) {
   //Validate auth by session
@@ -41,8 +46,8 @@ var validate_format = function (req, res, next) {
     return next(
       new Error(
         "The uploaded file is not in " +
-          accepted_extensions.join(", ") +
-          " format!"
+        accepted_extensions.join(", ") +
+        " format!"
       )
     );
 

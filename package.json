@@ -6,6 +6,9 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "@graphql-tools/merge": "^9.0.4",
+    "@graphql-tools/schema": "^10.0.4",
+    "apollo-server-express": "^3.13.0",
     "async": "^3.2.2",
     "bcrypt-nodejs": "0.0.3",
     "bcryptjs": "^2.4.3",
@@ -23,6 +26,7 @@
     "express-messages": "^1.0.1",
     "express-session": "^1.15.6",
     "express-validator": "^5.3.1",
+    "graphql": "^16.9.0",
     "http-errors": "~1.6.2",
     "jsonwebtoken": "^9.0.1",
     "mongodb": "^3.2.7",

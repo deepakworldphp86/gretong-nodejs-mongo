@@ -2,7 +2,6 @@
 
 // Required Packages
 const express = require("express");
-const app = require('./app_config.js');
 const path = require("path");
 const dotenv = require('dotenv').config();
 const expressValidator = require("express-validator");
@@ -13,27 +12,40 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const MongoDbStore = require("connect-mongodb-session")(session);
+const { ApolloServer } = require('apollo-server-express');
+const { mergeTypeDefs, mergeResolvers } = require('@graphql-tools/merge');
 
-// Paths
+// Application Configuration
+const app = require('./app_config.js');
 const modulesPath = app.locals.modulesPath;
 const corePath = app.locals.corePath;
 
+// GraphQL Schema and Resolvers
+const productTypeDefs = require(path.join(modulesPath, 'product', 'graphql', 'schema.graphqls'));
+const productResolvers = require(path.join(modulesPath, 'product', 'graphql', 'resolver.graphql'));
+const categoryTypeDefs = require(path.join(modulesPath, 'category', 'graphql', 'schema.graphqls'));
+const categoryResolvers = require(path.join(modulesPath, 'category', 'graphql', 'resolver.graphql'));
+
+// Merge typeDefs and resolvers
+const typeDefs = mergeTypeDefs([productTypeDefs, categoryTypeDefs]);
+const resolvers = mergeResolvers([productResolvers, categoryResolvers]);
+
 // Middleware
-const common = require(corePath + "/middleware/middleware_frontend.js");
+const common = require(`${corePath}/middleware/middleware_frontend.js`);
 
 // Routers
-const indexRouter = require(modulesPath + "/frontend/routes/index");
-const usersRouter = require(modulesPath + "/customer/routes/users");
-const apiRouter = require(modulesPath + "/rest/routes/api");
-const registerRouter = require(modulesPath + "/customer/routes/register");
-const adminRouter = require(modulesPath + "/admin/routes/admin");
-const productRouter = require(modulesPath + "/product/routes/product");
-const categoryRouter = require(modulesPath + "/category/routes/category");
-const quizRouter = require(modulesPath + "/quiz/routes/quiz");
+const indexRouter = require(path.join(modulesPath, 'frontend', 'routes', 'index'));
+const usersRouter = require(path.join(modulesPath, 'customer', 'routes', 'users'));
+const apiRouter = require(path.join(modulesPath, 'rest', 'routes', 'api'));
+const registerRouter = require(path.join(modulesPath, 'customer', 'routes', 'register'));
+const adminRouter = require(path.join(modulesPath, 'admin', 'routes', 'admin'));
+const productRouter = require(path.join(modulesPath, 'product', 'routes', 'product'));
+const categoryRouter = require(path.join(modulesPath, 'category', 'routes', 'category'));
+const quizRouter = require(path.join(modulesPath, 'quiz', 'routes', 'quiz'));
 
 // Configuration
 app.set("view engine", "ejs");
-app.set('views', modulesPath + '/');
+app.set('views', `${modulesPath}/`);
 app.use(express.static(path.join(__dirname, "public")));
 app.use(morgan("dev"));
 app.use(cookieParser());
@@ -55,13 +67,13 @@ app.use(session({
 }));
 
 // Passport Setup
-require(corePath + "/config/passport")(passport);
+require(`${corePath}/config/passport`)(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
 // Flash Messages
 app.use(flash());
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   res.locals.successMsg = req.flash("successMsg");
   res.locals.errorMsg = req.flash("errorMsg");
   res.locals.error = req.flash("error");
@@ -80,12 +92,12 @@ app.use("/admin/category", categoryRouter);
 app.use("/admin/quiz", quizRouter);
 
 // Error Handlers
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   res.status(404);
   res.render("frontend/views/404", { title: "404: File Not Found" });
 });
 
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
   res.status(err.status || 500);
@@ -93,15 +105,29 @@ app.use(function (err, req, res, next) {
 });
 
 // Middleware to log request protocol
-app.use("/admin", function (req, res, next) {
+app.use("/admin", (req, res, next) => {
   console.log("A request for things received at " + Date.now());
   next();
 });
 
-// Start Server
-const port = process.env.PORT || 5007;
-app.listen(port, () => {
-  console.log("The magic happens on port " + port);
-});
+// Start Apollo Server
+async function startApolloServer() {
+  const app = express();
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+  });
 
+  await server.start();
+  server.applyMiddleware({ app });
+
+  await new Promise(resolve => app.listen({ port: 4000 }, resolve));
+  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
+
+  return { server, app };
+}
+
+startApolloServer();
+
+// Export the Express app
 module.exports = app;
