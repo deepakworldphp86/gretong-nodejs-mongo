@@ -23,5 +23,14 @@ app.locals.layoutBackendPath = layoutBackendPath;
 app.locals.corePath = corePath;
 
 
+// Middleware to set the base URL in app.locals
+app.use((req, res, next) => {
+    if (!app.locals.baseUrl) {
+        app.locals.baseUrlBackend = `${req.protocol}://${req.get('host')}/admin`;
+    }
+    next();
+});
+
+
 // Export the Express app instance
 module.exports = app;

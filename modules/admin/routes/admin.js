@@ -5,7 +5,7 @@ const corePath = app.locals.corePath;
 const modulesPath = app.locals.modulesPath;
 const publicPath = app.locals.publicPath;
 const layoutBackendPath = app.locals.layoutBackendPath;
-
+const allowedLoggedInDuration = (process.env.ALLOWED_LOGGED_IN_DURATION || 1800) * 1000; // Default to 30 minutes
 const router = express.Router();
 const path = require("path");
 const multer = require("multer");
@@ -59,7 +59,7 @@ const loginPromise = new Promise(function (resolve, reject) {
 
 // Login view rendering
 router.get("/login", function (req, res, next) {
-  if (req.session.isAdminActive === undefined) {
+  if (req.session.isAdminActive === undefined || req.session.isAdminActive === false) {
     res.render("admin/views/login", { title: "Express" });
   } else {
     res.render("admin/views/dashboard", {
@@ -90,14 +90,14 @@ router.post("/login/post", function (req, res) {
           time: Date(),
           userId: user._id,
         };
-        var token = jwt.sign(data, jwtSecretKey, { expiresIn: "1800s" });
+        var token = jwt.sign(data, jwtSecretKey, { expiresIn: allowedLoggedInDuration });
 
         req.session.jwtToken = token;
 
         // Success Redirect
         res.redirect("/admin");
       } else {
-        var message = "Invalid login";
+        var message = "Invalid username or password";
         res.redirect(
           url.format({
             pathname: "/admin/login",
@@ -112,6 +112,8 @@ router.post("/login/post", function (req, res) {
 
 // Rendering to dashboard
 router.get("/", auth.isAuthorized, function (req, res, next) {
+  console.log('TOTAL DURATION',allowedLoggedInDuration);
+
   var message = "Dash Board Loaded";
   customEvents.emit("dashBoardLoaded", message);
   res.render("admin/views/dashboard", {
