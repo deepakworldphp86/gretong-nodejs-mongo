@@ -43,6 +43,12 @@ const productRouter = require(path.join(modulesPath, 'product', 'routes', 'produ
 const categoryRouter = require(path.join(modulesPath, 'category', 'routes', 'category'));
 const quizRouter = require(path.join(modulesPath, 'quiz', 'routes', 'quiz'));
 
+//REST API Routes
+const productRestApiRouter = require(path.join(modulesPath, 'product', 'routes','rest','api'));
+const categoryRestApiRouter = require(path.join(modulesPath, 'category', 'routes','rest','api'));
+
+
+
 // Configuration
 app.set("view engine", "ejs");
 app.set('views', `${modulesPath}/`);
@@ -90,6 +96,8 @@ app.use("/admin", adminRouter);
 app.use("/admin/product", productRouter);
 app.use("/admin/category", categoryRouter);
 app.use("/admin/quiz", quizRouter);
+app.use("/product/rest", productRestApiRouter);
+app.use("/category/rest", categoryRestApiRouter);
 
 // Error Handlers
 app.use((req, res, next) => {
