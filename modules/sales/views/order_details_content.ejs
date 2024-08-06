@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <!-- CSS for tables -->
+    <link rel="stylesheet" type="text/css" href="/admin/css/table-style.css" />
+</head>
+<body>
+    <div class="main-grid">
+        <div class="agile-grids">
+            <div class="bs-component mb40">
+               <div style="text-align: right;"><a onclick="window.history.back();" class="btn btn-lg btn-primary" >Back</a></div>
+              </div>            <!-- Order Details -->
+            <div style="text-align: center;"><h3>Order Details</h3></div>
+            <div class="order-details">
+                <h4>Product</h4>
+                <table id="table-product" class="two-axis">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% order.orderItems.forEach(item => { %>
+                            <tr>
+                                <td><%= item.name %></td>
+                                <td><%= item.qty %></td>
+                                <td>$<%= item.price.toFixed(2) %></td>
+                                <td>$<%= (item.qty * item.price).toFixed(2) %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+                
+                <!-- Top Row: Customer and Shipping Address -->
+                <div class="row" style="padding-bottom: 10px;">
+                    <div class="col-md-4">
+                        <h4>Customer</h4>
+                        <table id="table-customer" class="two-axis">
+                            <tbody>
+                                <tr>
+                                    <th>First Name:</th>
+                                    <td><%= order.customers.firstname %></td>
+                                </tr>
+                                <tr>
+                                    <th>Last Name:</th>
+                                    <td><%= order.customers.lastname %></td>
+                                </tr>
+                                <tr>
+                                    <th>Email:</th>
+                                    <td><%= order.customers.email %></td>
+                                </tr>
+                                <tr>
+                                    <th>Phone:</th>
+                                    <td><%= order.customers.phone %></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <h4>Shipping Address</h4>
+                        <table id="table-shipping" class="two-axis">
+                            <tbody>
+                                <tr>
+                                    <th>Address:</th>
+                                    <td><%= order.shippingAddress.address %></td>
+                                </tr>
+                                <tr>
+                                    <th>City:</th>
+                                    <td><%= order.shippingAddress.city %></td>
+                                </tr>
+                                <tr>
+                                    <th>Postal Code:</th>
+                                    <td><%= order.shippingAddress.postalCode %></td>
+                                </tr>
+                                <tr>
+                                    <th>Country:</th>
+                                    <td><%= order.shippingAddress.country %></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <h4>Billing Address</h4>
+                        <table id="table-billing" class="two-axis">
+                            <tbody>
+                                <tr>
+                                    <th>Address:</th>
+                                    <td><%= order.billingAddress.address %></td>
+                                </tr>
+                                <tr>
+                                    <th>City:</th>
+                                    <td><%= order.billingAddress.city %></td>
+                                </tr>
+                                <tr>
+                                    <th>Postal Code:</th>
+                                    <td><%= order.billingAddress.postalCode %></td>
+                                </tr>
+                                <tr>
+                                    <th>Country:</th>
+                                    <td><%= order.billingAddress.country %></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Bottom Row: Payment and Billing Address -->
+                <div class="row" style="padding-bottom: 10px;">
+                    <div class="col-md-4">
+                        <h4>Payment</h4>
+                        <table id="table-payment" class="two-axis">
+                            <tbody>
+                                <tr>
+                                    <th>Method:</th>
+                                    <td><%= order.paymentMethod %></td>
+                                </tr>
+                                <tr>
+                                    <th>Payment ID:</th>
+                                    <td><%= order.paymentResult.id %></td>
+                                </tr>
+                                <tr>
+                                    <th>Status:</th>
+                                    <td><%= order.paymentResult.status %></td>
+                                </tr>
+                                <tr>
+                                    <th>Update Time:</th>
+                                    <td><%= order.paymentResult.update_time %></td>
+                                </tr>
+                                <tr>
+                                    <th>Email Address:</th>
+                                    <td><%= order.paymentResult.email_address %></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="col-md-4">
+                        <h4>Order Status</h4>
+                        <table id="table-payment" class="two-axis">
+                            <tbody>
+                                <tr>
+                                    <th>Order Delivery Date:</th>
+                                    <td><%= order.deliveredAt %></td>
+                                </tr>
+                                <tr>
+                                    <th>Invoice Date:</th>
+                                    <td><%= order.invoice.date %></td>
+                                </tr>
+                                <tr>
+                                    <th>Order Status : </th>
+                                    <td>
+                                        <% if (order.deliveredAt) { %>
+                                            <span>Success</span>
+                                        <% } else { %>
+                                            <span>Not Delivered</span>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <th>Shipping Status:</th>
+                                    <td>
+                                        <% if (order.deliveredAt) { %>
+                                            <span>Shipped</span>
+                                        <% } else { %>
+                                            <span>Not Shipped</span>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <h4>Order Return  Status</h4>
+                        <table id="table-payment" class="two-axis">
+                            <tbody>
+                                <tr>
+                                    <th>Order Return Date:</th>
+                                    <td><%= order.returnDetails.returnDate %></td>
+                                </tr>
+                                <tr>
+                                    <th>Return Reason:</th>
+                                    <td><%= order.returnDetails.returnReason %></td>
+                                </tr>
+                                <tr>
+                                    <th>Return Status : </th>
+                                    <td>
+                                        <% if (order.returnDetails.returnStatus) { %>
+                                            <span>Returned</span>
+                                        <% } else { %>
+                                            <span>Not Return</span>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <th>Return Amount:</th>
+                                    <td>
+                                        <%= order.returnDetails.returnAmount %>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                
+                <!-- Buttons -->
+                <div class="row" style="padding-bottom: 10px; display: flex; justify-content: center;">
+                    <button type="button" class="btn btn-lg btn-primary">Invoice</button>
+                    <button type="button" class="btn btn-lg btn-primary" style="margin-left: 10px;">Shipped</button>
+                    <button type="button" class="btn btn-lg btn-primary" style="margin-left: 10px;">Cancel</button>
+                    <button type="button" class="btn btn-lg btn-primary" style="margin-left: 10px;">Return</button>
+                </div>
+            </div>
+            <!-- End Order Details -->
+        </div>
+    </div>
+</body>
+</html>

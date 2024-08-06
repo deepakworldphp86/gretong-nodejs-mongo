@@ -1,7 +1,7 @@
 module.exports = {
     arrayCategory: function () {
         var arrays = [
-            //{key: 'sales', value: 'Sales'},
+            {key: 'sales', value: 'Sales'},
             { key: 'catalog', value: 'Catalog' },
             //{key: 'customers', value: 'Customers'},
             //{key: 'marketing', value: 'Marketing'},
@@ -17,7 +17,7 @@ module.exports = {
     logoArray: function () {
         var arrays = [
             'fa fa-cogs',
-            // 'fa fa-check-square-o nav_icon',
+            'fa fa-check-square-o nav_icon',
             // 'fa fa-file-text-o nav_icon',
             // 'fa fa-bar-chart nav_icon',
             // 'icon-font nav-icon',
@@ -33,7 +33,7 @@ module.exports = {
     adminMenus: function () {
 
         var arrays = [
-            // {'sales': {orders: 'orders/list', invoices: 'invoices/list', shipments: 'shipments/list'}},
+             {'sales': {orders: 'orders/list/1'}},
             { 'catalog': { product: 'product/list/1', category: 'category/list/0/1' } },
             // {'customers': {allcustomer: 'customer/list', nowonline: 'customer/online'}},
             // {'marketing': {catalogrule: 'promotion/catalog', cartrule: 'promotion/cart'}},

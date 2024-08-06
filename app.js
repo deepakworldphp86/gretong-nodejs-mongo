@@ -42,10 +42,12 @@ const adminRouter = require(path.join(modulesPath, 'admin', 'routes', 'admin'));
 const productRouter = require(path.join(modulesPath, 'product', 'routes', 'product'));
 const categoryRouter = require(path.join(modulesPath, 'category', 'routes', 'category'));
 const quizRouter = require(path.join(modulesPath, 'quiz', 'routes', 'quiz'));
+const salesRouter = require(path.join(modulesPath, 'sales', 'routes', 'orders'));
 
 //REST API Routes
 const productRestApiRouter = require(path.join(modulesPath, 'product', 'routes','rest','api'));
 const categoryRestApiRouter = require(path.join(modulesPath, 'category', 'routes','rest','api'));
+const salesRestApiRouter = require(path.join(modulesPath, 'sales', 'routes','rest','api'));
 
 
 
@@ -98,6 +100,8 @@ app.use("/admin/category", categoryRouter);
 app.use("/admin/quiz", quizRouter);
 app.use("/product/rest", productRestApiRouter);
 app.use("/category/rest", categoryRestApiRouter);
+app.use("/admin/orders", salesRouter);
+app.use("/orders/rest", salesRestApiRouter);
 
 // Error Handlers
 app.use((req, res, next) => {
