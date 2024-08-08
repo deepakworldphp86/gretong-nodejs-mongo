@@ -42,6 +42,7 @@
     "passport-local": "^1.0.0",
     "passport-twitter": "^1.0.4",
     "request": "^2.88.0",
-    "sharp": "^0.30.5"
+    "sharp": "^0.30.5",
+    "zod": "^3.23.8"
   }
 }

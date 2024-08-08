@@ -57,6 +57,7 @@ router.post("/register", function (req, res, next) {
 });
 // Login Process
 router.post("/login", function (req, res, next) {
+
   passport.authenticate("local", {
     successRedirect: "/",
     failureRedirect: "/register",
