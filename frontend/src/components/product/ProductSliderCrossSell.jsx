@@ -2,6 +2,7 @@ import React from 'react';
 import { Carousel } from 'react-bootstrap';
 import { useQuery } from '@apollo/client';
 import { BEST_SELLER_PRODUCTS } from '../../services/graphql/query/product';
+import { Link } from 'react-router-dom';
 
 // Function to chunk the array into smaller arrays
 const chunkArray = (array, size) => {
@@ -41,11 +42,13 @@ const ProductSlider = () => {
             <div className="d-flex justify-content-between">
               {slide.map(product => (
                 <div className="product-item" key={product.id}>
-                  <img
-                    className="d-block w-100"
-                    src={product.productGalleryImage || 'https://via.placeholder.com/200x200?text=No+Image'} // Fallback image
-                    alt={product.name}
-                  />
+                  <Link to={`/products/${product.id}`}>
+                    <img
+                      className="d-block w-100"
+                      src={product.productGalleryImage || 'https://via.placeholder.com/200x200?text=No+Image'} // Fallback image
+                      alt={product.name}
+                    />
+                  </Link>
                   <div className="product-info">
                     <h5>{product.name}</h5>
                     <p className="price">${product.price.toFixed(2)}</p>

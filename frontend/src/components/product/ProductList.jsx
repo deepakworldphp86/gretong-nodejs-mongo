@@ -5,8 +5,8 @@ import { useParams } from 'react-router-dom';
 
 import Filter from '../product/ProductListFilter';
 import Search from '../product/ProductListSearch';
-import Sorting from '../product/SortingComponent';
-import Pagination from '../product/PaginationComponent';
+import Sorting from '../product//ProductListSorting';
+import Pagination from '../product/ProductListPagination';
 
 const GET_PRODUCTS = gql`
   query GetProducts($sort: String, $filter: FilterInput, $page: Int, $limit: Int, $search: String) {
