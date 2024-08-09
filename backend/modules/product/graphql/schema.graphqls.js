@@ -1,13 +1,11 @@
-// graphql/schema.js
 const { gql } = require('apollo-server-express');
 
-// Define the GraphQL schema
 const typeDefs = gql`
   type Review {
     name: String!
     rating: Int!
     comment: String!
-    user: String! # Assuming this is an ObjectId, replace with appropriate type if needed
+    user: String! 
     createdAt: String
     updatedAt: String
   }
@@ -37,8 +35,22 @@ const typeDefs = gql`
     crossSell: String
   }
 
-  type Query {
+  type ProductPage {
     products: [Product]
+    totalCount: Int
+    totalPages: Int
+    currentPage: Int
+  }
+
+  input FilterInput {
+    bestSeller: Boolean
+    crossSell: Boolean
+    newProduct: Boolean
+    category: String
+  }
+
+  type Query {
+    products(sort: String, filter: FilterInput, page: Int, limit: Int, search: String): ProductPage
     product(id: String!): Product
     bestSellerProducts: [Product]
   }
@@ -95,7 +107,7 @@ const typeDefs = gql`
     name: String!
     rating: Int!
     comment: String!
-    user: String! # Assuming this is an ObjectId, replace with appropriate type if needed
+    user: String!
   }
 `;
 

@@ -4,7 +4,6 @@ import { useQuery } from '@apollo/client';
 import { GET_CATEGORIES } from '../../services/graphql/query/categories';
 import { Link, useNavigate } from 'react-router-dom';
 
-// Function to build menu items from category data
 const buildMenu = (categories) => {
   const map = new Map();
   const roots = [];
@@ -29,12 +28,11 @@ const buildMenu = (categories) => {
 
 const Navigation = () => {
   const { loading, error, data } = useQuery(GET_CATEGORIES, {
-    variables: { limit: 100, skip: 0 }, // Adjust limit and skip as needed
+    variables: { limit: 100, skip: 0 },
   });
   
   const navigate = useNavigate();
   
-  // Check if user is authenticated
   const isAuthenticated = Boolean(localStorage.getItem('token'));
 
   const handleLogout = () => {
@@ -60,15 +58,15 @@ const Navigation = () => {
                 id={`dropdown-${item.id}`}
                 key={item.id}
               >
-                {item.children.length > 0 && item.children.map((subItem) => (
-                  <NavDropdown.Item as={Link} to={`/${subItem.id}`} key={subItem.id}>
+                {item.children.map((subItem) => (
+                  <NavDropdown.Item as={Link} to={`/products/${subItem.id}`} key={subItem.id}>
                     {subItem.name}
                   </NavDropdown.Item>
                 ))}
               </NavDropdown>
             ))}
           </Nav>
-          <Nav className="ms-auto"> {/* Align to the right */}
+          <Nav className="ms-auto">
             {!isAuthenticated ? (
               <>
                 <Nav.Link as={Link} to="/login">
