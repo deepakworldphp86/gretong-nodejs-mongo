@@ -6,6 +6,7 @@ import RegisterScreen from './screens/RegisterScreen'; // Adjust import path as 
 import LoginScreen from './screens/LoginScreen'; // Adjust import path as needed
 import CustomerProfileScreen from './screens/CustomerProfileScreen';
 import ProductListScreen from './screens/ProductListScreen';
+import ProductScreen from './screens/ProductScreen';
 
 //import CartScreen from './screens/CartScreen'; // Adjust import path as needed
 //import NotFoundScreen from './screens/NotFoundScreen'; // Adjust import path as needed
@@ -19,9 +20,10 @@ const App = () => {
           <Route path="/register" element={<RegisterScreen />} />
           <Route path="/login" element={<LoginScreen />} />
           <Route path="/customer/auth/profile" element={<CustomerProfileScreen />} />
-          <Route path="/products/:categoryId"  element={<ProductListScreen />} />
+          <Route path="/category/:categoryId"  element={<ProductListScreen />} />
+          <Route path="/products/:id" element={<ProductScreen />} />
 
-          ProductListScreen
+          
 
           {/* <Route path="/cart" element={<CartScreen />} /> */}
           {/* <Route path="*" element={<NotFoundScreen />} /> */}

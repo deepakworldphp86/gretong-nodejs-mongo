@@ -1,28 +1,41 @@
+// src/components/Pagination.js
 import React from 'react';
-import Pagination from 'react-bootstrap/Pagination';
+import { Pagination as BootstrapPagination } from 'react-bootstrap';
 
-const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
-  const items = [];
-
-  for (let number = 1; number <= totalPages; number++) {
-    items.push(
-      <Pagination.Item
-        key={number}
-        active={number === currentPage}
-        onClick={() => onPageChange(number)}
-      >
-        {number}
-      </Pagination.Item>
-    );
-  }
+const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+  const handlePageClick = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      onPageChange(page);
+    }
+  };
 
   return (
-    <Pagination>
-      <Pagination.Prev onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1} />
-      {items}
-      <Pagination.Next onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages} />
-    </Pagination>
+    <div className="pagination-wrapper">
+      <BootstrapPagination className="pagination-custom">
+        <BootstrapPagination.Prev
+          onClick={() => handlePageClick(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </BootstrapPagination.Prev>
+        {Array.from({ length: totalPages }, (_, index) => (
+          <BootstrapPagination.Item
+            key={index + 1}
+            active={index + 1 === currentPage}
+            onClick={() => handlePageClick(index + 1)}
+          >
+            {index + 1}
+          </BootstrapPagination.Item>
+        ))}
+        <BootstrapPagination.Next
+          onClick={() => handlePageClick(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </BootstrapPagination.Next>
+      </BootstrapPagination>
+    </div>
   );
 };
 
-export default PaginationComponent;
+export default Pagination;

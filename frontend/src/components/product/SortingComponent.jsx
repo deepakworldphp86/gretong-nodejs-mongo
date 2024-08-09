@@ -1,23 +1,19 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
 
-const SortingComponent = ({ onSortChange }) => {
-  const handleChange = (e) => {
-    onSortChange(e.target.value);
-  };
-
+const Sorting = ({ sort, onSortChange }) => {
   return (
-    <Form>
-      <Form.Group controlId="sort">
+    <div className="sorting-container">
+      <Form.Group controlId="sortSelect" className="sorting-group">
         <Form.Label>Sort By</Form.Label>
-        <Form.Control as="select" onChange={handleChange}>
-          <option value="price">Price</option>
-          <option value="createdDate">Creation Date</option>
-          <option value="name">Name</option>
+        <Form.Control as="select" onChange={onSortChange} value={sort} className="sorting-select">
+          <option value="name">Name <i className="fas fa-sort fa-sm"></i></option>
+          <option value="price">Price <i className="fas fa-sort fa-sm"></i></option>
+          <option value="date">Date <i className="fas fa-sort fa-sm"></i></option>
         </Form.Control>
       </Form.Group>
-    </Form>
+    </div>
   );
 };
 
-export default SortingComponent;
+export default Sorting;

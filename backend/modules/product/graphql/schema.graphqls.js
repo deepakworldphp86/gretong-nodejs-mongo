@@ -29,7 +29,7 @@ const typeDefs = gql`
     productGalleryImage: String
     syncError: String
     magentoSyncStatus: String
-    categories: [String]
+    categories: [String]  # Array of category IDs
     bestSeller: String
     newProduct: String
     crossSell: String
@@ -46,7 +46,7 @@ const typeDefs = gql`
     bestSeller: Boolean
     crossSell: Boolean
     newProduct: Boolean
-    category: String
+    categoryIds: [String]  # Array of category IDs
   }
 
   type Query {
@@ -73,7 +73,7 @@ const typeDefs = gql`
       productGalleryImage: String
       syncError: String
       magentoSyncStatus: String
-      categories: [String]
+      categories: [String]  # Array of category IDs
       bestSeller: String
       newProduct: String
       crossSell: String
@@ -95,7 +95,7 @@ const typeDefs = gql`
       productGalleryImage: String
       syncError: String
       magentoSyncStatus: String
-      categories: [String]
+      categories: [String]  # Array of category IDs
       bestSeller: String
       newProduct: String
       crossSell: String

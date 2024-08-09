@@ -1,4 +1,3 @@
-// src/graphql/resolvers.js
 const { productModel } = require("../models/product.model.js");
 const express = require("express");
 
@@ -24,7 +23,9 @@ const resolvers = {
           if (filter.bestSeller) query.bestSeller = '1';
           if (filter.crossSell) query.crossSell = '1';
           if (filter.newProduct) query.newProduct = '1';
-          if (filter.category) query.categories = filter.category;
+          if (filter.categoryIds && filter.categoryIds.length > 0) {
+            query.categories = { $in: filter.categoryIds };
+          }
         }
 
         const options = {

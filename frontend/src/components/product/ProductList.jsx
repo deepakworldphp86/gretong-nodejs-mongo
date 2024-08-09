@@ -1,8 +1,7 @@
-// src/pages/ProductListPage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import Filter from '../product/ProductListFilter';
 import Search from '../product/ProductListSearch';
@@ -27,12 +26,21 @@ const GET_PRODUCTS = gql`
   }
 `;
 
-const ProductListPage = () => {
+const ProductListScreen = () => {
+  const { categoryId } = useParams(); // Extract categoryId from URL
   const [sort, setSort] = useState('name');
-  const [filter, setFilter] = useState({});
+  const [filter, setFilter] = useState({ categoryIds: [] });
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const limit = 8;
+
+  // Update filter to include categoryId when component mounts or categoryId changes
+  useEffect(() => {
+    setFilter(prevFilter => ({
+      ...prevFilter,
+      categoryIds: categoryId ? [categoryId] : []
+    }));
+  }, [categoryId]);
 
   const { data, loading, error } = useQuery(GET_PRODUCTS, {
     variables: { sort, filter, page, limit, search }
@@ -81,9 +89,7 @@ const ProductListPage = () => {
                       <strong>${product.price}</strong> <br />
                       Rating: {product.rating} ({product.numReviews} reviews)
                     </Card.Text>
-                    <Link to={`/products/${product.id}`}>
-                      <Button variant="primary">View Product</Button>
-                    </Link>
+                    <Button variant="primary" as="a" href={`/products/${product.id}`}>View Product</Button>
                   </Card.Body>
                 </Card>
               </Col>
@@ -96,4 +102,4 @@ const ProductListPage = () => {
   );
 };
 
-export default ProductListPage;
+export default ProductListScreen;

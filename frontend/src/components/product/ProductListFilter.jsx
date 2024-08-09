@@ -36,13 +36,6 @@ const ProductListFilter = ({ filter, onFilterChange }) => {
           checked={filter.newProduct || false}
           onChange={handleFilterChange}
         />
-        <Form.Group controlId="categoryFilter">
-          <Form.Label>Category</Form.Label>
-          <Form.Control as="select" onChange={(e) => onFilterChange(prevFilter => ({ ...prevFilter, category: e.target.value }))}>
-            <option value="">Select Category</option>
-            {/* Add options here */}
-          </Form.Control>
-        </Form.Group>
       </Form>
     </div>
   );

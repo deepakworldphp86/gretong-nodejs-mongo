@@ -1,5 +1,5 @@
-import React from 'react';
-import { Navbar, Nav, NavDropdown, Container } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Navbar, Nav, NavDropdown, Container, Form, FormControl, Button } from 'react-bootstrap';
 import { useQuery } from '@apollo/client';
 import { GET_CATEGORIES } from '../../services/graphql/query/categories';
 import { Link, useNavigate } from 'react-router-dom';
@@ -32,12 +32,24 @@ const Navigation = () => {
   });
   
   const navigate = useNavigate();
+  const [search, setSearch] = useState('');
   
   const isAuthenticated = Boolean(localStorage.getItem('token'));
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/login');
+  };
+
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (search.trim()) {
+      navigate(`/search?query=${encodeURIComponent(search)}`);
+    }
   };
 
   if (loading) return <p>Loading...</p>;
@@ -53,19 +65,36 @@ const Navigation = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             {menuItems.map((item) => (
-              <NavDropdown
-                title={item.name}
-                id={`dropdown-${item.id}`}
-                key={item.id}
-              >
-                {item.children.map((subItem) => (
-                  <NavDropdown.Item as={Link} to={`/products/${subItem.id}`} key={subItem.id}>
-                    {subItem.name}
-                  </NavDropdown.Item>
-                ))}
-              </NavDropdown>
+              item.children.length > 0 ? (
+                <NavDropdown
+                  title={item.name}
+                  id={`dropdown-${item.id}`}
+                  key={item.id}
+                >
+                  {item.children.map((subItem) => (
+                    <NavDropdown.Item as={Link} to={`/category/${subItem.id}`} key={subItem.id}>
+                      {subItem.name}
+                    </NavDropdown.Item>
+                  ))}
+                </NavDropdown>
+              ) : (
+                <Nav.Link as={Link} to={`/category/${item.id}`} key={item.id}>
+                  {item.name}
+                </Nav.Link>
+              )
             ))}
           </Nav>
+          <Form className="d-flex ms-auto" onSubmit={handleSearchSubmit}>
+            <FormControl
+              type="search"
+              placeholder="Search"
+              className="me-2"
+              aria-label="Search"
+              value={search}
+              onChange={handleSearchChange}
+            />
+            <Button type="submit" variant="outline-success">Search</Button>
+          </Form>
           <Nav className="ms-auto">
             {!isAuthenticated ? (
               <>

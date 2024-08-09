@@ -480,3 +480,114 @@ label.radio input:checked + span {
   color: lightgray; /* Color for empty stars */
 }
 
+/* src/pages/ProductPage.css */
+.product-info {
+  margin-left: 20px; /* Adjust the margin as needed */
+}
+
+.star-rating {
+  font-size: 1.5rem;
+  color: #f39c12; /* Gold color for stars */
+}
+
+.star {
+  display: inline-block;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.star.filled {
+  color: #f39c12;
+}
+
+.star:not(.filled) {
+  color: #ccc;
+}
+
+.star-rating .star:hover,
+.star-rating .star.filled:hover {
+  color: #f1c40f;
+}
+
+
+/* Sorting.css */
+/* Sorting.css */
+.sorting-container {
+  display: flex;
+  justify-content: flex-end; /* Align the container to the right */
+  width: 100%; /* Ensure the container takes full width */
+}
+
+.sorting-group {
+  width: 15%; /* Set width of the container */
+  text-align: left; /* Align label text to the left */
+  padding-bottom: 10px; /* Add bottom padding */
+}
+
+.sorting-select {
+  width: 100%; /* Make the select element fill the container */
+}
+
+.fas.fa-sort {
+  font-size: 0.8rem; /* Adjust the icon size as needed */
+  margin-left: 0.5rem; /* Add spacing between text and icon */
+}
+
+
+
+/* src/components/Pagination.css */
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.pagination-custom {
+  display: flex;
+  gap: 5px; /* Adjust the spacing between items as needed */
+  width: 50%; /* Make the pagination container wider */
+}
+
+.pagination-custom .page-item {
+  margin: 0;
+}
+
+.pagination-custom .page-item.disabled .page-link {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.pagination-custom .page-item.active .page-link {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.pagination-custom .page-link {
+  display: block;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  line-height: 1.25;
+  text-decoration: none;
+  color: #007bff;
+}
+
+.pagination-custom .page-link:hover {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+.pagination-custom .page-link:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
+}
+
+.pagination-custom .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
