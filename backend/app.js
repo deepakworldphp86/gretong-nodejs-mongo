@@ -36,7 +36,7 @@ const resolvers = mergeResolvers([productResolvers, categoryResolvers, customerR
 
 // Routers
 const frontendRoutes = require(path.join(modulesPath, 'frontend', 'routes', 'frontendRoutes'));
-const customerFrontendRouter = require(path.join(modulesPath, 'customer', 'routes', 'customerFrontendRoutes'));
+const customerFrontRouter = require(path.join(modulesPath, 'customer', 'routes', 'customerFrontRoutes'));
 const adminRouter = require(path.join(modulesPath, 'admin', 'routes', 'adminRoutes'));
 const productAdminRouter = require(path.join(modulesPath, 'product', 'routes', 'productAdminRoutes'));
 const categoryAdminRouter = require(path.join(modulesPath, 'category', 'routes', 'categoryAdminRoutes'));
@@ -100,7 +100,7 @@ app.use("/admin/orders", salesAdminRouter);
 
 // Routes Front
 app.use("/", frontendRoutes);
-app.use("/customer", customerFrontendRouter);
+app.use("/customer", customerFrontRouter);
 
 //Rest Api Routes
 app.use("/category/rest", categoryRestApiRouter);

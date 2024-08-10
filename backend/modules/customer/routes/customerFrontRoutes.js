@@ -1,7 +1,7 @@
 // routes/customerRoutes.js
 const express = require("express");
 const router = express.Router();
-const customerController = require("../controllers/customerController");
+const customerController = require("../controllers/customerFrontController");
 
 // GET home page
 router.get("/", customerController.getHomePage);
