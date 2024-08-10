@@ -1,4 +1,4 @@
-const configArr = require('./config-array');
+const configArr = require('./adminMenuConfig');
 
 module.exports = {
     getMenuHtml: function () {

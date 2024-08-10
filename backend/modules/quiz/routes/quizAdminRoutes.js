@@ -1,5 +1,5 @@
 const express = require("express");
-var app = require('../../../app_config.js');
+var app = require('../../../appConfig.js');
 const corePath = app.locals.corePath;
 const modulesPath = app.locals.modulesPath;
 const publicPath = app.locals.publicPath;
@@ -12,16 +12,16 @@ const router = express.Router();
 const path = require("path");
 const url = require("url");
 const session = require("express-session");
-const mBackend = require(corePath+"/middleware/middleware_backend");
-const config = require(corePath+"/utility//config-array");
-const html = require(corePath+"/utility//backend-menu-html");
-const paginate = require(corePath+"/utility//pagination");
-const Response = require(corePath+"/utility//response");
-const customEvents = require(corePath+"/utility//custom-events");
-const dynamicForm = require(corePath+"/utility//dynamic-form");
+const mBackend = require(corePath+"/middlewares/middlewareAdmin");
+const config = require(corePath+"/utility//adminMenuConfig");
+const html = require(corePath+"/utility//adminMenuHtml");
+const paginate = require(corePath+"/utility//adminPaginationHelper");
+const Response = require(corePath+"/utility//messageHelper");
+const adminCustomEvents = require(corePath+"/utility//adminCustomEvents");
+const dynamicForm = require(corePath+"/utility//adminFormHelper");
 const { formArray } = require("../models/quiz.form.js");
 
-const { getValidate } = require(corePath+"/utility/validation");
+const { getValidate } = require(corePath+"/utility/validationHelper");
 var dateTime = require("node-datetime");
 
 const async = require("async");
@@ -80,7 +80,7 @@ router.get(
     var pageUrl = "/admin/quiz/list/";
     QuizModel.find().skip(perPage * currentPage - perPage).limit(perPage)
       .exec(function (err, quizCollection) {
-        customEvents.emit("quizLoaded", quizCollection);
+        adminCustomEvents.emit("quizLoaded", quizCollection);
         paginate.getPaginate(QuizModel, req, pageUrl, perPage, currentPage)
           .then((pagaintion) => {
             if (err) return next(err);
@@ -293,17 +293,17 @@ router.get("/delete", function (req, res) {
   objectCat._id = id.trim();
 
   QuizModel.countDocuments({ parent_category: id.trim() }).then((count) => {
-    customEvents.emit(
+    adminCustomEvents.emit(
       "categoryDeleteBefore",
       "Count of child categorys" + count
     );
     if (count === 0) {
       QuizModel.findOneAndRemove(objectCat, function (err) {
         if (err) {
-          customEvents.emit("categoryDeleteFailed", err);
+          adminCustomEvents.emit("categoryDeleteFailed", err);
           res.redirect("/admin/category/list?id=" + parent_id);
         } else {
-          customEvents.emit("categoryDeleted", "Category Has been Deleted");
+          adminCustomEvents.emit("categoryDeleted", "Category Has been Deleted");
           req.flash("successMsg", "You successfully deleted this category.");
           res.redirect("/admin/category/list?id=" + parent_id);
         }
@@ -312,7 +312,7 @@ router.get("/delete", function (req, res) {
       let errors = [];
 
       errors.push({ msg: "Please delete child category first." });
-      customEvents.emit("categoryDeleteFailed", errors);
+      adminCustomEvents.emit("categoryDeleteFailed", errors);
       req.flash("errorMsg", errors);
       res.redirect("/admin/category/list?id=" + parent_id);
     }

@@ -1,12 +1,12 @@
 //Modules
 const express = require("express");
-var app = require('../../../app_config.js');
+var app = require('../../../appConfig.js');
 const corePath = app.locals.corePath;
 
 const jwt = require("jsonwebtoken");
 const _mongodb = require(corePath+"/config/database.js");
-const customEvents = require(corePath+"/utility/custom-events");
-const auth = require(corePath+"/middleware/auth_api.js");
+const adminCustomEvents = require(corePath+"/utility/adminCustomEvents");
+const auth = require(corePath+"/auth/jwtAuthAdmin.js");
 var router = express.Router();
 
 //Temp
@@ -20,7 +20,7 @@ router.post("/token", (req, res, next) => {
     db.collection("admin").findOne(query, function (err, user) {
       if (user !== null) {
         var message = "Successfully login";
-        customEvents.emit("login", message, user.username);
+        adminCustomEvents.emit("login", message, user.username);
         // Then generate JWT Token
 
         let jwtSecretKey = process.env.JWT_SECRET_KEY || responseSecret.JWT_SECRET_KEY;
@@ -33,7 +33,7 @@ router.post("/token", (req, res, next) => {
         var tokenResponse = { token: token };
         res.status(200).send(tokenResponse);
       } else {
-        customEvents.emit("login", message, Username);
+        adminCustomEvents.emit("login", message, Username);
         var response = { message: "Invalid login" };
         res.status(401).send(response);
       }

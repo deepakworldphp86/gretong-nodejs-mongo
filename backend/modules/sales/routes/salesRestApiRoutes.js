@@ -7,9 +7,9 @@ const {
   updateOrder,
   deleteOrder,
   returnOrder
-} = require('../../controllers/orderController');
+} = require('../controllers/orderController');
 
-const { validateOrder } = require('../../middlewares/orderValidation');
+const { validateOrder } = require('../middlewares/orderValidation');
 
 
 // Routes

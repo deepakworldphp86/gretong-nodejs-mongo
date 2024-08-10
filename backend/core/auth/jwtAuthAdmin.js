@@ -1,12 +1,12 @@
 const express = require("express");
-var app = require('../../app_config');
+var app = require('../../appConfig');
 const corePath = app.locals.corePath;
 //Modules
 /*****************JWT TOEKN CONFIG *****************/
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
-const secretKey = require(corePath+"/config/secretKeyGenerator.js");
-const config = require(corePath+"/config/config.js");
+const secretKey = require(corePath+"/utility/secretKeyGeneratorHelper.js");
+const globalConfig = require(corePath+"/config/globalConfig.js");
 
 dotenv.config();
 
@@ -43,7 +43,7 @@ module.exports = {
       var JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || secretKey.getToken();
       responseSecret.JWT_SECRET_KEY = JWT_SECRET_KEY;
     } else {
-      responseSecret.JWT_SECRET_KEY = config.JWT_SECRET_KEY;
+      responseSecret.JWT_SECRET_KEY = globalConfig.JWT_SECRET_KEY;
     }
 
     return responseSecret;

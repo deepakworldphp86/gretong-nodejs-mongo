@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const Customer = require('../models/customer.model'); // Adjust the path as needed
+const Customer = require('../models/customerModel'); // Adjust the path as needed
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret'; // Use environment variable for the secret
 

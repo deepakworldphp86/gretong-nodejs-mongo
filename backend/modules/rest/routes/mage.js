@@ -63,7 +63,7 @@ app.post("/token", (req, res, next) => {
       //console.log(user);
       if (user !== null) {
         var message = "Successfully login";
-        customEvents.emit("login", message, user.username);
+        adminCustomEvents.emit("login", message, user.username);
         // Then generate JWT Token
         let jwtSecretKey = process.env.JWT_SECRET_KEY;
         let data = {
@@ -74,7 +74,7 @@ app.post("/token", (req, res, next) => {
         res.status(200).send(token);
       } else {
         var message = "Invalid login";
-        customEvents.emit("login", message, Username);
+        adminCustomEvents.emit("login", message, Username);
 		res.status(401).send(err);
       }
     });

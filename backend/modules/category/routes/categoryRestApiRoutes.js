@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { categoriesModel,schema } = require('../../models/category.model'); // Import the category model
+const { categoriesModel,schema } = require('../models/category.model'); // Import the category model
 
 // Create a new category
 router.post('/', async (req, res) => {

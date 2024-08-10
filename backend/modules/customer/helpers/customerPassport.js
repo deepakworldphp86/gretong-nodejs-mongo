@@ -1,11 +1,12 @@
 const express = require("express");
-const app = require('../../app_config.js');
+const app = require('../../../appConfig.js');
 // Paths
 const modulesPath = app.locals.modulesPath;
+const corePath = app.locals.corePath;
 
 const LocalStrategy = require('passport-local').Strategy;
-const User = require(modulesPath+"/customer/models/customer.model");
-const config = require('./database.js');
+const User = require(modulesPath+"/customer/models/customerModel");
+const config = require(corePath+'/config/database.js');
 const bcrypt = require('bcryptjs');
 
 module.exports = function(passport){

@@ -16,40 +16,38 @@ const { ApolloServer } = require('apollo-server-express');
 const { mergeTypeDefs, mergeResolvers } = require('@graphql-tools/merge');
 
 // Application Configuration
-const app = require('./app_config.js');
+const app = require('./appConfig.js');
 const modulesPath = app.locals.modulesPath;
 const corePath = app.locals.corePath;
 
 // GraphQL Schema and Resolvers
-const productTypeDefs = require(path.join(modulesPath, 'product', 'graphql', 'schema.graphqls'));
-const productResolvers = require(path.join(modulesPath, 'product', 'graphql', 'resolver.graphql'));
-const categoryTypeDefs = require(path.join(modulesPath, 'category', 'graphql', 'schema.graphqls'));
-const categoryResolvers = require(path.join(modulesPath, 'category', 'graphql', 'resolver.graphql'));
-const customerTypeDefs = require(path.join(modulesPath, 'customer', 'graphql', 'schema.graphqls'));
-const customerResolvers = require(path.join(modulesPath, 'customer', 'graphql', 'resolver.graphql'));
+const productTypeDefs = require(path.join(modulesPath, 'product', 'graphql', 'schemaGraphqls'));
+const productResolvers = require(path.join(modulesPath, 'product', 'graphql', 'resolverGraphql'));
+const categoryTypeDefs = require(path.join(modulesPath, 'category', 'graphql', 'schemaGraphqls'));
+const categoryResolvers = require(path.join(modulesPath, 'category', 'graphql', 'resolverGraphql'));
+const customerTypeDefs = require(path.join(modulesPath, 'customer', 'graphql', 'schemaGraphqls'));
+const customerResolvers = require(path.join(modulesPath, 'customer', 'graphql', 'resolverGraphql'));
 
 // Merge typeDefs and resolvers
 const typeDefs = mergeTypeDefs([productTypeDefs, categoryTypeDefs, customerTypeDefs]);
 const resolvers = mergeResolvers([productResolvers, categoryResolvers, customerResolvers]);
 
-// Middleware
-const common = require(`${corePath}/middleware/middleware_frontend.js`);
+
 
 // Routers
-const indexRouter = require(path.join(modulesPath, 'frontend', 'routes', 'index'));
-const usersRouter = require(path.join(modulesPath, 'customer', 'routes', 'users'));
-const apiRouter = require(path.join(modulesPath, 'rest', 'routes', 'api'));
-const registerRouter = require(path.join(modulesPath, 'customer', 'routes', 'register'));
-const adminRouter = require(path.join(modulesPath, 'admin', 'routes', 'admin'));
-const productRouter = require(path.join(modulesPath, 'product', 'routes', 'product'));
-const categoryRouter = require(path.join(modulesPath, 'category', 'routes', 'category'));
-const quizRouter = require(path.join(modulesPath, 'quiz', 'routes', 'quiz'));
-const salesRouter = require(path.join(modulesPath, 'sales', 'routes', 'orders'));
+const frontendRoutes = require(path.join(modulesPath, 'frontend', 'routes', 'frontendRoutes'));
+const customerFrontendRouter = require(path.join(modulesPath, 'customer', 'routes', 'customerFrontendRoutes'));
+const adminRouter = require(path.join(modulesPath, 'admin', 'routes', 'adminRoutes'));
+const productAdminRouter = require(path.join(modulesPath, 'product', 'routes', 'productAdminRoutes'));
+const categoryAdminRouter = require(path.join(modulesPath, 'category', 'routes', 'categoryAdminRoutes'));
+const quizAdminRouter = require(path.join(modulesPath, 'quiz', 'routes', 'quizAdminRoutes'));
+const salesAdminRouter = require(path.join(modulesPath, 'sales', 'routes', 'ordersAdminRoutes'));
 
 //REST API Routes
-const productRestApiRouter = require(path.join(modulesPath, 'product', 'routes', 'rest', 'api'));
-const categoryRestApiRouter = require(path.join(modulesPath, 'category', 'routes', 'rest', 'api'));
-const salesRestApiRouter = require(path.join(modulesPath, 'sales', 'routes', 'rest', 'api'));
+const apiRouter = require(path.join(modulesPath, 'rest', 'routes', 'api'));
+const productRestApiRouter = require(path.join(modulesPath, 'product', 'routes', 'productRestApiRoutes'));
+const categoryRestApiRouter = require(path.join(modulesPath, 'category', 'routes', 'categoryRestApiRoutes'));
+const salesRestApiRouter = require(path.join(modulesPath, 'sales', 'routes', 'salesRestApiRoutes'));
 
 
 
@@ -77,7 +75,7 @@ app.use(session({
 }));
 
 // Passport Setup
-require(`${corePath}/config/passport`)(passport);
+require(`${modulesPath}/customer/helpers/customerPassport`)(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -91,19 +89,26 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
-app.use("/rest/api", apiRouter);
-app.use("/register", registerRouter);
+
+
+// Routes Admin
 app.use("/admin", adminRouter);
-app.use("/admin/product", productRouter);
-app.use("/admin/category", categoryRouter);
-app.use("/admin/quiz", quizRouter);
-app.use("/product/rest", productRestApiRouter);
+app.use("/admin/product", productAdminRouter);
+app.use("/admin/category", categoryAdminRouter);
+app.use("/admin/quiz", quizAdminRouter);
+app.use("/admin/orders", salesAdminRouter);
+
+// Routes Front
+app.use("/", frontendRoutes);
+app.use("/customer", customerFrontendRouter);
+
+//Rest Api Routes
 app.use("/category/rest", categoryRestApiRouter);
-app.use("/admin/orders", salesRouter);
 app.use("/orders/rest", salesRestApiRouter);
+app.use("/product/rest", productRestApiRouter);
+
+// app.use("/rest/api", apiRouter);
+
 
 // Error Handlers
 app.use((req, res, next) => {
