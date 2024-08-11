@@ -9,12 +9,12 @@ const quizQnaForm = (dataArray, numberOfAnswers = 4) => {
         value: (dataArray.formData[`${prefix}${i}`] !== undefined) ? dataArray.formData[`${prefix}${i}`] : '',
         fieldType: "textarea", // Set fieldType to "textarea"
         label: `Answer ${String.fromCharCode(64 + i)}`, // A, B, C, D
-        id: `${prefix}${i}`,
+        id: `${prefix}${String.fromCharCode(64 + i)}`,
         rows: "4", // Set rows for the textarea
         cols: "50", // Set cols for the textarea
         class: "form-control",
         placeholder: `Answer ${String.fromCharCode(64 + i)}`,
-        name: `${prefix}${i}`
+        name: `${prefix}${String.fromCharCode(64 + i)}`
       };
     }
     return answerFields;
@@ -24,7 +24,8 @@ const quizQnaForm = (dataArray, numberOfAnswers = 4) => {
   const generateCorrectAnswerOptions = (count) => {
     const correctAnswerOptions = {};
     for (let i = 1; i <= count; i++) {
-      correctAnswerOptions[i] = `Answer ${String.fromCharCode(64 + i)}`;
+      const key = `answer${String.fromCharCode(64 + i)}`; // e.g., 'answerA', 'answerB'
+      correctAnswerOptions[key] = `Answer ${String.fromCharCode(64 + i)}`;
     }
     return correctAnswerOptions;
   };
