@@ -26,11 +26,11 @@ var quizSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    image: {
+    quizImage: {
       type: String,
       required: false,
     },
-    total_question: {
+    totalQuestion: {
       type: String,
       required: false,
     },
@@ -38,27 +38,27 @@ var quizSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    created_date: {
+    createdDate: {
       type: String,
       required: false,
     },
-    modified_date: {
+    modifiedDate: {
       type: String,
       required: false,
     },
-    sync_error: {
+    syncError: {
       type: String,
       required: false,
     },
-    magento_sync_status: {
+    magentoSyncStatus: {
       type: String,
       required: false,
     },
-    update_required: {
+    updateRequired: {
       type: String,
       required: false,
     },
-    store_id: {
+    storeId: {
       type: String,
       required: false,
     },
@@ -82,35 +82,28 @@ var quizQuestionAnswerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    category: {
-      type: String,
+    quizId: {
+      type: mongoose.Schema.Types.ObjectId, // Changed to ObjectId for referencing
+      ref: 'QuizModel', // Reference to QuizModel
       required: true,
     },
-    question: {
+    questions: [{
       type: String,
-      required: true,
-    },
-    correct_answer: {
+      trim: true,
+    }],
+    answers: [{
       type: String,
-      required: true,
-    },
-    incorrect_answers: {
-      type: String,
-      required: true,
-    },
-    options: {
-      type: String,
-      required: true,
-    },
+      trim: true,
+    }],
     active: {
       type: String,
       required: true,
     },
-    created_date: {
+    createdDate: {
       type: String,
       required: false,
     },
-    modified_date: {
+    modifiedDate: {
       type: String,
       required: false,
     },

@@ -1,4 +1,4 @@
-let { categoriesModel, schema } = require("../models/category.model.js");
+let { categoriesModel, schema } = require("../models/categoryModel.js");
 
 // Define the resolvers
 const resolvers = {

@@ -1,4 +1,4 @@
-const { productModel } = require("../models/product.model.js");
+const { productModel } = require("../models/productModel.js");
 const express = require("express");
 
 const app = express();

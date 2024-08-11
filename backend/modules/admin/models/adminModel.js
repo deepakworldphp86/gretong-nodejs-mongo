@@ -15,4 +15,4 @@ var adminSchema = Mongoose.Schema(
 );
 
 // Compile model from schema
-module.exports = Mongoose.model("Admin", adminSchema);
+module.exports = Mongoose.model("admin", adminSchema);

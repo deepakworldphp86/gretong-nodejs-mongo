@@ -4,7 +4,7 @@ const layoutBackendPath = app.locals.layoutBackendPath;
 
 const jwt = require('jsonwebtoken');
 const url = require('url');
-const html = require(corePath + "/utility/adminMenuHtml");
+const adminMenuHtml =  require(corePath + "/utility/adminMenuHtml");
 const adminCustomEvents = require(corePath + "/utility/adminCustomEvents");
 const _mongodb = require(corePath + "/config/database.js");
 const allowedLoggedInDuration = (process.env.ALLOWED_LOGGED_IN_DURATION || 1800) * 1000;
@@ -14,7 +14,7 @@ const getLoginView = (req, res, next) => {
     res.render("admin/views/login", { title: "Express" });
   } else {
     res.render("admin/views/dashboard", {
-      menuHtml: html.getMenuHtml(),
+      menuHtml: adminMenuHtml.getMenuHtml(),
       title: "Gretong Admin",
       layoutBackendPath: layoutBackendPath,
     });
@@ -66,7 +66,7 @@ const getDashboard = (req, res) => {
   var message = "Dash Board Loaded";
   adminCustomEvents.emit("dashBoardLoaded", message);
   res.render("admin/views/dashboard", {
-    menuHtml: html.getMenuHtml(),
+    menuHtml: adminMenuHtml.getMenuHtml(),
     layoutBackendPath: layoutBackendPath,
     title: "Gretong Admin",
   });

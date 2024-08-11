@@ -1,4 +1,4 @@
-const dynamicFormArray = (dataArray) =>  {
+const quizForm = (dataArray) =>  {
   form = {
     form: {
       required: false,
@@ -13,7 +13,8 @@ const dynamicFormArray = (dataArray) =>  {
       required: false,
       value: ('_id' in dataArray.formData) ? dataArray.formData._id : '',
       fieldType: "hidden",
-      id: "hexadecimal_id"
+      id: "hexadecimal_id",
+      name: "_id"
     },
     id: {
       required: false,
@@ -23,24 +24,27 @@ const dynamicFormArray = (dataArray) =>  {
       id: "id",
       class: "form-control1",
       placeholder: "",
+      name: "id"
     },
-    created_date: {
+    createdDate: {
       required: false,
-      value: (dataArray.formData.created_date !== undefined) ? dataArray.formData.created_date : '',
+      value: (dataArray.formData.createdDate !== undefined) ? dataArray.formData.createdDate : '',
       label: "Created Date",
       fieldType: "hidden",
-      id: "created_date",
+      id: "createdDate",
       class: "form-control1",
       placeholder: "",
+      name: "createdDate"
     },
-    modified_date: {
+    modifiedDate: {
       required: false,
-      value: (dataArray.formData.modified_date !== undefined) ? dataArray.formData.modified_date : '',     
+      value: (dataArray.formData.modifiedDate !== undefined) ? dataArray.formData.modifiedDate : '',     
       label: "Update Date",
       fieldType: "hidden",
-      id: "modified_date",
+      id: "modifiedDate",
       class: "form-control1",
       placeholder: "",
+      name: "modifiedDate"
     },
     name: {
       required: true,
@@ -50,6 +54,7 @@ const dynamicFormArray = (dataArray) =>  {
       id: "name",
       class: "form-control1",
       placeholder: "Name",
+      name: "name"
     },
     code: {
       required: true,
@@ -59,6 +64,7 @@ const dynamicFormArray = (dataArray) =>  {
       id: "code",
       class: "form-control1",
       placeholder: "Code",
+      name: "code"
     },
     description: {
       required: true,
@@ -68,15 +74,17 @@ const dynamicFormArray = (dataArray) =>  {
       id: "description",
       class: "form-control1",
       placeholder: "Description",
+      name: "description"
     },
-    total_question: {
+    totalQuestion: {
       required: true,
-      value: (dataArray.formData.total_question !== undefined) ? dataArray.formData.total_question : '',
+      value: (dataArray.formData.totalQuestion !== undefined) ? dataArray.formData.totalQuestion : '',
       fieldType: "text",
       label: "Total Question",
-      id: "total_question",
+      id: "totalQuestion",
       class: "form-control1",
       placeholder: "Total Question",
+      name: "totalQuestion"
     },
     difficulty: {
       required: true,
@@ -91,6 +99,7 @@ const dynamicFormArray = (dataArray) =>  {
       id: "difficulty",
       class: "form-control1",
       placeholder: "",
+      name: "difficulty"
     },
     status: {
       required: true,
@@ -105,13 +114,14 @@ const dynamicFormArray = (dataArray) =>  {
       id: "active",
       class: "form-control1",
       placeholder: "",
+      name: "status"
     },
-    store_id: {
+    storeId: {
       required: true,
-      value: (dataArray.formData.store_id !== undefined) ? dataArray.formData.store_id : '',      
+      value: (dataArray.formData.storeId !== undefined) ? dataArray.formData.storeId : '',      
       label: "Store",
       fieldType: "select",
-      id: "store_id",
+      id: "storeId",
       optionArray: {
         0: "---------Please Select ------------------",
         1: "1",
@@ -119,13 +129,14 @@ const dynamicFormArray = (dataArray) =>  {
       },
       class: "form-control1",
       placeholder: "",
+      name: "storeId"
     },
-    update_required: {
+    updateRequired: {
       required: true,
-      value: (dataArray.formData.update_required !== undefined) ? dataArray.formData.update_required : '',      
+      value: (dataArray.formData.updateRequired !== undefined) ? dataArray.formData.updateRequired : '',      
       label: "Update  Required",
       fieldType: "select",
-      id: "update_required",
+      id: "updateRequired",
       optionArray: {
         0: "---------Please Select ------------------",
         1: "Yes",
@@ -133,16 +144,18 @@ const dynamicFormArray = (dataArray) =>  {
       },
       class: "form-control1",
       placeholder: "",
+      name: "updateRequired"
     },
-    image: {
+    quizImage: {
       required: false,
-      value: (dataArray.formData.image !== undefined) ? dataArray.formData.image : '',      
+      value: (dataArray.formData.quizImage !== undefined) ? dataArray.formData.quizImage : '',      
       label: "Quiz Image",
       id: "image",
       fieldType: "upload",
       class: "form-control1",
       upload_path : '/admin/uploads/quiz_image/',
       placeholder: "",
+      name: "quizImage"
     },
     submit: {
       required: false,
@@ -163,5 +176,5 @@ const dynamicFormArray = (dataArray) =>  {
 
 // create the model for users and expose it to our app
 module.exports = {
-  formArray: dynamicFormArray,
+  quizForm: quizForm,
 };

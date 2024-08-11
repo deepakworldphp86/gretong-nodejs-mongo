@@ -7,7 +7,7 @@ const {
   updateOrder,
   deleteOrder,
   returnOrder
-} = require('../controllers/orderController');
+} = require('../controllers/salesRestApiController');
 
 const { validateOrder } = require('../middlewares/orderValidation');
 
