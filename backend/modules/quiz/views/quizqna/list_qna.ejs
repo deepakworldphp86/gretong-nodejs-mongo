@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include ("../../../backend/views/layouts/header") %>
+
+</head>
+<body class="dashboard-page">
+	<script>
+	        var theme = $.cookie('protonTheme') || 'default';
+	        $('body').removeClass (function (index, css) {
+	            return (css.match (/\btheme-\S+/g) || []).join(' ');
+	        });
+	        if (theme !== 'default') $('body').addClass(theme);
+        </script>
+
+<main>
+    <%- include ("../../../backend/views/layouts/nav") %>
+</main>
+
+<main>
+    <%- include ("../../../backend/views/layouts/top") %>
+    <%- include ("../../../backend/views/layouts/error") %>
+    <%- include ("list_qna_content") %>
+</main>
+
+<footer>
+  <%- include ("../../../backend/views/layouts/footer") %>
+</footer>
+
+<script src="/admin/js/bootstrap.js"></script>
+<script src="/admin/js/proton.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+	
+
+	

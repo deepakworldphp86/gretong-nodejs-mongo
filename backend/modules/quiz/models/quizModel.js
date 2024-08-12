@@ -34,7 +34,7 @@ var quizSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    active: {
+    status: {
       type: String,
       required: false,
     },
@@ -83,21 +83,28 @@ var quizQuestionAnswerSchema = new mongoose.Schema(
       required: true,
     },
     quizId: {
-      type: mongoose.Schema.Types.ObjectId, // Changed to ObjectId for referencing
-      ref: 'QuizModel', // Reference to QuizModel
+      type: String, 
       required: true,
     },
-    questions: [{
+    question:{
       type: String,
       trim: true,
-    }],
+    },
     answers: [{
       type: String,
       trim: true,
     }],
-    active: {
+    status: {
       type: String,
       required: true,
+    },
+    storeId: {
+      type: String,
+      required: false,
+    },
+    updateRequired: {
+      type: String,
+      required: false,
     },
     createdDate: {
       type: String,
@@ -110,6 +117,8 @@ var quizQuestionAnswerSchema = new mongoose.Schema(
   },
   { strict: false }
 );
+
+
 
 var quizQuestionAnswerSchema = mongoose.Schema(quizQuestionAnswerSchema);
 

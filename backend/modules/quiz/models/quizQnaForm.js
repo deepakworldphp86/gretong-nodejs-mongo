@@ -1,20 +1,22 @@
 const quizQnaForm = (dataArray, numberOfAnswers = 4) => {
+  const answers = dataArray.formData.answers || [];
+  const correctAnswers = Array.isArray(dataArray.formData.correctAnswer) ? dataArray.formData.correctAnswer : [];
 
   // Helper function to generate answer fields
   const generateAnswerFields = (prefix, count) => {
     const answerFields = {};
-    for (let i = 1; i <= count; i++) {
-      answerFields[`${prefix}${i}`] = {
+    for (let i = 0; i < count; i++) { // Start from 0 and end at count-1 (4 answers)
+      answerFields[`${prefix}${String.fromCharCode(65 + i)}`] = {
         required: true,
-        value: (dataArray.formData[`${prefix}${i}`] !== undefined) ? dataArray.formData[`${prefix}${i}`] : '',
+        value: (answers[i] !== undefined) ? answers[i] : '', // Get the answer or empty string if undefined
         fieldType: "textarea", // Set fieldType to "textarea"
-        label: `Answer ${String.fromCharCode(64 + i)}`, // A, B, C, D
-        id: `${prefix}${String.fromCharCode(64 + i)}`,
+        label: `Answer ${String.fromCharCode(65 + i)}`, // A, B, C, D
+        id: `${prefix}${String.fromCharCode(65 + i)}`,
         rows: "4", // Set rows for the textarea
         cols: "50", // Set cols for the textarea
         class: "form-control",
-        placeholder: `Answer ${String.fromCharCode(64 + i)}`,
-        name: `${prefix}${String.fromCharCode(64 + i)}`
+        placeholder: `Answer ${String.fromCharCode(65 + i)}`,
+        name: `${prefix}${String.fromCharCode(65 + i)}`
       };
     }
     return answerFields;
@@ -23,9 +25,9 @@ const quizQnaForm = (dataArray, numberOfAnswers = 4) => {
   // Helper function to generate correct answer options
   const generateCorrectAnswerOptions = (count) => {
     const correctAnswerOptions = {};
-    for (let i = 1; i <= count; i++) {
-      const key = `answer${String.fromCharCode(64 + i)}`; // e.g., 'answerA', 'answerB'
-      correctAnswerOptions[key] = `Answer ${String.fromCharCode(64 + i)}`;
+    for (let i = 0; i < count; i++) { // Start from 0 and end at count-1 (4 options)
+      const key = `answer${String.fromCharCode(65 + i)}`; // e.g., 'answerA', 'answerB'
+      correctAnswerOptions[key] = `Answer ${String.fromCharCode(65 + i)}`;
     }
     return correctAnswerOptions;
   };
@@ -37,7 +39,7 @@ const quizQnaForm = (dataArray, numberOfAnswers = 4) => {
       action: (dataArray.action !== undefined) ? dataArray.action : '',
       autocomplete: "off",
       class: "form-horizontal",
-      enctype: "multipart/form-data",
+      enctype: "application/x-www-form-urlencoded",
     },
     _id: {
       required: false,
@@ -48,19 +50,29 @@ const quizQnaForm = (dataArray, numberOfAnswers = 4) => {
     },
     quizId: {
       required: false,
-      value: ('id' in dataArray.formData) ? dataArray.formData.id : '',
+      value: ('quizId' in dataArray.formData) ? dataArray.formData.quizId : '',
       fieldType: "hidden",
-      label: "quizId",
+      label: "Quiz ID",
       id: "quizId",
       class: "form-control1",
       placeholder: "",
       name: "quizId"
     },
+    id: {
+      required: false,
+      value: ('id' in dataArray.formData) ? dataArray.formData.id : '',
+      fieldType: "hidden",
+      label: "QNA ID",
+      id: "id",
+      class: "form-control1",
+      placeholder: "",
+      name: "id"
+    },
     createdDate: {
       required: false,
       value: (dataArray.formData.createdDate !== undefined) ? dataArray.formData.createdDate : '',
-      label: "Created Date",
       fieldType: "hidden",
+      label: "Created Date",
       id: "createdDate",
       class: "form-control1",
       placeholder: "",
@@ -68,9 +80,9 @@ const quizQnaForm = (dataArray, numberOfAnswers = 4) => {
     },
     modifiedDate: {
       required: false,
-      value: (dataArray.formData.modifiedDate !== undefined) ? dataArray.formData.modifiedDate : '',     
-      label: "Update Date",
+      value: (dataArray.formData.modifiedDate !== undefined) ? dataArray.formData.modifiedDate : '',
       fieldType: "hidden",
+      label: "Update Date",
       id: "modifiedDate",
       class: "form-control1",
       placeholder: "",
@@ -91,7 +103,7 @@ const quizQnaForm = (dataArray, numberOfAnswers = 4) => {
     ...generateAnswerFields('answer', numberOfAnswers), // Generate fields for Answer A, B, C, D
     correctAnswer: {
       required: true,
-      value: Array.isArray(dataArray.formData.correctAnswer) ? dataArray.formData.correctAnswer : [], // Ensure value is an array
+      value: correctAnswers, // Ensure value is an array of selected correct answers
       fieldType: "multiselect", // Set fieldType to "multiselect"
       label: "Correct Answers",
       id: "correctAnswer",
@@ -110,16 +122,16 @@ const quizQnaForm = (dataArray, numberOfAnswers = 4) => {
         1: "Active",
         2: "Inactive",
       },
-      id: "active",
+      id: "status",
       class: "form-control1",
       placeholder: "",
       name: "status"
     },
     storeId: {
       required: true,
-      value: (dataArray.formData.storeId !== undefined) ? dataArray.formData.storeId : '',      
-      label: "Store",
+      value: (dataArray.formData.storeId !== undefined) ? dataArray.formData.storeId : '',
       fieldType: "select",
+      label: "Store",
       id: "storeId",
       optionArray: {
         0: "---------Please Select ------------------",
@@ -132,9 +144,9 @@ const quizQnaForm = (dataArray, numberOfAnswers = 4) => {
     },
     updateRequired: {
       required: true,
-      value: (dataArray.formData.updateRequired !== undefined) ? dataArray.formData.updateRequired : '',      
-      label: "Update Required",
+      value: (dataArray.formData.updateRequired !== undefined) ? dataArray.formData.updateRequired : '',
       fieldType: "select",
+      label: "Update Required",
       id: "updateRequired",
       optionArray: {
         0: "---------Please Select ------------------",

@@ -24,7 +24,7 @@ module.exports = {
       }
 
       if (value.fieldType === "textarea") {
-
+        console.log(value);
         form += `
             <div class="form-group">
                 <label for="${value.id}" class="col-sm-2 control-label">${value.label}</label>

@@ -33,18 +33,14 @@
         <div class="main-grid">
         <div class="agile-grids">
         <div class="bs-component mb40">
-          <a href="/admin/quiz/add" class="btn btn-category btn-block" >Add Quiz</a>
+          <a href="/admin/quizqna/add/<%= quizId %>"" class="btn btn-category btn-block" >Add Quiz QNA</a>
         </div>
 				<!-- tables -->
 			    <h3>Quiz Listing</h3>
 				  <table id="table-two-axis" class="two-axis">
 					<thead>
 					  <tr>
-						<th>Quiz Name</th>
-						<th>Quiz Code </th>
-						<th>Quiz Description</th>
-						<th>Quiz Thumb</th>
-            <th>Quiz Difficulty</th>
+						<th>Quiz Question</th>
             <th>Add Quiz Question Answer</th>
 						<th>Edit</th>
 						<th>Action</th>
@@ -53,18 +49,9 @@
 					<tbody>
             <% for (var i = 0; i < responce.length; ++i) { %>
 					  <tr>
-						<td><a href="/admin/quiz?id=<%= responce[i]._id %>"><%= responce[i].name %><a/></td>
-						<td><%= responce[i].code %></td>
-						<td><%= responce[i].description %></td>
-						<td>
-              <% if(responce[i].quizImage) { %>
-              <img id="myImg" src="/admin/uploads/quiz_image/<%= responce[i].quizImage %>" width="107" height="98">
-              <% } %>
-              </td>
-            <td><%= responce[i].difficulty %></td>
-            <td><a href="/admin/quizqna/list/<%= responce[i].id %>/1">View Quiz Question Answer </td>
-            <td><a href="/admin/quiz/edit/<%- responce[i]._id %>">Edit</td>
-            <td><a href="/admin/quiz/delete/<%= responce[i]._id  %>">Delete</td>
+						<td><%= responce[i].question %></td>
+            <td><a href="/admin/quizqna/edit/<%- responce[i].id %>">Edit</td>
+            <td><a href="/admin/quizqna/delete/<%= responce[i].id  %>">Delete</td>
 					  </tr>
               <% } %>
 					 </tbody>
