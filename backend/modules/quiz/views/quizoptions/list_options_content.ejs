@@ -33,15 +33,14 @@
         <div class="main-grid">
         <div class="agile-grids">
         <div class="bs-component mb40">
-          <a href="/admin/quizqna/add/<%= quizId %>"" class="btn btn-category btn-block" >Add Quiz QNA</a>
+          <a href="/admin/quizoptions/add/<%= quizId %>"" class="btn btn-category btn-block" >Add Quiz QNA</a>
         </div>
 				<!-- tables -->
-			    <h3>Quiz Listing</h3>
+			    <h3>Quiz Options Listing</h3>
 				  <table id="table-two-axis" class="two-axis">
 					<thead>
 					  <tr>
 						<th>Quiz Question</th>
-            <th>Add Quiz Question Answer</th>
 						<th>Edit</th>
 						<th>Action</th>
 					  </tr>
@@ -50,8 +49,8 @@
             <% for (var i = 0; i < responce.length; ++i) { %>
 					  <tr>
 						<td><%= responce[i].question %></td>
-            <td><a href="/admin/quizqna/edit/<%- responce[i].id %>">Edit</td>
-            <td><a href="/admin/quizqna/delete/<%= responce[i].id  %>">Delete</td>
+            <td><a href="/admin/quizoptions/edit/<%- responce[i].id %>">Edit</td>
+            <td><a href="/admin/quizoptions/delete/<%= responce[i].quizId  %>/<%= responce[i]._id  %>">Delete</td>
 					  </tr>
               <% } %>
 					 </tbody>

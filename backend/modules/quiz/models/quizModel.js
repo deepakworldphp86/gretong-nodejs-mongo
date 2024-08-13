@@ -71,12 +71,12 @@ var quizSchema = mongoose.Schema(quizSchema);
 
 quizSchema.plugin(mongoosePaginate);
 
-const QuizModel = mongoose.model("QuizModel", quizSchema);
+const quizModel = mongoose.model("quizModel", quizSchema);
 
-QuizModel.paginate().then({}); // Usage
+quizModel.paginate().then({}); // Usage
 
 // Define schema
-var quizQuestionAnswerSchema = new mongoose.Schema(
+var quizOptionsSchema = new mongoose.Schema(
   {
     id: {
       type: String,
@@ -90,10 +90,18 @@ var quizQuestionAnswerSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    answers: [{
+    options: [{
       type: String,
       trim: true,
     }],
+    correctOptions:[{
+      type: String,
+      trim: true,
+    }],
+    points:{
+      type: String,
+      trim: true,
+    },
     status: {
       type: String,
       required: true,
@@ -120,18 +128,18 @@ var quizQuestionAnswerSchema = new mongoose.Schema(
 
 
 
-var quizQuestionAnswerSchema = mongoose.Schema(quizQuestionAnswerSchema);
+var quizOptionsSchema = mongoose.Schema(quizOptionsSchema);
 
-quizQuestionAnswerSchema.plugin(mongoosePaginate);
+quizOptionsSchema.plugin(mongoosePaginate);
 
-const QuizQuestionAnswer = mongoose.model("QuizQuestionAnswer", quizQuestionAnswerSchema);
+var quizOptionsModel = mongoose.model("quizOptionsModel", quizOptionsSchema);
 
-QuizQuestionAnswer.paginate().then({}); // Usage
+quizOptionsModel.paginate().then({}); // Usage
 
 // create the model for users and expose it to our app
 module.exports = {
-  QuizModel: QuizModel,
-  QuizQuestionAnswerModel: QuizQuestionAnswer,
-  quizSchema: quizSchema,
-  quizQuestionAnswerSchema: quizQuestionAnswerSchema,
+  quizModel,
+  quizOptionsModel,
+  quizSchema,
+  quizOptionsSchema,
 };

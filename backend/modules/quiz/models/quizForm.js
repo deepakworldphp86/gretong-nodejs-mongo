@@ -58,7 +58,7 @@ const quizForm = (dataArray) =>  {
     },
     code: {
       required: true,
-      value: ('Code' in dataArray.formData) ? dataArray.formData.code : '',
+      value: ('code' in dataArray.formData) ? dataArray.formData.code : '',
       fieldType: "text",
       label: "Code",
       id: "code",

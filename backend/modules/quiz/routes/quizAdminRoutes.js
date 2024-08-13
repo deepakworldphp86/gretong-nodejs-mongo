@@ -12,6 +12,6 @@ router.get("/edit/:id", mBackend.isAuthorized,quizAdminController.editQuiz);
 router.get("/add",mBackend.isAuthorized,quizAdminController.addQuiz);
 router.post("/update/:id",quizHelper.upload.single("quizImage"),quizAdminController.updateQuiz);
 router.post("/save", quizHelper.upload.single("quizImage"), quizAdminController.saveQuiz);
-router.get("/delete", quizAdminController.deleteQuiz);
+router.get("/delete/:quizId/:_id", quizAdminController.deleteQuiz);
 
 module.exports = router;

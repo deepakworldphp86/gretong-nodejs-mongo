@@ -42,7 +42,7 @@ const productAdminRouter = require(path.join(modulesPath, 'product', 'routes', '
 const categoryAdminRouter = require(path.join(modulesPath, 'category', 'routes', 'categoryAdminRoutes'));
 const quizAdminRouter = require(path.join(modulesPath, 'quiz', 'routes', 'quizAdminRoutes'));
 const salesAdminRouter = require(path.join(modulesPath, 'sales', 'routes', 'ordersAdminRoutes'));
-const quizAdminQuestionAnswerRoutes = require(path.join(modulesPath, 'quiz', 'routes', 'quizAdminQuestionAnswerRoutes'));
+const quizAdminOptionsRoutes = require(path.join(modulesPath, 'quiz', 'routes', 'quizAdminOptionsRoutes'));
 
 //REST API Routes
 const apiRouter = require(path.join(modulesPath, 'rest', 'routes', 'api'));
@@ -98,7 +98,7 @@ app.use("/admin/product", productAdminRouter);
 app.use("/admin/category", categoryAdminRouter);
 app.use("/admin/orders", salesAdminRouter);
 app.use("/admin/quiz", quizAdminRouter);
-app.use("/admin/quizqna", quizAdminQuestionAnswerRoutes);
+app.use("/admin/quizoptions", quizAdminOptionsRoutes);
 
 
 // Routes Front
