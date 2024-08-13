@@ -1,0 +1,77 @@
+<!-- tables -->
+<link rel="stylesheet" type="text/css" href="/admin/css/table-style.css" />
+<link rel="stylesheet" type="text/css" href="/admin/css/basictable.css" />
+<script type="text/javascript" src="/admin/js/jquery.basictable.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+      $('#table').basictable();
+
+      $('#table-breakpoint').basictable({
+        breakpoint: 768
+      });
+
+      $('#table-swap-axis').basictable({
+        swapAxis: true
+      });
+
+      $('#table-force-off').basictable({
+        forceResponsive: false
+      });
+
+      $('#table-no-resize').basictable({
+        noResize: true
+      });
+
+      $('#table-two-axis').basictable();
+
+      $('#table-max-height').basictable({
+        tableWrapper: true
+      });
+    });
+</script>
+<!-- //tables -->
+        <div class="main-grid">
+        <div class="agile-grids">
+        <div class="bs-component mb40">
+          <a href="/admin/slider/add" class="btn btn-category btn-block" >Add Slider</a>
+        </div>
+				<!-- tables -->
+			    <h3>Slider Listing</h3>
+				  <table id="table-two-axis" class="two-axis">
+					<thead>
+					  <tr>
+						<th>Slider Name</th>
+						<th>Slider Code </th>
+						<th>Slider Description</th>
+						<th>Slider Thumb</th>
+            <th>View/Add Slider Images</th>
+						<th>Edit</th>
+						<th>Action</th>
+					  </tr>
+					</thead>
+					<tbody>
+            <% for (var i = 0; i < responce.length; ++i) { %>
+					  <tr>
+						<td><a href="/admin/slider?id=<%= responce[i]._id %>"><%= responce[i].name %><a/></td>
+						<td><%= responce[i].code %></td>
+						<td><%= responce[i].description %></td>
+						<td>
+              <% if(responce[i].sliderImage) { %>
+              <img id="myImg" src="/admin/uploads/slider_image/<%= responce[i].sliderImage %>" width="107" height="98">
+              <% } %>
+              </td>
+            <td><a href="/admin/sliderimages/list/<%= responce[i].id %>/1">View/Add Slider Images </td>
+            <td><a href="/admin/slider/edit/<%- responce[i]._id %>">Edit</td>
+            <td><a href="/admin/slider/delete/<%= responce[i].id  %>/<%= responce[i]._id  %>">Delete</td>
+					  </tr>
+              <% } %>
+					 </tbody>
+				  </table>
+
+
+
+				</div>
+				<!-- //tables -->
+        <%- paginationHtml %>
+			</div>
+		

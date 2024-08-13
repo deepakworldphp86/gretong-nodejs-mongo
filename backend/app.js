@@ -40,9 +40,13 @@ const customerFrontRouter = require(path.join(modulesPath, 'customer', 'routes',
 const adminRouter = require(path.join(modulesPath, 'admin', 'routes', 'adminRoutes'));
 const productAdminRouter = require(path.join(modulesPath, 'product', 'routes', 'productAdminRoutes'));
 const categoryAdminRouter = require(path.join(modulesPath, 'category', 'routes', 'categoryAdminRoutes'));
-const quizAdminRouter = require(path.join(modulesPath, 'quiz', 'routes', 'quizAdminRoutes'));
 const salesAdminRouter = require(path.join(modulesPath, 'sales', 'routes', 'ordersAdminRoutes'));
+
+const quizAdminRouter = require(path.join(modulesPath, 'quiz', 'routes', 'quizAdminRoutes'));
 const quizAdminOptionsRoutes = require(path.join(modulesPath, 'quiz', 'routes', 'quizAdminOptionsRoutes'));
+
+const sliderAdminRouter = require(path.join(modulesPath, 'slider', 'routes', 'sliderAdminRoutes'));
+const sliderImageAdminRoutes = require(path.join(modulesPath, 'slider', 'routes', 'sliderImageAdminRoutes'));
 
 //REST API Routes
 const apiRouter = require(path.join(modulesPath, 'rest', 'routes', 'api'));
@@ -99,6 +103,8 @@ app.use("/admin/category", categoryAdminRouter);
 app.use("/admin/orders", salesAdminRouter);
 app.use("/admin/quiz", quizAdminRouter);
 app.use("/admin/quizoptions", quizAdminOptionsRoutes);
+app.use("/admin/slider", sliderAdminRouter);
+app.use("/admin/sliderimage", sliderImageAdminRoutes);
 
 
 // Routes Front
