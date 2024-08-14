@@ -20,7 +20,7 @@ let {
 
 /********************************** Rendering to Slider QNA Listing ********************************************************************/
 
-const getSliderOptionsListing = async (req, res, next) => {
+const getSliderImagesListing = async (req, res, next) => {
     var sliderId = req.params.sliderId ? req.params.sliderId.trim() : 0;
     var data = [];
     var perPage = 2;
@@ -31,13 +31,13 @@ const getSliderOptionsListing = async (req, res, next) => {
     sliderImageModel.find(filter).skip(perPage * currentPage - perPage).limit(perPage)
         .exec(function (err, sliderImageCollection) {
            
-            adminCustomEvents.emit("slider Options Loaded", sliderImageCollection);
+            adminCustomEvents.emit("slider Images Loaded", sliderImageCollection);
             paginate.getPaginate(sliderImageModel, req, pageUrl, perPage, currentPage)
                 .then((pagaintion) => {
                     if (err) return next(err);
-                    res.render("slider/views/sliderimages/list_options", {
+                    res.render("slider/views/sliderimages/list_sliderimages", {
                         menuHtml: adminMenuHtml.getMenuHtml(),
-                        title: "Slider Options List",
+                        title: "Slider Images List",
                         collection: sliderImageCollection,
                         paginationHtml: pagaintion ?? '',
                         responce: sliderImageCollection,
@@ -51,7 +51,7 @@ const getSliderOptionsListing = async (req, res, next) => {
 
 /********************************** Edit Slider action  ********************************************************************/
 
-const editSliderOptions = async (req, res, next) => {
+const editSliderImages = async (req, res, next) => {
     var id = req.params.id ? req.params.id.trim() : 0;
     const dataArray = {};
     dataArray.formData = {};
@@ -59,13 +59,13 @@ const editSliderOptions = async (req, res, next) => {
     dataArray.formData.modifiedDate = ""; // Assuming ModifiedDate is a string
     sliderImageModel.findById(id)
         .exec()
-        .then(sliderOptionsResponse => {
+        .then(sliderImagesResponse => {
         var postUrl = "/admin/sliderimages/update/" + id;
 
-        if (sliderOptionsResponse !== undefined) {
+        if (sliderImagesResponse !== undefined) {
             dataArray.action = postUrl;
             // Assign categoryResponse to formData
-            dataArray.formData = sliderOptionsResponse;
+            dataArray.formData = sliderImagesResponse;
         }
 
         // Date Format for Modified
@@ -75,15 +75,15 @@ const editSliderOptions = async (req, res, next) => {
         // Assign formatted date to ModifiedDate property
         dataArray.formData.modifiedDate = formatted;
         // Generate dynamic form HTML
-        var sliderOptionsFormHtml = adminFormHelper.getFrom(sliderImageForm(dataArray));
+        var sliderImagesFormHtml = adminFormHelper.getFrom(sliderImageForm(dataArray));
         console.log(dataArray);
-        res.render("slider/views/sliderimages/add_options", {
+        res.render("slider/views/sliderimages/add_sliderimages", {
             menuHtml: adminMenuHtml.getMenuHtml(),
-            collection: sliderOptionsResponse,
+            collection: sliderImagesResponse,
             title: "Slider Edit",
-            response: sliderOptionsResponse,
+            response: sliderImagesResponse,
             schemaModel: sliderImageSchema,
-            form: sliderOptionsFormHtml,
+            form: sliderImagesFormHtml,
             id: id,
         });
     });
@@ -92,7 +92,7 @@ const editSliderOptions = async (req, res, next) => {
 
 /********************************** Add Slider action  ********************************************************************/
 
-const addSliderOptions = async (request, response, next) => {
+const addSliderImages = async (request, response, next) => {
    
     var sliderId = request.params.sliderId ? request.params.sliderId : 0;
     const dataArray = new Object();
@@ -106,20 +106,20 @@ const addSliderOptions = async (request, response, next) => {
     var formatted = dt.format("Y-m-d H:M:S");
     dataArray.formData.createdDate = formatted; // Created Date
     //console.log(dataArray);return;
-    var sliderOptionsFormHtml = adminFormHelper.getFrom(sliderImageForm(dataArray));
-    response.render("slider/views/sliderimages/add_options", {
+    var sliderImagesFormHtml = adminFormHelper.getFrom(sliderImageForm(dataArray));
+    response.render("slider/views/sliderimages/add_sliderimages", {
         menuHtml: adminMenuHtml.getMenuHtml(),
         title: "Slider Question Answer Form",
         response: response,
         sliderId: sliderId,
-        form: sliderOptionsFormHtml,
+        form: sliderImagesFormHtml,
     });
 }
 
 
 /********************************** Update Slider action  ********************************************************************/
 
-const updateSliderOptions = async (req, res, next) => {
+const updateSliderImages = async (req, res, next) => {
     var errors = [];
     const dataArray = new Object();
     dataArray.formData = {};
@@ -149,12 +149,12 @@ const updateSliderOptions = async (req, res, next) => {
         );
     } else {
         delete req.body.Submit;
-        sliderOptionsDataModel = req.body;
-        sliderOptionsDataModel.childSliderImage = childSliderImage;
-       // console.log(sliderOptionsDataModel);return;
+        sliderImagesDataModel = req.body;
+        sliderImagesDataModel.childSliderImage = childSliderImage;
+       // console.log(sliderImagesDataModel);return;
         sliderImageModel.findByIdAndUpdate(
             req.body._id,
-            sliderOptionsDataModel,
+            sliderImagesDataModel,
             { upsert: true },
             function (err, num, n) {
                 if (err) {
@@ -172,7 +172,7 @@ const updateSliderOptions = async (req, res, next) => {
 
 /********************************** Save Slider action  ********************************************************************/
 
-const saveSliderOptions = async (req, res, next) => {
+const saveSliderImages = async (req, res, next) => {
 
     var errors = [];
     const dataArray = new Object();
@@ -200,19 +200,19 @@ const saveSliderOptions = async (req, res, next) => {
             })
         );
     } else {
-        var sliderOptionsDataModel = new Object();
+        var sliderImagesDataModel = new Object();
         delete req.body._id;
         delete req.body.Submit;
 
         const childSliderImage = req.file.filename;
-        sliderOptionsDataModel = req.body;
-        sliderOptionsDataModel.childSliderImage = childSliderImage;
+        sliderImagesDataModel = req.body;
+        sliderImagesDataModel.childSliderImage = childSliderImage;
 
-        //console.log(sliderOptionsDataModel);return;
+        //console.log(sliderImagesDataModel);return;
 
-        let newSliderOptions = new sliderImageModel(sliderOptionsDataModel);
+        let newSliderImages = new sliderImageModel(sliderImagesDataModel);
        
-        newSliderOptions.save(function (err) {
+        newSliderImages.save(function (err) {
             if (err) {
                 if (err) return next(err);;
             } else {
@@ -225,18 +225,18 @@ const saveSliderOptions = async (req, res, next) => {
 
 /********************************** Delete Slider action  ********************************************************************/
 
-const deleteSliderOptions = async function (req, res) {
+const deleteSliderImages = async function (req, res) {
     var id = req.params._id ? req.params._id : 0;
-    var objectSliderOptions = new Object();
-    objectSliderOptions._id = id.trim();
+    var objectSliderImages = new Object();
+    objectSliderImages._id = id.trim();
     var sliderId = req.params.sliderId;
-    sliderImageModel.findOneAndRemove(objectSliderOptions, function (err) {
+    sliderImageModel.findOneAndRemove(objectSliderImages, function (err) {
         if (err) {
-            adminCustomEvents.emit("sliderOptionsDeleteFailed", err);
+            adminCustomEvents.emit("sliderImagesDeleteFailed", err);
             res.redirect(`/admin/sliderimages/list/${sliderId}/1`);
         } else {
-            adminCustomEvents.emit("sliderOptionsDeleted", "Slider Options Has been Deleted");
-            req.flash("successMsg", "You successfully deleted this Slider Options.");
+            adminCustomEvents.emit("sliderImagesDeleted", "Slider Images Has been Deleted");
+            req.flash("successMsg", "You successfully deleted this Slider Images.");
             res.redirect(`/admin/sliderimages/list/${sliderId}/1`);
         }
     });
@@ -245,4 +245,4 @@ const deleteSliderOptions = async function (req, res) {
 
 
 
-module.exports = { getSliderOptionsListing, editSliderOptions, addSliderOptions, updateSliderOptions, saveSliderOptions, deleteSliderOptions };
+module.exports = { getSliderImagesListing, editSliderImages, addSliderImages, updateSliderImages, saveSliderImages, deleteSliderImages };

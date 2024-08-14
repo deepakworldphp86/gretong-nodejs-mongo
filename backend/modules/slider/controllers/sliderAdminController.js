@@ -245,7 +245,7 @@ const deleteSlider = async function (req, res) {
             });
         } else {
             let errors = [];
-            errors.push({ msg: "Please delete child slider options first." });
+            errors.push({ msg: "Please delete child slider images first." });
             adminCustomEvents.emit("sliderDeleteFailed", errors);
             req.flash("errorMsg", errors);
             res.redirect("/admin/slider/list/1");
