@@ -99,7 +99,7 @@ const addSlider = async (request, response, next) => {
     var postUrl = "/admin/slider/save";
     dataArray.formData = {};
     dataArray.action = postUrl;
-    dataArray.formData.parentSliderId = (await sliderModel.countDocuments()) + 1; // Int Id of Category
+    dataArray.formData.sliderId = (await sliderModel.countDocuments()) + 1; // Int Id of Category
     //Date Format for CreatedDate
     var dt = dateTime.create();
     var formatted = dt.format("Y-m-d H:M:S");
@@ -158,7 +158,7 @@ const updateSlider = async (req, res, next) => {
             { upsert: true },
             function (err, num, n) {
                 if (err) {
-                    throw err;
+                  return next(err);
                 } else {
                     //console.log(newCategory);
                     req.flash("successMsg", "You successfully Update this slider");
@@ -210,7 +210,7 @@ const saveSlider = async (req, res, next) => {
         let newSlider = new sliderModel(sliderDataModel);
         newSlider.save(function (err) {
             if (err) {
-                return;
+                return next(err);
             } else {
                 req.flash("successMsg", "You successfully save this slider");
                 res.redirect("/admin/slider/list/1");
@@ -231,6 +231,7 @@ const deleteSlider = async function (req, res) {
             "sliderDeleteBefore",
             "Count of child slider questions" + count
         );
+       
         if (count === 0) {
             sliderModel.findOneAndRemove(objectSlider, function (err) {
                 if (err) {

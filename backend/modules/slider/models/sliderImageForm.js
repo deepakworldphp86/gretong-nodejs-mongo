@@ -1,44 +1,13 @@
-const sliderImageForm = (dataArray, numberOfOptions = 4) => {
-  const options = dataArray.formData.options || [];
-  const correctOptions = Array.isArray(dataArray.formData.correctOptions) ? dataArray.formData.correctOptions : [];
-  // Helper function to generate option fields
-  const generateOptionsFields = (prefix, count) => {
-    const optionFields = {};
-    for (let i = 0; i < count; i++) { // Start from 0 and end at count-1 (4 options)
-      optionFields[`${prefix}${String.fromCharCode(65 + i)}`] = {
-        required: true,
-        value: (options[i] !== undefined) ? options[i] : '', // Get the option or empty string if undefined
-        fieldType: "textarea", // Set fieldType to "textarea"
-        label: `Option ${String.fromCharCode(65 + i)}`, // A, B, C, D
-        id: `${prefix}${String.fromCharCode(65 + i)}`,
-        rows: "4", // Set rows for the textarea
-        cols: "50", // Set cols for the textarea
-        class: "form-control",
-        placeholder: `Option ${String.fromCharCode(65 + i)}`,
-        name: `${prefix}${String.fromCharCode(65 + i)}`
-      };
-    }
-    return optionFields;
-  };
-
-  // Helper function to generate correct option options
-  const generateCorrectOptions = (count) => {
-    const correctOptions = {};
-    for (let i = 0; i < count; i++) {
-      const key = `${i + 1}`; // e.g., 'option1', 'option2'
-      correctOptions[key] = `Option ${i + 1}`;
-    }
-    return correctOptions;
-  };
-
-  const form = {
+const sliderImageForm = (dataArray) =>  {
+  form = {
     form: {
       required: false,
       method: "post",
-      action: (dataArray.action !== undefined) ? dataArray.action : '',
+      action:(dataArray.action !== undefined) ? dataArray.action : '',
       autocomplete: "off",
+      //novalidate: "novalidate",
       class: "form-horizontal",
-      enctype: "application/x-www-form-urlencoded",
+      enctype: "multipart/form-data",
     },
     _id: {
       required: false,
@@ -51,75 +20,51 @@ const sliderImageForm = (dataArray, numberOfOptions = 4) => {
       required: false,
       value: ('sliderId' in dataArray.formData) ? dataArray.formData.sliderId : '',
       fieldType: "hidden",
-      label: "Slider ID",
+      label: "Slider Id",
       id: "sliderId",
       class: "form-control1",
       placeholder: "",
       name: "sliderId"
     },
-    id: {
+    sliderImageId: {
       required: false,
-      value: ('id' in dataArray.formData) ? dataArray.formData.id : '',
+      value: ('sliderImageId' in dataArray.formData) ? dataArray.formData.sliderImageId : '',
       fieldType: "hidden",
-      label: "QNA ID",
-      id: "id",
+      label: "Slider Images id",
+      id: "sliderImageId",
       class: "form-control1",
       placeholder: "",
-      name: "id"
+      name: "sliderImageId"
     },
-    createdDate: {
-      required: false,
-      value: (dataArray.formData.createdDate !== undefined) ? dataArray.formData.createdDate : '',
-      fieldType: "hidden",
-      label: "Created Date",
-      id: "createdDate",
-      class: "form-control1",
-      placeholder: "",
-      name: "createdDate"
-    },
-    modifiedDate: {
-      required: false,
-      value: (dataArray.formData.modifiedDate !== undefined) ? dataArray.formData.modifiedDate : '',
-      fieldType: "hidden",
-      label: "Update Date",
-      id: "modifiedDate",
-      class: "form-control1",
-      placeholder: "",
-      name: "modifiedDate"
-    },
-    question: {
+    sliderTitle: {
       required: true,
-      value: (dataArray.formData.question !== undefined) ? dataArray.formData.question : '',
-      fieldType: "textarea", // Set fieldType to "textarea"
-      label: "Question",
-      id: "question",
-      rows: "4", // Set rows for the textarea
-      cols: "50", // Set cols for the textarea
-      class: "form-control",
-      placeholder: "Question",
-      name: "question"
-    },
-    ...generateOptionsFields('options', numberOfOptions), // Generate fields for Answer A, B, C, D
-    correctOptions: {
-      required: true,
-      value: correctOptions, // Ensure value is an array of selected correct options
-      fieldType: "multiselect", // Set fieldType to "multiselect"
-      label: "Correct Options",
-      id: "correctOptions",
-      optionArray: generateCorrectOptions(numberOfOptions), // Generate options
+      value: (dataArray.formData.sliderTitle !== undefined) ? dataArray.formData.sliderTitle : '',
+      fieldType: "text",
+      label: "Slider Title",
+      id: "sliderTitle",
       class: "form-control1",
-      name: "correctOptions",
-      placeholder: "", // No placeholder needed for multi-select
+      placeholder: "Slider Title",
+      name: "sliderTitle"
     },
-    points: {
+    sliderText: {
       required: true,
-      value: (dataArray.formData.points !== undefined) ? dataArray.formData.points : '',
-      fieldType: "text", // Set fieldType to "textarea"
-      label: "Points",
-      id: "points",
-      class: "form-control",
-      placeholder: "Points",
-      name: "points"
+      value: ('sliderText' in dataArray.formData) ? dataArray.formData.sliderText : '',
+      fieldType: "text",
+      label: "Slider Text",
+      id: "sliderText",
+      class: "form-control1",
+      placeholder: "Slider Text",
+      name: "sliderText"
+    },
+    url: {
+      required: true,
+      value: (dataArray.formData.url !== undefined) ? dataArray.formData.url : '',
+      fieldType: "text",
+      label: "Url",
+      id: "url",
+      class: "form-control1",
+      placeholder: "Url",
+      name: "url"
     },
     status: {
       required: true,
@@ -129,18 +74,18 @@ const sliderImageForm = (dataArray, numberOfOptions = 4) => {
       optionArray: {
         0: "---------Please Select ------------------",
         1: "Active",
-        2: "Inactive",
+        2: "InActive",
       },
-      id: "status",
+      id: "active",
       class: "form-control1",
       placeholder: "",
       name: "status"
     },
     storeId: {
       required: true,
-      value: (dataArray.formData.storeId !== undefined) ? dataArray.formData.storeId : '',
-      fieldType: "select",
+      value: (dataArray.formData.storeId !== undefined) ? dataArray.formData.storeId : '',      
       label: "Store",
+      fieldType: "select",
       id: "storeId",
       optionArray: {
         0: "---------Please Select ------------------",
@@ -153,9 +98,9 @@ const sliderImageForm = (dataArray, numberOfOptions = 4) => {
     },
     updateRequired: {
       required: true,
-      value: (dataArray.formData.updateRequired !== undefined) ? dataArray.formData.updateRequired : '',
+      value: (dataArray.formData.updateRequired !== undefined) ? dataArray.formData.updateRequired : '',      
+      label: "Update  Required",
       fieldType: "select",
-      label: "Update Required",
       id: "updateRequired",
       optionArray: {
         0: "---------Please Select ------------------",
@@ -166,9 +111,41 @@ const sliderImageForm = (dataArray, numberOfOptions = 4) => {
       placeholder: "",
       name: "updateRequired"
     },
+    childSliderImage: {
+      required: false,
+      value: (dataArray.formData.childSliderImage !== undefined) ? dataArray.formData.childSliderImage : '',      
+      label: "Slider Image",
+      id: "childSliderImage",
+      fieldType: "upload",
+      class: "form-control1",
+      upload_path : '/admin/uploads/slider_image/',
+      placeholder: "",
+      name: "childSliderImage"
+    },
+    createdDate: {
+      required: false,
+      value: (dataArray.formData.createdDate !== undefined) ? dataArray.formData.createdDate : '',
+      label: "Created Date",
+      fieldType: "hidden",
+      id: "createdDate",
+      class: "form-control1",
+      placeholder: "",
+      name: "createdDate"
+    },
+    modifiedDate: {
+      required: false,
+      value: (dataArray.formData.modifiedDate !== undefined) ? dataArray.formData.modifiedDate : '',     
+      label: "Update Date",
+      fieldType: "hidden",
+      id: "modifiedDate",
+      class: "form-control1",
+      placeholder: "",
+      name: "modifiedDate"
+    },
     submit: {
       required: false,
-      value: "Submit", // Only one value key
+      value: (dataArray.formData.submit !== undefined) ? dataArray.formData.submit : '',      
+      value: "Submit",
       label: "Submit",
       fieldType: "submit",
       id: "submit",
@@ -180,7 +157,9 @@ const sliderImageForm = (dataArray, numberOfOptions = 4) => {
   return form;
 };
 
-// Export the model
+
+
+// create the model for users and expose it to our app
 module.exports = {
   sliderImageForm: sliderImageForm,
 };

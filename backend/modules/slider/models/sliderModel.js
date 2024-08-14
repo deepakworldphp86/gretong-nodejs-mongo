@@ -7,7 +7,7 @@ const mongoosePaginate = require("mongoose-paginate-v2");
 
 var sliderSchema = new mongoose.Schema(
   {
-    parentSliderId: {
+    sliderId: {
       type: String,
       required: true,
       trim: true,
@@ -77,9 +77,12 @@ sliderModel.paginate().then({}); // Usage
 // Define schema
 var sliderImageSchema = new mongoose.Schema(
   {
+    sliderImageId: {
+      type: String,
+      required: true,
+    },
     sliderId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Slider',
+      type: String,
       required: true,
     },
     sliderTitle: {
@@ -87,7 +90,7 @@ var sliderImageSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    sliderImage: {
+    childSliderImage: {
       type: String,
       required: true,
     },
@@ -111,6 +114,11 @@ var sliderImageSchema = new mongoose.Schema(
     createdDate: {
       type: Date,
       default: Date.now,
+    },
+    updateRequired: {
+      type: String,
+      required: false,
+      trim: true,
     },
     modifiedDate: {
       type: Date,

@@ -60,9 +60,9 @@
               <img id="myImg" src="/admin/uploads/slider_image/<%= responce[i].sliderImage %>" width="107" height="98">
               <% } %>
               </td>
-            <td><a href="/admin/sliderimages/list/<%= responce[i].id %>/1">View/Add Slider Images </td>
+            <td><a href="/admin/sliderimages/list/<%= responce[i].sliderId %>/1">View/Add Slider Images </td>
             <td><a href="/admin/slider/edit/<%- responce[i]._id %>">Edit</td>
-            <td><a href="/admin/slider/delete/<%= responce[i].id  %>/<%= responce[i]._id  %>">Delete</td>
+            <td><a href="/admin/slider/delete/<%= responce[i].sliderId  %>/<%= responce[i]._id  %>">Delete</td>
 					  </tr>
               <% } %>
 					 </tbody>

@@ -33,14 +33,15 @@
         <div class="main-grid">
         <div class="agile-grids">
         <div class="bs-component mb40">
-          <a href="/admin/sliderimages/add/<%= sliderId %>"" class="btn btn-category btn-block" >Add Slider QNA</a>
+          <a href="/admin/sliderimages/add/<%= sliderId %>"" class="btn btn-category btn-block" >Add Slider Images</a>
         </div>
 				<!-- tables -->
-			    <h3>Slider Options Listing</h3>
+			    <h3>Slider Image Listing</h3>
 				  <table id="table-two-axis" class="two-axis">
 					<thead>
 					  <tr>
-						<th>Slider Question</th>
+						<th>Slider Title</th>
+            <th>Slider Child Image</th>
 						<th>Edit</th>
 						<th>Action</th>
 					  </tr>
@@ -48,7 +49,12 @@
 					<tbody>
             <% for (var i = 0; i < responce.length; ++i) { %>
 					  <tr>
-						<td><%= responce[i].question %></td>
+						<td><%= responce[i].sliderTitle %></td>
+            <td>
+              <% if(responce[i].childSliderImage) { %>
+              <img id="myImg" src="/admin/uploads/slider_image/<%= responce[i].childSliderImage %>" width="107" height="98">
+              <% } %>
+              </td>
             <td><a href="/admin/sliderimages/edit/<%- responce[i].id %>">Edit</td>
             <td><a href="/admin/sliderimages/delete/<%= responce[i].sliderId  %>/<%= responce[i]._id  %>">Delete</td>
 					  </tr>

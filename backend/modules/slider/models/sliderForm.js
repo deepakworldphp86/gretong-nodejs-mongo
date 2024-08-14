@@ -16,15 +16,15 @@ const sliderForm = (dataArray) =>  {
       id: "hexadecimal_id",
       name: "_id"
     },
-    parentSliderId: {
+    sliderId: {
       required: false,
-      value: ('parentSliderId' in dataArray.formData) ? dataArray.formData.parentSliderId : '',
+      value: ('sliderId' in dataArray.formData) ? dataArray.formData.sliderId : '',
       fieldType: "hidden",
-      label: "Parent Slider Id",
-      id: "parentSliderId",
+      label: "Slider Id",
+      id: "sliderId",
       class: "form-control1",
       placeholder: "",
-      name: "parentSliderId"
+      name: "sliderId"
     },
     name: {
       required: true,
