@@ -104,7 +104,7 @@ app.use("/admin/orders", salesAdminRouter);
 app.use("/admin/quiz", quizAdminRouter);
 app.use("/admin/quizoptions", quizAdminOptionsRoutes);
 app.use("/admin/slider", sliderAdminRouter);
-app.use("/admin/sliderimage", sliderImageAdminRoutes);
+app.use("/admin/sliderimages", sliderImageAdminRoutes);
 
 
 // Routes Front
