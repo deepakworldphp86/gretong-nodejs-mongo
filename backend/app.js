@@ -28,9 +28,14 @@ const categoryResolvers = require(path.join(modulesPath, 'category', 'graphql', 
 const customerTypeDefs = require(path.join(modulesPath, 'customer', 'graphql', 'schemaGraphqls'));
 const customerResolvers = require(path.join(modulesPath, 'customer', 'graphql', 'resolverGraphql'));
 
+const quizTypeDefs = require(path.join(modulesPath, 'quiz', 'graphql', 'schemaGraphqls'));
+const quizResolvers = require(path.join(modulesPath, 'quiz', 'graphql', 'resolverGraphql'));
+const sliderTypeDefs = require(path.join(modulesPath, 'slider', 'graphql', 'schemaGraphqls'));
+const sliderResolvers = require(path.join(modulesPath, 'slider', 'graphql', 'resolverGraphql'));
+
 // Merge typeDefs and resolvers
-const typeDefs = mergeTypeDefs([productTypeDefs, categoryTypeDefs, customerTypeDefs]);
-const resolvers = mergeResolvers([productResolvers, categoryResolvers, customerResolvers]);
+const typeDefs = mergeTypeDefs([productTypeDefs, categoryTypeDefs, customerTypeDefs,quizTypeDefs,sliderTypeDefs]);
+const resolvers = mergeResolvers([productResolvers, categoryResolvers, customerResolvers,quizResolvers,sliderResolvers]);
 
 
 
@@ -53,6 +58,8 @@ const apiRouter = require(path.join(modulesPath, 'rest', 'routes', 'api'));
 const productRestApiRouter = require(path.join(modulesPath, 'product', 'routes', 'productRestApiRoutes'));
 const categoryRestApiRouter = require(path.join(modulesPath, 'category', 'routes', 'categoryRestApiRoutes'));
 const salesRestApiRouter = require(path.join(modulesPath, 'sales', 'routes', 'salesRestApiRoutes'));
+const quizRestApiRoutes = require(path.join(modulesPath, 'quiz', 'routes', 'quizRestApiRoutes'));
+const sliderRestApiRoutes = require(path.join(modulesPath, 'slider', 'routes', 'sliderRestApiRoutes'));
 
 
 
@@ -115,6 +122,10 @@ app.use("/customer", customerFrontRouter);
 app.use("/category/rest", categoryRestApiRouter);
 app.use("/orders/rest", salesRestApiRouter);
 app.use("/product/rest", productRestApiRouter);
+app.use("/quiz/rest", quizRestApiRoutes);
+app.use("/slider/rest", sliderRestApiRoutes);
+
+
 
 // app.use("/rest/api", apiRouter);
 
