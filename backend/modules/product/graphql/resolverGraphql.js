@@ -1,14 +1,31 @@
+const { GraphQLScalarType, Kind } = require('graphql');
+const mongoose = require("mongoose");
 const { productModel } = require("../models/productModel.js");
-const express = require("express");
 
-const app = express();
+// Custom scalar for MongoDB ObjectId
+const ObjectId = new GraphQLScalarType({
+  name: 'ObjectId',
+  description: 'Custom scalar type for MongoDB ObjectId',
+  parseValue(value) {
+    return mongoose.Types.ObjectId(value); // Convert client value to ObjectId
+  },
+  serialize(value) {
+    return value.toString(); // Convert MongoDB ObjectId to string for the client
+  },
+  parseLiteral(ast) {
+    if (ast.kind === Kind.STRING) {
+      return mongoose.Types.ObjectId(ast.value); // Convert AST value to ObjectId
+    }
+    return null;
+  },
+});
 
 // Define your base URL for images
 const IMAGE_BASE_URL = 'http://localhost:3000/admin/uploads/product_images/';
 
 const resolvers = {
+  ObjectId, // Include the ObjectId scalar here
   Query: {
-    // Fetch all products with sorting, filtering, searching, and pagination
     products: async (_, { sort, filter, page = 1, limit = 10, search }) => {
       try {
         let query = {};
@@ -20,9 +37,9 @@ const resolvers = {
 
         // Additional filters
         if (filter) {
-          if (filter.bestSeller) query.bestSeller = '1';
-          if (filter.crossSell) query.crossSell = '1';
-          if (filter.newProduct) query.newProduct = '1';
+          if (filter.bestSeller === 0 || filter.bestSeller === 1) query.bestSeller = filter.bestSeller;
+          if (filter.crossSell === 0 || filter.crossSell === 1) query.crossSell = filter.crossSell;
+          if (filter.newProduct === 0 || filter.newProduct === 1) query.newProduct = filter.newProduct;
           if (filter.categoryIds && filter.categoryIds.length > 0) {
             query.categories = { $in: filter.categoryIds };
           }
@@ -63,13 +80,13 @@ const resolvers = {
         throw new Error('Error fetching products');
       }
     },
-    // Fetch a single product by id
     product: async (_, { id }) => {
       try {
         const product = await productModel.findOne({ id });
         if (product) {
           return {
             ...product._doc,
+            _id: product._id.toString(), // Convert _id to string
             productGalleryImage: product.productGalleryImage
               ? `${IMAGE_BASE_URL}${product.productGalleryImage}`
               : null
@@ -81,52 +98,18 @@ const resolvers = {
         throw new Error('Error fetching product');
       }
     },
-    // Fetch products marked as bestsellers with image base URL
-    bestSellerProducts: async () => {
-      try {
-        const products = await productModel.find({ bestSeller: '1' });
-        return products.map(product => ({
-          ...product._doc,
-          productGalleryImage: product.productGalleryImage
-            ? `${IMAGE_BASE_URL}${product.productGalleryImage}`
-            : null
-        }));
-      } catch (error) {
-        console.error('Error fetching best seller products:', error);
-        throw new Error('Error fetching best seller products');
-      }
-    }
+    productReviews: async (_, { productId }) => {
+      const product = await productModel.findById(productId); // ObjectId
+      return product.reviews || []; // Return reviews for the specified product
+    },
   },
   Mutation: {
-    // Create a new product
-    createProduct: async (_, args) => {
-      try {
-        const product = new productModel(args);
-        return await product.save();
-      } catch (error) {
-        console.error('Error creating product:', error);
-        throw new Error('Error creating product');
-      }
+    addReview: async (_, { productId, review }) => {
+      const product = await productModel.findById(productId);
+      product.reviews.push(review);
+      await product.save();
+      return product; // Return the updated product
     },
-    // Update an existing product by id
-    updateProduct: async (_, args) => {
-      try {
-        const { id, ...updateFields } = args;
-        return await productModel.findOneAndUpdate({ id }, updateFields, { new: true });
-      } catch (error) {
-        console.error('Error updating product:', error);
-        throw new Error('Error updating product');
-      }
-    },
-    // Delete a product by id
-    deleteProduct: async (_, { id }) => {
-      try {
-        return await productModel.findOneAndDelete({ id });
-      } catch (error) {
-        console.error('Error deleting product:', error);
-        throw new Error('Error deleting product');
-      }
-    }
   }
 };
 

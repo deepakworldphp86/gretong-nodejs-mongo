@@ -7,11 +7,27 @@ import LoginScreen from './screens/LoginScreen'; // Adjust import path as needed
 import CustomerProfileScreen from './screens/CustomerProfileScreen';
 import ProductListScreen from './screens/ProductListScreen';
 import ProductScreen from './screens/ProductScreen';
+import { logout } from './redux/authSlice';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
 
 //import CartScreen from './screens/CartScreen'; // Adjust import path as needed
 //import NotFoundScreen from './screens/NotFoundScreen'; // Adjust import path as needed
 
 const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const expirationTime = localStorage.getItem('expirationTime');
+    if (expirationTime) {
+      const currentTime = new Date().getTime();
+
+      if (currentTime > expirationTime) {
+        dispatch(logout());
+      }
+    }
+  }, [dispatch]);
+
   return (
     <Router>
       <main>

@@ -6,12 +6,16 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import './public/styles/global.css';
 import { ApolloProvider } from '@apollo/client';
 import client from './client/apollo_client';
+import store from './store';
+import { Provider } from 'react-redux';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-  <ApolloProvider client={client}>
-    <App />
-  </ApolloProvider>
+  <Provider store={store}>
+    <ApolloProvider client={client}>
+      <App />
+    </ApolloProvider>
+  </Provider>
 );
 

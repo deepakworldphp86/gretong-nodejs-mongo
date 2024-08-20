@@ -1,5 +1,6 @@
 // resolvers.js
 const { sliderModel, sliderImageModel } = require('../models/sliderModel'); // Adjust path as necessary
+const IMAGE_BASE_URL = 'http://localhost:3000/admin/uploads/slider_image/';
 
 const resolvers = {
   Query: {
@@ -13,10 +14,22 @@ const resolvers = {
     async getSliderImage(_, { id }) {
       return await sliderImageModel.findById(id);
     },
+    async getSliderImageBySliderId(_, { sliderId }) {
+      return await sliderImageModel.find({ sliderId: sliderId });
+    },
     async listSliderImages(_, { page = 1, limit = 10, sliderId }) {
       const query = sliderId ? { sliderId } : {};
       const result = await sliderImageModel.paginate(query, { page, limit });
-      return result.docs; // Assuming `paginate` returns an object with `docs` array
+
+      // Map over documents to prepend base URL to image
+      const slider = result.docs.map(doc => ({
+        ...doc._doc, // Assuming _doc is used to access the document's properties
+        childSliderImage: doc.childSliderImage
+          ? `${IMAGE_BASE_URL}${doc.childSliderImage}`
+          : null
+      }));
+
+      return slider; // Assuming `paginate` returns an object with `docs` array
     },
   },
   Mutation: {

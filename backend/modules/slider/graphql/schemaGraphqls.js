@@ -40,7 +40,8 @@ const typeDefs = gql`
   type Query {
     getSlider(id: ID!): Slider
     listSliders(page: Int, limit: Int): [Slider]
-    getSliderImage(id: ID!): SliderImage
+    getSliderImage(id: ID!,): SliderImage
+    getSliderImageBySliderId(sliderId: ID!,): SliderImage
     listSliderImages(page: Int, limit: Int, sliderId: String): [SliderImage]
   }
 

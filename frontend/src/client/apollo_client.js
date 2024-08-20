@@ -1,4 +1,5 @@
 import { ApolloClient, InMemoryCache, HttpLink, ApolloLink } from '@apollo/client';
+import { getToken } from '../utils/getToken'; // Adjust the path as needed
 
 // Replace with your actual server URL
 const SERVER_URL = 'http://localhost:4000/graphql';
@@ -11,8 +12,7 @@ const httpLink = new HttpLink({
 // Create a link to add the JWT token to each request
 const authLink = new ApolloLink((operation, forward) => {
   // Retrieve the token from localStorage or other storage
-  const token = localStorage.getItem('token') || '';
-
+  const token = getToken();
   // Add the authorization token to the headers
   operation.setContext({
     headers: {

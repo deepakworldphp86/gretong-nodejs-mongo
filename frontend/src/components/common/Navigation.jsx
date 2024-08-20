@@ -3,6 +3,8 @@ import { Navbar, Nav, NavDropdown, Container, Form, FormControl, Button } from '
 import { useQuery } from '@apollo/client';
 import { GET_CATEGORIES } from '../../services/graphql/query/categories';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch,useSelector } from 'react-redux';
+import { logout } from '../../redux/authSlice';
 
 const buildMenu = (categories) => {
   const map = new Map();
@@ -27,6 +29,8 @@ const buildMenu = (categories) => {
 };
 
 const Navigation = () => {
+  const dispatch = useDispatch();
+
   const { loading, error, data } = useQuery(GET_CATEGORIES, {
     variables: { limit: 100, skip: 0 },
   });
@@ -34,9 +38,11 @@ const Navigation = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   
-  const isAuthenticated = Boolean(localStorage.getItem('token'));
+  const { userInfo } = useSelector((state) => state.auth);
 
+  console.log(userInfo);
   const handleLogout = () => {
+    dispatch(logout());
     localStorage.removeItem('token');
     navigate('/login');
   };
@@ -96,7 +102,7 @@ const Navigation = () => {
             <Button type="submit" variant="outline-success">Search</Button>
           </Form>
           <Nav className="ms-auto">
-            {!isAuthenticated ? (
+            {!userInfo  ? (
               <>
                 <Nav.Link as={Link} to="/login">
                   <i className="fas fa-user"></i> Login

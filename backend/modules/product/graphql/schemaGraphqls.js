@@ -1,16 +1,10 @@
 const { gql } = require('apollo-server-express');
 
 const typeDefs = gql`
-  type Review {
-    name: String!
-    rating: Int!
-    comment: String!
-    user: String! 
-    createdAt: String
-    updatedAt: String
-  }
+  scalar ObjectId
 
   type Product {
+    _id: ObjectId
     id: String!
     sku: String!
     name: String!
@@ -43,9 +37,9 @@ const typeDefs = gql`
   }
 
   input FilterInput {
-    bestSeller: Boolean
-    crossSell: Boolean
-    newProduct: Boolean
+    bestSeller: Int
+    crossSell: Int
+    newProduct: Int
     categoryIds: [String]  # Array of category IDs
   }
 
@@ -53,61 +47,27 @@ const typeDefs = gql`
     products(sort: String, filter: FilterInput, page: Int, limit: Int, search: String): ProductPage
     product(id: String!): Product
     bestSellerProducts: [Product]
+    productReviews(productId: ObjectId!): [Review]  # Use ObjectId scalar for product reviews
   }
 
-  type Mutation {
-    createProduct(
-      id: String!
-      sku: String!
-      name: String!
-      price: Float!
-      brand: String
-      description: String
-      reviews: [ReviewInput]
-      rating: Int
-      numReviews: Int
-      countInStock: Int
-      status: String!
-      storeId: String!
-      updateRequired: String!
-      productGalleryImage: String
-      syncError: String
-      magentoSyncStatus: String
-      categories: [String]  # Array of category IDs
-      bestSeller: String
-      newProduct: String
-      crossSell: String
-    ): Product
-    updateProduct(
-      id: String!
-      sku: String
-      name: String
-      price: Float
-      brand: String
-      description: String
-      reviews: [ReviewInput]
-      rating: Int
-      numReviews: Int
-      countInStock: Int
-      status: String
-      storeId: String
-      updateRequired: String
-      productGalleryImage: String
-      syncError: String
-      magentoSyncStatus: String
-      categories: [String]  # Array of category IDs
-      bestSeller: String
-      newProduct: String
-      crossSell: String
-    ): Product
-    deleteProduct(id: String!): Product
+  type Review {
+    name: String!
+    rating: Int!
+    comment: String!
+    user: ObjectId!  # Use ObjectId scalar for user reference
+    createdAt: String
+    updatedAt: String
   }
 
   input ReviewInput {
     name: String!
     rating: Int!
     comment: String!
-    user: String!
+    user: ObjectId!  # Use ObjectId scalar for user reference
+  }
+
+  type Mutation {
+    addReview(productId: ObjectId!, review: ReviewInput!): Product  # Use ObjectId scalar for productId
   }
 `;
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Carousel } from 'react-bootstrap';
 import { useQuery } from '@apollo/client';
 import { Link } from 'react-router-dom';
-import { BEST_SELLER_PRODUCTS } from '../../services/graphql/query/product';
+import { PRODUCTS_SLIDER } from '../../services/graphql/query/product';
 
 // Function to chunk the array into smaller arrays
 const chunkArray = (array, size) => {
@@ -23,13 +23,22 @@ const renderStars = (num) => {
 
 const ProductSlider = () => {
   // Fetch bestseller products using the GraphQL query
-  const { loading, error, data } = useQuery(BEST_SELLER_PRODUCTS);
-  
+  const { loading, error, data } = useQuery(PRODUCTS_SLIDER, {
+    variables: {
+      sort: "price",
+      filter: {
+        bestSeller: 1 
+      },
+      page: 1,
+      limit: 6,
+      search: ""
+    }
+  });  
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
   // Ensure data and data.bestSellerProducts exist
-  const products = data?.bestSellerProducts || [];
+  const products = data?.products.products || [];
   const slides = chunkArray(products, 4); // Create slides with 4 products each
 
   return (

@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
+
 import { useMutation } from '@apollo/client';
 import { LOGIN_USER_MUTATION } from '../../services/graphql/mutation/customer';
 import { Form, Button, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { setCredentials } from '../../redux/authSlice';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
     username: '',
     password: ''
   });
+
+  const dispatch = useDispatch();
+
   const [loginUser, { loading, error }] = useMutation(LOGIN_USER_MUTATION);
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -24,6 +30,7 @@ const LoginForm = () => {
     e.preventDefault();
     try {
       const { data } = await loginUser({ variables: formData });
+      dispatch(setCredentials({ ...data })); //Store data in redux
       const { token, user } = data.loginUser;
       localStorage.setItem('token', token); // Store token in local storage
       navigate('/customer/auth/profile');
