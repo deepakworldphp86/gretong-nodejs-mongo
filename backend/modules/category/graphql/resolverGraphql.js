@@ -15,7 +15,10 @@ const resolvers = {
   },
   Mutation: {
     createCategory: async (_, args) => {
+        console.log(args);
+        return args;
       const category = new categoriesModel(args);
+    
       return await category.save();
     },
     updateCategory: async (_, args) => {

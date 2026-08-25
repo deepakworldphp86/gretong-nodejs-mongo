@@ -81,7 +81,7 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   store: new MongoDbStore({
-    uri: 'mongodb://localhost:27017/greatcart',
+    uri: 'mongodb://root:datascience%40123@mongodb.docker:27017/greatcart?authSource=admin',
     collection: 'mySessions'
   })
 }));
