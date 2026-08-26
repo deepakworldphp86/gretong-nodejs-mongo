@@ -14,7 +14,7 @@ const session = require("express-session");
 const MongoDbStore = require("connect-mongodb-session")(session);
 const { ApolloServer } = require('apollo-server-express');
 const { mergeTypeDefs, mergeResolvers } = require('@graphql-tools/merge');
-
+const cors = require("cors");
 // Application Configuration
 const app = require('./appConfig.js');
 const modulesPath = app.locals.modulesPath;
@@ -119,6 +119,13 @@ app.use("/admin/sliderimages", sliderImageAdminRoutes);
 // Routes Front
 app.use("/", frontendRoutes);
 app.use("/customer", customerFrontRouter);
+
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
 
 //Rest Api Routes
 app.use("/category/rest", categoryRestApiRouter);
