@@ -60,6 +60,8 @@ const categoryRestApiRouter = require(path.join(modulesPath, 'category', 'routes
 const salesRestApiRouter = require(path.join(modulesPath, 'sales', 'routes', 'salesRestApiRoutes'));
 const quizRestApiRoutes = require(path.join(modulesPath, 'quiz', 'routes', 'quizRestApiRoutes'));
 const sliderRestApiRoutes = require(path.join(modulesPath, 'slider', 'routes', 'sliderRestApiRoutes'));
+const shopifyApiRoutes = require(path.join(modulesPath, 'shopify', 'routes', 'shopifyRestApiRoutes'));
+
 
 
 
@@ -124,6 +126,7 @@ app.use("/orders/rest", salesRestApiRouter);
 app.use("/product/rest", productRestApiRouter);
 app.use("/quiz/rest", quizRestApiRoutes);
 app.use("/slider/rest", sliderRestApiRoutes);
+app.use("/shopify/rest", shopifyApiRoutes);
 
 
 
